@@ -1,7 +1,7 @@
 # Obvivlorum AI Symbiote System
 
 [![CI/CD Pipeline](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/ci.yml/badge.svg)](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/ci.yml)
-[![Research Release](https://github.com/Yatrogeneus/Obvivlorum/actions/workflows/research-release.yml/badge.svg)](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/research-release.yml)
+[![Research Release](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/research-release.yml/badge.svg)](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/research-release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Performance](https://img.shields.io/badge/Performance-3780x%20Faster-red.svg)](AION/final_optimized_topo_spectral.py)

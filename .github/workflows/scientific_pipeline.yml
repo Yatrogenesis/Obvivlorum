@@ -1,0 +1,130 @@
+name: Scientific CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  scientific-validation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy numba matplotlib seaborn
+        pip install ripser persim gudhi
+        pip install pytest pytest-cov
+        pip install ruff mypy
+        
+    - name: Run Scientific CI/CD Pipeline
+      run: |
+        python -c "
+        from AION.ci_cd_scientific_pipeline import ScientificCICDPipeline
+        import sys
+        
+        pipeline = ScientificCICDPipeline()
+        results = pipeline.run_full_pipeline()
+        
+        print(f'Pipeline Status: {results["overall_status"]}')
+        print(f'Execution Time: {results["total_execution_time_s"]:.2f}s')
+        
+        if results['overall_status'] != 'passed':
+            print('❌ Pipeline failed')
+            sys.exit(1)
+        else:
+            print('✅ Pipeline passed')
+        "
+    
+    - name: Upload Pipeline Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: pipeline-reports-${{ matrix.python-version }}
+        path: ci_reports/
+    
+    - name: Performance Regression Check
+      run: |
+        python -c "
+        from AION.final_optimized_topo_spectral import FinalOptimizedTopoSpectral
+        import numpy as np
+        
+        engine = FinalOptimizedTopoSpectral()
+        
+        # Test performance regression
+        np.random.seed(42)
+        connectivity = np.random.exponential(0.3, (100, 100))
+        connectivity = (connectivity + connectivity.T) / 2
+        np.fill_diagonal(connectivity, 0)
+        
+        # Warmup
+        _ = engine.calculate_psi_ultra_fast(connectivity)
+        
+        # Benchmark
+        times = []
+        for _ in range(10):
+            result = engine.calculate_psi_ultra_fast(connectivity)
+            times.append(result['total_time_ms'])
+        
+        mean_time = np.mean(times)
+        print(f'Average computation time: {mean_time:.3f}ms')
+        
+        if mean_time > 5.0:
+            print(f'❌ Performance regression detected: {mean_time:.3f}ms > 5.0ms target')
+            exit(1)
+        else:
+            print(f'✅ Performance target met: {mean_time:.3f}ms < 5.0ms')
+        "
+
+  documentation-update:
+    needs: scientific-validation
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scipy matplotlib seaborn
+    
+    - name: Update Documentation
+      run: |
+        python -c "
+        from AION.ci_cd_scientific_pipeline import ScientificCICDPipeline
+        
+        pipeline = ScientificCICDPipeline()
+        doc_result = pipeline._run_documentation_generation_stage()
+        print('Documentation updated:', doc_result['success'])
+        "
+    
+    - name: Commit updated documentation
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md API_DOCUMENTATION.md .claude.json
+        git diff --staged --quiet || git commit -m "🤖 Auto-update documentation [skip ci]"
+        git push
