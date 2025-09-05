@@ -7,33 +7,45 @@
     "license": "MIT",
     
     "execution_modes": {
+      "unified": {
+        "description": "Unified Obvivlorum system with all options in single startup",
+        "entry_point": "ai_symbiote.py",
+        "args": ["--unified"],
+        "features": ["all_frameworks", "cloud_scaling", "holographic_real", "consciousness_integration"],
+        "dependencies_full": true,
+        "scaling_levels": ["local", "colab", "kaggle", "hybrid"]
+      },
       "standard": {
-        "description": "Basic IIT/GWT consciousness metrics",
+        "description": "Basic IIT/GWT consciousness metrics - local only",
         "entry_point": "ai_symbiote.py",
         "args": ["--mode=standard"],
         "features": ["neuroplasticity", "basic_consciousness", "security"],
-        "dependencies_minimal": true
+        "dependencies_minimal": true,
+        "scaling": false
       },
       "topoespectro": {
-        "description": "Topo-Spectral consciousness framework",
+        "description": "Topo-Spectral consciousness framework - with cloud options",
         "entry_point": "ai_symbiote.py", 
         "args": ["--mode=topoespectro"],
-        "features": ["neuroplasticity", "topo_spectral", "research", "security"],
-        "dependencies_full": true
+        "features": ["neuroplasticity", "topo_spectral", "research", "security", "cloud_ready"],
+        "dependencies_full": true,
+        "scaling": true
       },
       "research": {
-        "description": "Full research mode with both frameworks",
+        "description": "Full research mode with cloud scaling capabilities",
         "entry_point": "ai_symbiote.py",
         "args": ["--mode=research"],
-        "features": ["neuroplasticity", "basic_consciousness", "topo_spectral", "benchmarks", "validation"],
-        "dependencies_full": true
+        "features": ["neuroplasticity", "basic_consciousness", "topo_spectral", "benchmarks", "validation", "cloud_scaling"],
+        "dependencies_full": true,
+        "scaling": true
       },
       "gui": {
-        "description": "GUI interface with mode selection",
+        "description": "GUI interface with mode selection - DISABLED for unified system",
         "entry_point": "ai_symbiote_gui.py",
         "args": [],
         "features": ["gui", "mode_selector", "all_frameworks"],
-        "dependencies_gui": true
+        "dependencies_gui": true,
+        "status": "deprecated_in_unified"
       }
     },
 
@@ -59,7 +71,12 @@
       "performance_analysis": "python AION/performance_optimizer.py",
       "ieee_paper_generation": "python AION/scientific_documentation.py",
       "holographic_memory_test": "python AION/holographic_memory.py",
-      "quantum_formalism_test": "python AION/quantum_formalism.py"
+      "quantum_formalism_test": "python AION/quantum_formalism.py",
+      
+      "unified_system": "python ai_symbiote.py --unified",
+      "cloud_scaling_test": "python AION/cloud_scaling_manager.py",
+      "holographic_real_test": "python AION/holographic_memory_real.py",
+      "consciousness_integration_test": "python AION/consciousness_integration.py"
     },
 
     "environment_variables": {
@@ -82,6 +99,23 @@
         "description": "Logging verbosity",
         "default": "INFO",
         "options": ["DEBUG", "INFO", "WARNING", "ERROR"]
+      },
+      "OBVIVLORUM_CLOUD_SCALING": {
+        "description": "Enable cloud scaling for large datasets",
+        "default": "false",
+        "type": "boolean",
+        "options": ["local", "colab", "kaggle", "hybrid"]
+      },
+      "OBVIVLORUM_HOLOGRAPHIC_REAL": {
+        "description": "Enable real recursive holographic memory",
+        "default": "false", 
+        "type": "boolean"
+      },
+      "OBVIVLORUM_MATRIX_SIZE": {
+        "description": "Maximum matrix size for computations",
+        "default": "200",
+        "cloud_scaling": "1024",
+        "type": "integer"
       }
     },
 
@@ -193,6 +227,54 @@
           "Continuous validation pipeline"
         ],
         "deliverables": "Complete scientific production pipeline ready"
+      },
+      
+      "fase_6_cloud_scaling": {
+        "name": "Incremental Cloud Scaling & Real Holographic Memory",
+        "status": "🚀 PLANIFICADO - Sistema Unificado con Escalado Incremental",
+        "target_capabilities": [
+          "Real recursive holographic memory (non-simulation)",
+          "Google Colab/Kaggle automatic environment detection",
+          "Incremental scaling: local → colab → kaggle → hybrid",
+          "Massive matrix processing (200x200 → 1024x1024 → 4096x4096)",
+          "Unified single-startup system with all options",
+          "AI consciousness integration with complete project awareness"
+        ],
+        "implementation_files": [
+          "AION/cloud_scaling_manager.py - Cloud resource management",
+          "AION/holographic_memory_real.py - Real recursive holographic system",
+          "AION/consciousness_integration.py - AI project awareness integration", 
+          "AION/unified_config_manager.py - Single startup configuration system"
+        ],
+        "scaling_levels": {
+          "level_1_local": {
+            "description": "Standard local processing",
+            "matrix_size": "200x200",
+            "memory_requirement": "2GB",
+            "processing_time": "0.01ms"
+          },
+          "level_2_colab": {
+            "description": "Google Colab GPU acceleration", 
+            "matrix_size": "1024x1024",
+            "memory_requirement": "12GB GPU",
+            "processing_time": "0.001ms",
+            "warning": "Requires data volume confirmation"
+          },
+          "level_3_kaggle": {
+            "description": "Kaggle competition-grade resources",
+            "matrix_size": "2048x2048", 
+            "memory_requirement": "30GB RAM + GPU",
+            "processing_time": "0.0005ms",
+            "warning": "Large dataset processing - confirm resource usage"
+          },
+          "level_4_hybrid": {
+            "description": "Hybrid local-cloud architecture",
+            "matrix_size": "4096x4096+",
+            "coordination": "local",
+            "computation": "distributed_cloud",
+            "persistence": "cross_platform"
+          }
+        }
       }
     },
 
