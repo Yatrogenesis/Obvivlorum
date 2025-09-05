@@ -107,6 +107,10 @@ class OAuthManager:
         self.callback_server: Optional[HTTPServer] = None
         self.callback_port = 8080
         self.state_verifier = None
+        self.callback_received = False
+        self.callback_result = False
+        self.current_provider = None
+        self.server_thread = None
         
         # REAL OAuth configurations using public clients
         self._setup_real_oauth_configs()
@@ -370,9 +374,17 @@ class OAuthManager:
     def _start_web_flow(self, provider: OAuthProvider, config: OAuthConfig) -> bool:
         """Start web-based OAuth flow with local server."""
         try:
-            # Start local callback server
+            # Start local callback server and wait for it to be ready
             if not self._start_callback_server():
+                print("Failed to start local callback server")
                 return False
+            
+            # Wait a moment for server to be fully ready
+            import time
+            time.sleep(1)
+            
+            # Store current provider for callback handling
+            self.current_provider = provider
             
             # Generate state for security
             self.state_verifier = secrets.token_urlsafe(32)
@@ -386,18 +398,25 @@ class OAuthManager:
                 'state': self.state_verifier
             }
             
+            # Add provider-specific parameters
+            if provider == OAuthProvider.GOOGLE:
+                auth_params['access_type'] = 'offline'
+                auth_params['prompt'] = 'consent'
+            
             auth_url = f"{config.auth_url}?{urllib.parse.urlencode(auth_params)}"
             
             print(f"\n{provider.value.title()} Web Authentication:")
+            print(f"Local server started on http://localhost:{self.callback_port}")
             print("Opening browser for authentication...")
+            print("Waiting for authentication callback...")
             
             # Open browser
             if webbrowser.open(auth_url):
-                print("Please complete authentication in your browser")
-                return True
+                # Wait for callback with timeout
+                return self._wait_for_callback(60)  # 60 second timeout
             else:
                 print(f"Please open manually: {auth_url}")
-                return False
+                return self._wait_for_callback(120)  # 2 minute timeout for manual
                 
         except Exception as e:
             logger.error(f"Web flow failed: {e}")
@@ -491,14 +510,20 @@ class OAuthManager:
             logger.error("Web server not available for OAuth callback")
             return False
         
+        if self.callback_server:
+            # Server already running
+            return True
+        
         try:
             # Find available port
             for port in range(8080, 8090):
                 try:
-                    server = HTTPServer(('localhost', port), OAuthCallbackHandler)
+                    server = HTTPServer(('127.0.0.1', port), OAuthCallbackHandler)
                     server.oauth_manager = self
                     self.callback_server = server
                     self.callback_port = port
+                    self.callback_received = False
+                    self.callback_result = False
                     break
                 except OSError:
                     continue
@@ -507,10 +532,28 @@ class OAuthManager:
                 # Start server in background
                 def run_server():
                     logger.info(f"OAuth callback server started on port {self.callback_port}")
-                    self.callback_server.timeout = 120  # 2 minutes
-                    self.callback_server.handle_request()
+                    try:
+                        while not self.callback_received:
+                            self.callback_server.timeout = 5  # Short timeout for checking
+                            self.callback_server.handle_request()
+                    except Exception as e:
+                        logger.error(f"Server error: {e}")
                 
-                threading.Thread(target=run_server, daemon=True).start()
+                self.server_thread = threading.Thread(target=run_server, daemon=True)
+                self.server_thread.start()
+                
+                # Test server is responding
+                import socket
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                try:
+                    result = sock.connect_ex(('127.0.0.1', self.callback_port))
+                    sock.close()
+                    if result != 0:
+                        # Server not ready yet, wait a bit
+                        time.sleep(0.5)
+                finally:
+                    sock.close()
+                
                 return True
             else:
                 logger.error("Could not start OAuth callback server")
@@ -520,6 +563,24 @@ class OAuthManager:
             logger.error(f"Callback server startup failed: {e}")
             return False
     
+    def _wait_for_callback(self, timeout: int) -> bool:
+        """Wait for OAuth callback with timeout."""
+        try:
+            import time
+            start_time = time.time()
+            
+            while time.time() - start_time < timeout:
+                if hasattr(self, 'callback_received') and self.callback_received:
+                    return getattr(self, 'callback_result', False)
+                time.sleep(0.5)
+            
+            print(f"\nAuthentication timeout after {timeout} seconds")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Wait for callback failed: {e}")
+            return False
+    
     def handle_callback(self, callback_path: str):
         """Handle OAuth callback from provider."""
         try:
@@ -527,24 +588,40 @@ class OAuthManager:
             parsed = urlparse(callback_path)
             params = parse_qs(parsed.query)
             
+            self.callback_received = True
+            
+            if 'error' in params:
+                error = params['error'][0]
+                error_desc = params.get('error_description', ['Unknown error'])[0]
+                print(f"\nAuthentication failed: {error} - {error_desc}")
+                self.callback_result = False
+                return
+            
             if 'code' in params and 'state' in params:
                 auth_code = params['code'][0]
                 state = params['state'][0]
                 
                 # Verify state
                 if state == self.state_verifier:
-                    # Find current provider and exchange code
-                    for provider, config in self.configs.items():
-                        if config.enabled:
-                            self._exchange_code_for_token(provider, config, auth_code)
-                            break
+                    # Use current provider for token exchange
+                    if hasattr(self, 'current_provider'):
+                        provider = self.current_provider
+                        config = self.configs[provider]
+                        self.callback_result = self._exchange_code_for_token(provider, config, auth_code)
+                    else:
+                        logger.error("No current provider for callback")
+                        self.callback_result = False
                 else:
                     logger.error("OAuth state verification failed")
+                    self.callback_result = False
             else:
                 logger.error("OAuth callback missing required parameters")
+                self.callback_result = False
                 
         except Exception as e:
             logger.error(f"OAuth callback handling failed: {e}")
+            self.callback_received = True
+            self.callback_result = False
     
     def get_token(self, provider: OAuthProvider) -> Optional[OAuthToken]:
         """Get stored token for provider."""
