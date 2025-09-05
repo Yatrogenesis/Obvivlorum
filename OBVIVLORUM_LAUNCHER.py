@@ -385,6 +385,9 @@ class ObvivlorumLauncher:
         self.launch_button.configure(state='normal')
         
         logger.info(f"Selected mode: {mode_config['name']}")
+        
+        # Auto-launch after brief delay (commercial-style immediate response)
+        self.root.after(1500, self.launch_selected_mode)
     
     def launch_selected_mode(self):
         """Launch the selected mode."""
