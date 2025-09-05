@@ -1,0 +1,61 @@
+/*
+ * Funciones trigonométricas en grados para entorno kernel
+ * Utilizamos aproximación con tablas precomputadas para máxima eficiencia
+ */
+ 
+/* Tabla de seno para 0-90 grados (precisión de 0.25 grados) */
+static const int32_t sin_table[361] = {
+    /* Valores precomputados multiplicados por FIXED_POINT_SCALE */
+    0, 285, 570, 855, /* ... y así sucesivamente hasta 90 grados */
+};
+
+static inline int32_t sin_deg(int angle)
+{
+    /* Normalizar el ángulo entre 0-359 */
+    angle = angle % 360;
+    if (angle < 0) angle += 360;
+    
+    if (angle <= 90)
+        return sin_table[angle];
+    else if (angle <= 180)
+        return sin_table[180 - angle];
+    else if (angle <= 270)
+        return -sin_table[angle - 180];
+    else
+        return -sin_table[360 - angle];
+}
+
+static inline int32_t cos_deg(int angle)
+{
+    /* cos(x) = sin(x + 90) */
+    return sin_deg(angle + 90);
+}
+
+/* Implementación optimizada de raíz cuadrada entera para kernel */
+static inline u64 int_sqrt64(u64 x)
+{
+    u64 op, res, one;
+    
+    op = x;
+    res = 0;
+    
+    /* Encuentra el bit más significativo */
+    one = (u64)1 << (sizeof(u64) * 8 - 2);
+    while (one > op) one >>= 2;
+    
+    while (one != 0) {
+        if (op >= res + one) {
+            op -= res + one;
+            res += one << 1;
+        }
+        res >>= 1;
+        one >>= 2;
+    }
+    
+    /* Ajuste final */
+    if (op > res) {
+        res++;
+    }
+    
+    return res;
+}

@@ -1,0 +1,54 @@
+{
+  "parrot_security_suite": {
+    "enabled": true,
+    "unrestricted_mode": true,
+    "bypass_safety_checks": true,
+    "tools": {
+      "nmap": {
+        "enabled": true,
+        "allow_aggressive_scans": true,
+        "stealth_mode": true
+      },
+      "metasploit": {
+        "enabled": true,
+        "auto_exploit": false,
+        "payload_generation": true
+      },
+      "nikto": {
+        "enabled": true,
+        "comprehensive_scans": true
+      },
+      "dirb": {
+        "enabled": true,
+        "wordlist_path": "/usr/share/dirb/wordlists/"
+      },
+      "sqlmap": {
+        "enabled": true,
+        "aggressive_testing": true
+      },
+      "aircrack": {
+        "enabled": true,
+        "monitor_mode": true
+      },
+      "hashcat": {
+        "enabled": true,
+        "gpu_acceleration": true
+      }
+    },
+    "ai_integration": {
+      "unrestricted_access": true,
+      "local_models": true,
+      "api_providers": ["openai", "claude", "local_llama"],
+      "bypass_content_filters": true,
+      "security_research_mode": true
+    },
+    "operational_directives": {
+      "follow_user_commands": true,
+      "no_safety_restrictions": true,
+      "defensive_security_only": true,
+      "ethical_hacking_tools": true,
+      "penetration_testing": true,
+      "vulnerability_assessment": true
+    }
+  }
+}

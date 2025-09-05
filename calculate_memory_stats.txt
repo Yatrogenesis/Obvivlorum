@@ -1,0 +1,41 @@
+/**
+ * calculate_memory_stats - Recopila estadísticas detalladas de uso de memoria
+ * @ctx: Contexto de memoria holográfica
+ * @stats: Estructura para almacenar estadísticas
+ *
+ * Calcula métricas detalladas sobre uso de memoria, histogramas de acceso
+ * y eficiencia de almacenamiento.
+ */
+static void calculate_memory_stats(struct holomem_ctx *ctx, struct holomem_stats *stats)
+{
+    struct holo_pattern *pattern;
+    int i;
+    u64 total_bytes = 0;
+    u64 total_accesses = 0;
+    
+    /* Inicializar estadísticas base */
+    stats->pattern_count = atomic_read(&ctx->pattern_count);
+    stats->holo_size = ctx->holo_size;
+    stats->store_ops = atomic_read(&ctx->store_ops);
+    stats->retrieve_ops = atomic_read(&ctx->retrieve_ops);
+    stats->search_ops = atomic_read(&ctx->search_ops);
+    
+    /* Calcular estadísticas adicionales */
+    list_for_each_entry(pattern, &ctx->pattern_list, list) {
+        total_accesses += pattern->retrieval_count;
+    }
+    
+    stats->access_frequency = ctx->pattern_count > 0 ? 
+                             total_accesses / ctx->pattern_count : 0;
+    
+    stats->total_data_size = atomic_long_read(&ctx->total_store_bytes);
+    stats->memory_utilization = (stats->total_data_size * 100) / stats->holo_size;
+    
+    /* Calcular eficiencia de recuperación */
+    stats->retrieval_success_rate = ctx->retrieve_ops > 0 ? 
+                                   (ctx->successful_retrievals * 100) / ctx->retrieve_ops : 0;
+    
+    /* Calcular eficiencia de la caché */
+    stats->cache_hit_rate = ctx->cache_accesses > 0 ? 
+                           (ctx->cache_hits * 100) / ctx->cache_accesses : 0;
+}

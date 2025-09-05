@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  obvivlorum-sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: obvivlorum-secure
+    hostname: obvivlorum-lab
+    
+    # Seguridad: Ejecutar sin privilegios
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:unconfined  # Necesario para algunas herramientas
+    
+    # Capacidades limitadas
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN       # Para herramientas de red
+      - SYS_PTRACE      # Para debugging
+      - DAC_READ_SEARCH # Para acceso a archivos
+    
+    # Límites de recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    
+    # Red aislada
+    networks:
+      - obvivlorum-net
+    
+    # Volúmenes con acceso controlado
+    volumes:
+      - ./ai_symbiote.py:/app/ai_symbiote.py:ro
+      - ./config_optimized.json:/app/config_optimized.json:ro
+      - ./AION:/app/AION:ro
+      - ./logs:/app/logs:rw
+      - ./data:/app/data:rw
+      - sandbox-tmp:/tmp
+    
+    # Variables de entorno
+    environment:
+      - SANDBOX_MODE=true
+      - SECURITY_LEVEL=HIGH
+      - HUMAN_CONFIRMATION=true
+      - MAX_COMMAND_RISK=MEDIUM
+      - AI_PROVIDER=local_first
+      - LOG_LEVEL=DEBUG
+    
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Comando de inicio
+    command: python /app/ai_symbiote.py --sandbox --safe-mode
+
+  parrotos-wsl:
+    image: parrotsec/core:latest
+    container_name: parrotos-sandbox
+    hostname: parrotos-lab
+    
+    security_opt:
+      - no-new-privileges:true
+    
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    
+    networks:
+      - obvivlorum-net
+    
+    volumes:
+      - parrot-tools:/usr/share/tools:ro
+      - ./shared:/shared:rw
+    
+    environment:
+      - PARROT_MODE=defensive
+      - ETHICAL_MODE=true
+    
+    restart: unless-stopped
+
+networks:
+  obvivlorum-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+    driver_opts:
+      com.docker.network.bridge.name: br-obvivlorum
+
+volumes:
+  sandbox-tmp:
+    driver: local
+  parrot-tools:
+    driver: local

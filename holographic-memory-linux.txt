@@ -1,0 +1,792 @@
+/*
+ * holomem.c - Kernel module implementing holographic memory for Linux
+ *
+ * Copyright (C) 2025 Obvlivorum Project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/fs.h>
+#include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/mutex.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/mm.h>
+#include <linux/vmalloc.h>
+#include <linux/random.h>
+#include <linux/sched.h>
+#include <linux/jiffies.h>
+#include <linux/atomic.h>
+#include <linux/string.h>
+#include <linux/list.h>
+#include <linux/miscdevice.h>
+
+#define HOLOMEM_VERSION "1.0.0"
+#define DEVICE_NAME "holomem"
+#define CLASS_NAME "holographic"
+
+/* Configuration parameters */
+#define HOLOMEM_SIZE (128 * 1024 * 1024)  // 128 MB holographic space
+#define PATTERN_DIM 1024                  // Dimensions of holographic patterns
+#define MAX_PATTERNS 2048                 // Maximum number of patterns
+#define REDUNDANCY_FACTOR 7               // Storage redundancy factor
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Obvlivorum Project");
+MODULE_DESCRIPTION("Holographic Memory Storage System");
+MODULE_VERSION(HOLOMEM_VERSION);
+
+/* Fixed point arithmetic for complex operations */
+#define FIXED_POINT_BITS 16
+#define FIXED_POINT_SCALE (1 << FIXED_POINT_BITS)
+#define FIXED_MUL(a, b) (((int64_t)(a) * (int64_t)(b)) >> FIXED_POINT_BITS)
+
+/* Complex number representation (fixed point) */
+struct complex_val {
+    int32_t real;
+    int32_t imag;
+};
+
+/* Pattern descriptor */
+struct holo_pattern {
+    u64 id;                           // Unique pattern identifier
+    char name[64];                    // Human-readable name
+    u32 encoding_type;                // Type of encoding used
+    u32 positions[REDUNDANCY_FACTOR]; // Storage positions in holographic space
+    struct timespec64 creation_time;  // When pattern was stored
+    struct timespec64 last_access;    // Last access timestamp
+    u32 retrieval_count;              // Number of times pattern was retrieved
+    u32 coherence_score;              // Quality/confidence metric
+    bool valid;                       // Whether this slot is in use
+    struct list_head list;            // For linked list management
+};
+
+/* Memory context for the module */
+struct holomem_ctx {
+    /* Holographic storage space */
+    struct complex_val *holo_space;
+    size_t holo_size;
+    
+    /* Pattern tracking */
+    struct holo_pattern patterns[MAX_PATTERNS];
+    struct list_head pattern_list;    // Active patterns linked list
+    atomic_t pattern_count;           // Number of stored patterns
+    u64 next_pattern_id;              // ID generator
+    
+    /* Encoding kernels */
+    struct complex_val *symbolic_kernel;  // For symbolic encoding
+    struct complex_val *emotional_kernel; // For emotional encoding
+    struct complex_val *context_kernel;   // For contextual encoding
+    
+    /* Statistics */
+    atomic_t store_ops;
+    atomic_t retrieve_ops;
+    atomic_t search_ops;
+    atomic_long_t total_store_bytes;
+    
+    /* Synchronization */
+    struct mutex lock;
+    
+    /* Device */
+    struct miscdevice misc_dev;
+    struct proc_dir_entry *proc_entry;
+};
+
+/* IOCTL commands */
+#define HOLOMEM_IOC_MAGIC 'h'
+#define HOLOMEM_IOCSTOREPAT    _IOWR(HOLOMEM_IOC_MAGIC, 1, struct holomem_store_cmd)
+#define HOLOMEM_IOCRETPAT      _IOWR(HOLOMEM_IOC_MAGIC, 2, struct holomem_retrieve_cmd)
+#define HOLOMEM_IOCSEARCHPAT   _IOWR(HOLOMEM_IOC_MAGIC, 3, struct holomem_search_cmd)
+#define HOLOMEM_IOCGETSTAT     _IOR(HOLOMEM_IOC_MAGIC, 4, struct holomem_stats)
+#define HOLOMEM_IOCFLUSH       _IO(HOLOMEM_IOC_MAGIC, 5)
+#define HOLOMEM_IOC_MAXNR 5
+
+/* IOCTL command arguments */
+struct holomem_store_cmd {
+    const void __user *data;      // Data to store
+    size_t size;                  // Data size
+    u32 encoding_type;            // Encoding type (0=symbolic, 1=emotional, 2=contextual)
+    char name[64];                // Pattern name
+    u64 pattern_id;               // Output: assigned pattern ID
+};
+
+struct holomem_retrieve_cmd {
+    u64 pattern_id;               // Pattern ID to retrieve
+    void __user *buffer;          // Output buffer
+    size_t buf_size;              // Buffer size
+    size_t data_size;             // Output: actual data size
+    u32 coherence;                // Output: retrieval confidence/quality
+};
+
+struct holomem_search_cmd {
+    const void __user *query;     // Query data
+    size_t query_size;            // Query size
+    u32 encoding_type;            // Encoding type
+    u32 threshold;                // Coherence threshold (0-10000)
+    u32 max_results;              // Maximum results to return
+    u64 __user *results;          // Output: pattern IDs
+    u32 __user *scores;           // Output: coherence scores
+    u32 result_count;             // Output: number of results
+};
+
+struct holomem_stats {
+    u32 pattern_count;            // Number of stored patterns
+    u64 holo_size;                // Size of holographic space (bytes)
+    u64 total_data_size;          // Total bytes of data stored
+    u64 store_ops;                // Total store operations
+    u64 retrieve_ops;             // Total retrieve operations
+    u64 search_ops;               // Total search operations
+};
+
+/* Global context instance */
+static struct holomem_ctx *g_ctx;
+
+/* Module init/exit functions */
+static int __init holomem_init(void);
+static void __exit holomem_exit(void);
+
+/* Forward function declarations */
+static int holomem_open(struct inode *inode, struct file *file);
+static int holomem_release(struct inode *inode, struct file *file);
+static long holomem_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+static ssize_t holomem_read(struct file *file, char __user *buf, size_t count, loff_t *pos);
+static ssize_t holomem_write(struct file *file, const char __user *buf, size_t count, loff_t *pos);
+static int holomem_proc_show(struct seq_file *m, void *v);
+static int holomem_proc_open(struct inode *inode, struct file *file);
+
+/* File operations */
+static const struct file_operations holomem_fops = {
+    .owner = THIS_MODULE,
+    .open = holomem_open,
+    .release = holomem_release,
+    .unlocked_ioctl = holomem_ioctl,
+    .compat_ioctl = holomem_ioctl,
+    .read = holomem_read,
+    .write = holomem_write,
+};
+
+/* Proc file operations */
+static const struct proc_ops holomem_proc_fops = {
+    .proc_open = holomem_proc_open,
+    .proc_read = seq_read,
+    .proc_lseek = seq_lseek,
+    .proc_release = single_release,
+};
+
+/* Core functionality implementations */
+
+/**
+ * init_encoding_kernels - Initialize encoding kernels for the different types
+ * @ctx: Holographic memory context
+ *
+ * Creates specialized kernels for encoding different types of information.
+ * Returns 0 on success, negative on error.
+ */
+static int init_encoding_kernels(struct holomem_ctx *ctx)
+{
+    int i, j;
+    u32 seed;
+    
+    /* Allocate encoding kernels */
+    ctx->symbolic_kernel = vmalloc(64 * 64 * sizeof(struct complex_val));
+    if (!ctx->symbolic_kernel)
+        return -ENOMEM;
+        
+    ctx->emotional_kernel = vmalloc(32 * 32 * sizeof(struct complex_val));
+    if (!ctx->emotional_kernel) {
+        vfree(ctx->symbolic_kernel);
+        return -ENOMEM;
+    }
+    
+    ctx->context_kernel = vmalloc(48 * 48 * sizeof(struct complex_val));
+    if (!ctx->context_kernel) {
+        vfree(ctx->symbolic_kernel);
+        vfree(ctx->emotional_kernel);
+        return -ENOMEM;
+    }
+    
+    /* Generate random seed */
+    get_random_bytes(&seed, sizeof(seed));
+    
+    /* Generate symbolic kernel (64x64) */
+    for (i = 0; i < 64; i++) {
+        for (j = 0; j < 64; j++) {
+            /* Generate complex value with unit magnitude and random phase */
+            u32 angle = prandom_u32_state(&seed) % 360;
+            /* Convert angle to radians and calculate sine/cosine */
+            int32_t cos_val = cos_deg(angle) * FIXED_POINT_SCALE / 100;
+            int32_t sin_val = sin_deg(angle) * FIXED_POINT_SCALE / 100;
+            
+            ctx->symbolic_kernel[i*64 + j].real = cos_val;
+            ctx->symbolic_kernel[i*64 + j].imag = sin_val;
+        }
+    }
+    
+    /* Generate emotional kernel (32x32) with more variation */
+    for (i = 0; i < 32; i++) {
+        for (j = 0; j < 32; j++) {
+            u32 angle = (prandom_u32_state(&seed) % 360) + (i*j % 90);
+            int32_t cos_val = cos_deg(angle) * FIXED_POINT_SCALE / 100;
+            int32_t sin_val = sin_deg(angle) * FIXED_POINT_SCALE / 100;
+            
+            ctx->emotional_kernel[i*32 + j].real = cos_val;
+            ctx->emotional_kernel[i*32 + j].imag = sin_val;
+        }
+    }
+    
+    /* Generate contextual kernel (48x48) with smoother patterns */
+    for (i = 0; i < 48; i++) {
+        for (j = 0; j < 48; j++) {
+            u32 angle = (prandom_u32_state(&seed) % 180) + ((i+j) % 180);
+            int32_t cos_val = cos_deg(angle) * FIXED_POINT_SCALE / 100;
+            int32_t sin_val = sin_deg(angle) * FIXED_POINT_SCALE / 100;
+            
+            ctx->context_kernel[i*48 + j].real = cos_val;
+            ctx->context_kernel[i*48 + j].imag = sin_val;
+        }
+    }
+    
+    return 0;
+}
+
+/**
+ * encode_pattern - Encode data into a holographic pattern
+ * @ctx: Holographic memory context
+ * @data: Input data to encode
+ * @size: Size of input data
+ * @type: Encoding type (0=symbolic, 1=emotional, 2=contextual)
+ * @pattern: Output pattern buffer (must be pre-allocated)
+ *
+ * Encodes the input data into a holographic pattern using the appropriate kernel.
+ * Returns 0 on success, negative on error.
+ */
+static int encode_pattern(struct holomem_ctx *ctx, const void *data, size_t size,
+                        u32 type, struct complex_val *pattern)
+{
+    struct complex_val *kernel;
+    int kernel_size, i, j, k, l;
+    struct complex_val *data_pattern;
+    
+    /* Select appropriate kernel */
+    switch (type) {
+        case 0: /* Symbolic */
+            kernel = ctx->symbolic_kernel;
+            kernel_size = 64;
+            break;
+        case 1: /* Emotional */
+            kernel = ctx->emotional_kernel;
+            kernel_size = 32;
+            break;
+        case 2: /* Contextual */
+            kernel = ctx->context_kernel;
+            kernel_size = 48;
+            break;
+        default:
+            return -EINVAL;
+    }
+    
+    /* Allocate temporary pattern for data phase encoding */
+    data_pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+    if (!data_pattern)
+        return -ENOMEM;
+    
+    /* Phase encode the input data */
+    for (i = 0; i < PATTERN_DIM; i++) {
+        for (j = 0; j < PATTERN_DIM; j++) {
+            /* Use a hash function to convert data to phase angle */
+            u32 hash = jhash(data, size, i * PATTERN_DIM + j);
+            u32 angle = hash % 360;
+            int32_t cos_val = cos_deg(angle) * FIXED_POINT_SCALE / 100;
+            int32_t sin_val = sin_deg(angle) * FIXED_POINT_SCALE / 100;
+            
+            data_pattern[i * PATTERN_DIM + j].real = cos_val;
+            data_pattern[i * PATTERN_DIM + j].imag = sin_val;
+        }
+    }
+    
+    /* Clear the output pattern */
+    memset(pattern, 0, PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+    
+    /* Apply convolution with kernel (will be slow, but correct) */
+    for (i = 0; i < PATTERN_DIM - kernel_size; i++) {
+        for (j = 0; j < PATTERN_DIM - kernel_size; j++) {
+            struct complex_val sum = {0, 0};
+            
+            for (k = 0; k < kernel_size; k++) {
+                for (l = 0; l < kernel_size; l++) {
+                    /* Complex multiplication */
+                    int32_t real_part = FIXED_MUL(data_pattern[(i+k)*PATTERN_DIM + (j+l)].real, kernel[k*kernel_size + l].real) - 
+                                       FIXED_MUL(data_pattern[(i+k)*PATTERN_DIM + (j+l)].imag, kernel[k*kernel_size + l].imag);
+                    int32_t imag_part = FIXED_MUL(data_pattern[(i+k)*PATTERN_DIM + (j+l)].real, kernel[k*kernel_size + l].imag) + 
+                                       FIXED_MUL(data_pattern[(i+k)*PATTERN_DIM + (j+l)].imag, kernel[k*kernel_size + l].real);
+                    
+                    sum.real += real_part;
+                    sum.imag += imag_part;
+                }
+            }
+            
+            pattern[i * PATTERN_DIM + j] = sum;
+        }
+    }
+    
+    vfree(data_pattern);
+    return 0;
+}
+
+/**
+ * store_pattern - Store an encoded pattern in holographic memory
+ * @ctx: Holographic memory context
+ * @pattern: Encoded pattern to store
+ * @pat_idx: Pattern index in registry
+ *
+ * Stores an encoded pattern in the holographic memory space with redundancy.
+ * Returns 0 on success, negative on error.
+ */
+static int store_pattern(struct holomem_ctx *ctx, struct complex_val *pattern, int pat_idx)
+{
+    int i, j, k;
+    u32 x, y;
+    u32 seed;
+    
+    if (pat_idx >= MAX_PATTERNS)
+        return -EINVAL;
+    
+    /* Generate random seed */
+    get_random_bytes(&seed, sizeof(seed));
+    
+    /* Store the pattern in REDUNDANCY_FACTOR different locations */
+    for (i = 0; i < REDUNDANCY_FACTOR; i++) {
+        /* Calculate random position ensuring the pattern fits */
+        x = prandom_u32_state(&seed) % (ctx->holo_size / sizeof(struct complex_val) / PATTERN_DIM - PATTERN_DIM);
+        y = prandom_u32_state(&seed) % (ctx->holo_size / sizeof(struct complex_val) / PATTERN_DIM - PATTERN_DIM);
+        
+        /* Store the position for later retrieval */
+        ctx->patterns[pat_idx].positions[i] = x * PATTERN_DIM + y;
+        
+        /* Apply the pattern to the holographic space using superposition */
+        for (j = 0; j < PATTERN_DIM; j++) {
+            for (k = 0; k < PATTERN_DIM; k++) {
+                size_t holo_pos = ((x + j) * PATTERN_DIM + (y + k));
+                struct complex_val *target = &ctx->holo_space[holo_pos];
+                struct complex_val *source = &pattern[j * PATTERN_DIM + k];
+                
+                /* 70% new + 30% existing for superposition */
+                target->real = (target->real * 3 + source->real * 7) / 10;
+                target->imag = (target->imag * 3 + source->imag * 7) / 10;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+/**
+ * retrieve_pattern - Retrieve a pattern from holographic memory
+ * @ctx: Holographic memory context
+ * @pat_idx: Pattern index in registry
+ * @pattern: Output buffer for retrieved pattern
+ *
+ * Retrieves a pattern from holographic memory by combining all redundant copies.
+ * Returns 0 on success, negative on error.
+ */
+static int retrieve_pattern(struct holomem_ctx *ctx, int pat_idx, struct complex_val *pattern)
+{
+    int i, j, k;
+    
+    if (pat_idx >= MAX_PATTERNS || !ctx->patterns[pat_idx].valid)
+        return -EINVAL;
+    
+    /* Clear the output pattern */
+    memset(pattern, 0, PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+    
+    /* Retrieve and average all redundant copies */
+    for (i = 0; i < REDUNDANCY_FACTOR; i++) {
+        u32 pos = ctx->patterns[pat_idx].positions[i];
+        u32 x = pos / PATTERN_DIM;
+        u32 y = pos % PATTERN_DIM;
+        
+        for (j = 0; j < PATTERN_DIM; j++) {
+            for (k = 0; k < PATTERN_DIM; k++) {
+                size_t holo_pos = ((x + j) * PATTERN_DIM + (y + k));
+                struct complex_val *source = &ctx->holo_space[holo_pos];
+                
+                /* Accumulate from this copy */
+                pattern[j * PATTERN_DIM + k].real += source->real / REDUNDANCY_FACTOR;
+                pattern[j * PATTERN_DIM + k].imag += source->imag / REDUNDANCY_FACTOR;
+            }
+        }
+    }
+    
+    /* Update access statistics */
+    ctx->patterns[pat_idx].retrieval_count++;
+    ktime_get_real_ts64(&ctx->patterns[pat_idx].last_access);
+    
+    return 0;
+}
+
+/**
+ * calculate_coherence - Calculate the coherence between two patterns
+ * @pattern1: First pattern
+ * @pattern2: Second pattern
+ *
+ * Calculates the coherence (similarity) between two patterns.
+ * Returns coherence score (0-10000).
+ */
+static u32 calculate_coherence(struct complex_val *pattern1, struct complex_val *pattern2)
+{
+    int64_t dot_product = 0;
+    int64_t norm1 = 0, norm2 = 0;
+    int i;
+    const int size = PATTERN_DIM * PATTERN_DIM;
+    
+    /* Calculate dot product and norms */
+    for (i = 0; i < size; i++) {
+        /* Dot product of complex vectors (real part of complex inner product) */
+        dot_product += (int64_t)pattern1[i].real * pattern2[i].real + 
+                      (int64_t)pattern1[i].imag * pattern2[i].imag;
+        
+        /* Calculate squared norms */
+        norm1 += (int64_t)pattern1[i].real * pattern1[i].real + 
+                (int64_t)pattern1[i].imag * pattern1[i].imag;
+        
+        norm2 += (int64_t)pattern2[i].real * pattern2[i].real + 
+                (int64_t)pattern2[i].imag * pattern2[i].imag;
+    }
+    
+    /* Avoid division by zero */
+    if (norm1 == 0 || norm2 == 0)
+        return 0;
+    
+    /* Calculate coherence score (scaled to 0-10000) */
+    return (u32)div64_u64(dot_product * 10000ULL, int_sqrt64(norm1 * norm2));
+}
+
+/**
+ * find_by_coherence - Find patterns similar to a query pattern
+ * @ctx: Holographic memory context
+ * @query: Query pattern
+ * @threshold: Minimum coherence threshold (0-10000)
+ * @results: Buffer for result pattern indices
+ * @scores: Buffer for coherence scores
+ * @max_results: Maximum number of results to return
+ *
+ * Finds patterns that match a query pattern with coherence above threshold.
+ * Returns number of patterns found.
+ */
+static int find_by_coherence(struct holomem_ctx *ctx, struct complex_val *query,
+                          u32 threshold, int *results, u32 *scores, u32 max_results)
+{
+    int i, result_count = 0;
+    struct complex_val *pattern;
+    
+    /* Allocate temporary pattern buffer */
+    pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+    if (!pattern)
+        return -ENOMEM;
+    
+    /* Check each stored pattern */
+    for (i = 0; i < MAX_PATTERNS && result_count < max_results; i++) {
+        if (!ctx->patterns[i].valid)
+            continue;
+        
+        /* Retrieve the pattern */
+        retrieve_pattern(ctx, i, pattern);
+        
+        /* Calculate coherence */
+        u32 coherence = calculate_coherence(query, pattern);
+        
+        /* If above threshold, add to results */
+        if (coherence >= threshold) {
+            results[result_count] = i;
+            scores[result_count] = coherence;
+            result_count++;
+        }
+    }
+    
+    vfree(pattern);
+    return result_count;
+}
+
+/* Device file operations implementations */
+
+static int holomem_open(struct inode *inode, struct file *file)
+{
+    /* Simple open, nothing special to do */
+    return 0;
+}
+
+static int holomem_release(struct inode *inode, struct file *file)
+{
+    /* Simple release, nothing special to do */
+    return 0;
+}
+
+static long holomem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+    int ret = 0;
+    
+    /* Check if command is valid */
+    if (_IOC_TYPE(cmd) != HOLOMEM_IOC_MAGIC)
+        return -ENOTTY;
+    if (_IOC_NR(cmd) > HOLOMEM_IOC_MAXNR)
+        return -ENOTTY;
+    
+    /* Lock for multi-threaded access */
+    mutex_lock(&g_ctx->lock);
+    
+    switch (cmd) {
+        case HOLOMEM_IOCSTOREPAT: {
+            struct holomem_store_cmd cmd_arg;
+            void *data = NULL;
+            struct complex_val *pattern = NULL;
+            int pat_idx = -1, i;
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Check for valid data */
+            if (!cmd_arg.data || cmd_arg.size == 0 || cmd_arg.size > 1024*1024) {
+                ret = -EINVAL;
+                goto store_out;
+            }
+            
+            /* Allocate buffer for input data */
+            data = vmalloc(cmd_arg.size);
+            if (!data) {
+                ret = -ENOMEM;
+                goto store_out;
+            }
+            
+            /* Copy data from user */
+            if (copy_from_user(data, cmd_arg.data, cmd_arg.size)) {
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Allocate buffer for encoded pattern */
+            pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!pattern) {
+                ret = -ENOMEM;
+                goto store_out;
+            }
+            
+            /* Find a free pattern slot */
+            for (i = 0; i < MAX_PATTERNS; i++) {
+                if (!g_ctx->patterns[i].valid) {
+                    pat_idx = i;
+                    break;
+                }
+            }
+            
+            if (pat_idx < 0) {
+                ret = -ENOSPC;
+                goto store_out;
+            }
+            
+            /* Encode the pattern */
+            ret = encode_pattern(g_ctx, data, cmd_arg.size, cmd_arg.encoding_type, pattern);
+            if (ret)
+                goto store_out;
+            
+            /* Store the pattern */
+            ret = store_pattern(g_ctx, pattern, pat_idx);
+            if (ret)
+                goto store_out;
+            
+            /* Setup pattern metadata */
+            g_ctx->patterns[pat_idx].id = g_ctx->next_pattern_id++;
+            g_ctx->patterns[pat_idx].encoding_type = cmd_arg.encoding_type;
+            g_ctx->patterns[pat_idx].retrieval_count = 0;
+            g_ctx->patterns[pat_idx].coherence_score = 10000;  /* Max score for exact match */
+            strlcpy(g_ctx->patterns[pat_idx].name, cmd_arg.name, sizeof(g_ctx->patterns[pat_idx].name));
+            ktime_get_real_ts64(&g_ctx->patterns[pat_idx].creation_time);
+            g_ctx->patterns[pat_idx].last_access = g_ctx->patterns[pat_idx].creation_time;
+            g_ctx->patterns[pat_idx].valid = true;
+            
+            /* Add to active patterns list */
+            list_add(&g_ctx->patterns[pat_idx].list, &g_ctx->pattern_list);
+            atomic_inc(&g_ctx->pattern_count);
+            
+            /* Return the assigned ID */
+            cmd_arg.pattern_id = g_ctx->patterns[pat_idx].id;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                /* If this fails, we don't invalidate the pattern - it's still stored */
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Update statistics */
+            atomic_inc(&g_ctx->store_ops);
+            atomic_long_add(cmd_arg.size, &g_ctx->total_store_bytes);
+            
+store_out:
+            if (data)
+                vfree(data);
+            if (pattern)
+                vfree(pattern);
+            break;
+        }
+        
+        case HOLOMEM_IOCRETPAT: {
+            struct holomem_retrieve_cmd cmd_arg;
+            struct complex_val *pattern = NULL;
+            int pat_idx = -1, i;
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Find pattern by ID */
+            for (i = 0; i < MAX_PATTERNS; i++) {
+                if (g_ctx->patterns[i].valid && g_ctx->patterns[i].id == cmd_arg.pattern_id) {
+                    pat_idx = i;
+                    break;
+                }
+            }
+            
+            if (pat_idx < 0) {
+                ret = -ENOENT;
+                goto retrieve_out;
+            }
+            
+            /* Allocate buffer for retrieved pattern */
+            pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!pattern) {
+                ret = -ENOMEM;
+                goto retrieve_out;
+            }
+            
+            /* Retrieve the pattern */
+            ret = retrieve_pattern(g_ctx, pat_idx, pattern);
+            if (ret)
+                goto retrieve_out;
+            
+            /* In a real implementation, we would decode the pattern back to original data
+               here. For simplicity, we'll just return the raw pattern data */
+            
+            /* Check if user buffer is large enough */
+            size_t data_size = PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val);
+            if (cmd_arg.buf_size < data_size) {
+                ret = -ENOSPC;
+                goto retrieve_out;
+            }
+            
+            /* Copy pattern to user */
+            if (copy_to_user(cmd_arg.buffer, pattern, data_size)) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Update return values */
+            cmd_arg.data_size = data_size;
+            cmd_arg.coherence = g_ctx->patterns[pat_idx].coherence_score;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Update statistics */
+            atomic_inc(&g_ctx->retrieve_ops);
+            
+retrieve_out:
+            if (pattern)
+                vfree(pattern);
+            break;
+        }
+        
+        case HOLOMEM_IOCSEARCHPAT: {
+            struct holomem_search_cmd cmd_arg;
+            void *query_data = NULL;
+            struct complex_val *query_pattern = NULL;
+            int results[100], result_count = 0;
+            u32 scores[100];
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Validate arguments */
+            if (!cmd_arg.query || cmd_arg.query_size == 0 || cmd_arg.query_size > 1024*1024) {
+                ret = -EINVAL;
+                goto search_out;
+            }
+            
+            if (cmd_arg.max_results > 100)
+                cmd_arg.max_results = 100;
+            
+            /* Allocate buffer for query data */
+            query_data = vmalloc(cmd_arg.query_size);
+            if (!query_data) {
+                ret = -ENOMEM;
+                goto search_out;
+            }
+            
+            /* Copy query data from user */
+            if (copy_from_user(query_data, cmd_arg.query, cmd_arg.query_size)) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Allocate buffer for query pattern */
+            query_pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!query_pattern) {
+                ret = -ENOMEM;
+                goto search_out;
+            }
+            
+            /* Encode the query */
+            ret = encode_pattern(g_ctx, query_data, cmd_arg.query_size, 
+                               cmd_arg.encoding_type, query_pattern);
+            if (ret)
+                goto search_out;
+            
+            /* Search for similar patterns */
+            result_count = find_by_coherence(g_ctx, query_pattern, cmd_arg.threshold,
+                                          results, scores, cmd_arg.max_results);
+            if (result_count < 0) {
+                ret = result_count;
+                goto search_out;
+            }
+            
+            /* Copy results to user */
+            u64 pattern_ids[100];
+            for (int i = 0; i < result_count; i++) {
+                pattern_ids[i] = g_ctx->patterns[results[i]].id;
+            }
+            
+            if (copy_to_user(cmd_arg.results, pattern_ids, result_count * sizeof(u64)) ||
+                copy_to_user(cmd_arg.scores, scores, result_count * sizeof(u32))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Update return value */
+            cmd_arg.result_count = result_count;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Update statistics */
+            atomic_inc(&g_ctx->search_ops);
+            
+search_out:
+            if (query_data)
+                vfree(query_data);
+            if (query_pattern)
+                vfree(query_pattern);
+            break;
+        }

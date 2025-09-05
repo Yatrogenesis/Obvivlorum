@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-09-04T21:39:42.073276",
+  "is_running": true,
+  "user_id": "default",
+  "pid": 22564,
+  "uptime": 354.7741756439209,
+  "components": {
+    "aion": {
+      "status": "active"
+    },
+    "bridge": {
+      "status": "active"
+    },
+    "persistence": {
+      "status": "inactive",
+      "is_active": true,
+      "monitoring_active": true,
+      "symbiote_path": "D:\\Obvivlorum\\ai_symbiote.py",
+      "config": {
+        "auto_start": false,
+        "registry_persistence": false,
+        "scheduled_task": false,
+        "startup_folder": false,
+        "service_mode": false,
+        "stealth_mode": false,
+        "self_healing": false,
+        "update_check_interval": 3600,
+        "heartbeat_interval": 300,
+        "max_restart_attempts": 5,
+        "restart_delay": 30
+      },
+      "appdata_folder": "C:\\Users\\Propietario\\AppData\\Local\\AISymbiote",
+      "registry_active": false,
+      "scheduled_task_active": false,
+      "startup_folder_active": false
+    },
+    "linux": {
+      "status": "active",
+      "is_wsl": true,
+      "wsl_distros": [
+        "docker-desktop",
+        "ParrotOS"
+      ],
+      "default_distro": "docker-desktop",
+      "config": {
+        "safe_mode": true
+      },
+      "execution_count": 0,
+      "active_sessions": 0,
+      "system_platform": "win32"
+    },
+    "tasks": {
+      "status": "active",
+      "is_active": true,
+      "user_id": "default",
+      "active_tasks": 0,
+      "completed_tasks": 0,
+      "behavior_patterns": 0,
+      "task_history_size": 0,
+      "active_contexts": {},
+      "config": {
+        "learning_enabled": true,
+        "proactive_suggestions": true,
+        "adaptive_scheduling": true,
+        "context_awareness": true,
+        "max_suggestions_per_hour": 5,
+        "min_confidence_threshold": 0.6,
+        "pattern_detection_interval": 300,
+        "suggestion_cooldown": 1800,
+        "auto_prioritize": true,
+        "interruption_tolerance": 0.7
+      }
+    }
+  }
+}

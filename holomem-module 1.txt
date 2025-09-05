@@ -1,0 +1,691 @@
+/*
+ * holomem.c - Módulo de kernel Linux para memoria holográfica
+ *
+ * Este módulo implementa un sistema de almacenamiento holográfico donde la
+ * información se distribuye en un espacio de memoria compartido utilizando
+ * principios similares a la holografía óptica. Cada patrón se almacena con
+ * redundancia y se puede recuperar incluso cuando partes del espacio de
+ * memoria están dañadas.
+ *
+ * Copyright (C) 2025 Obvlivorum Project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/fs.h>
+#include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/mutex.h>
+#include <linux/spinlock.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/mm.h>
+#include <linux/vmalloc.h>
+#include <linux/random.h>
+#include <linux/sched.h>
+#include <linux/jiffies.h>
+#include <linux/atomic.h>
+#include <linux/string.h>
+#include <linux/list.h>
+#include <linux/hash.h>
+#include <linux/miscdevice.h>
+#include <linux/sched/signal.h>
+#include <linux/sysfs.h>
+#include <linux/kobject.h>
+#include <linux/timekeeping.h>
+#include <linux/ratelimit.h>
+#include <linux/jhash.h>
+
+#define HOLOMEM_VERSION "1.0.0"
+#define DEVICE_NAME "holomem"
+#define CLASS_NAME "holographic"
+
+/* Configuración del módulo */
+#define HOLOMEM_SIZE (128 * 1024 * 1024)  /* 128 MB espacio holográfico */
+#define PATTERN_DIM 1024                  /* Dimensiones de patrones holográficos */
+#define MAX_PATTERNS 2048                 /* Máximo número de patrones */
+#define REDUNDANCY_FACTOR 7               /* Factor de redundancia */
+#define MAX_INPUT_SIZE (4 * 1024 * 1024)  /* Límite de tamaño de entrada (4MB) */
+#define MAX_ENCODING_TYPE 2               /* Máximo tipo de codificación válido */
+#define AUDIT_LOG_SIZE 1024               /* Tamaño del log de auditoría */
+#define SUSPICIOUS_THRESHOLD 50           /* Umbral para actividad sospechosa */
+#define THROTTLE_SECONDS 60               /* Segundos de throttling tras sospecha */
+#define LRU_CACHE_SIZE 16                 /* Tamaño de caché LRU */
+#define FFT_MAX_SIZE 2048                 /* Tamaño máximo para FFT (potencia de 2) */
+
+/* Operaciones para auditoría */
+#define HOLOMEM_OP_STORE    1
+#define HOLOMEM_OP_RETRIEVE 2
+#define HOLOMEM_OP_SEARCH   3
+#define HOLOMEM_OP_FLUSH    4
+
+/* Aritmética de punto fijo para operaciones complejas */
+#define FIXED_POINT_BITS 16
+#define FIXED_POINT_SCALE (1 << FIXED_POINT_BITS)
+#define FIXED_MUL(a, b) (((int64_t)(a) * (int64_t)(b)) >> FIXED_POINT_BITS)
+#define FIXED_DIV(a, b) (((int64_t)(a) << FIXED_POINT_BITS) / (int64_t)(b))
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Obvlivorum Project");
+MODULE_DESCRIPTION("Holographic Memory Storage System");
+MODULE_VERSION(HOLOMEM_VERSION);
+
+/* Representación de números complejos (punto fijo) */
+struct complex_val {
+    int32_t real;
+    int32_t imag;
+};
+
+/* Estructura para almacenar una entrada en caché */
+struct cache_entry {
+    u64 pattern_id;                    /* ID del patrón */
+    struct complex_val *pattern_data;  /* Datos del patrón */
+    bool valid;                        /* Si la entrada es válida */
+    struct list_head lru_node;         /* Nodo para lista LRU */
+};
+
+/* Estructura para entry del log de auditoría */
+struct audit_entry {
+    struct timespec64 timestamp;       /* Cuando ocurrió */
+    int operation;                     /* Tipo de operación */
+    u64 pattern_id;                    /* Patrón involucrado */
+    kuid_t user_id;                    /* Usuario que realizó la operación */
+};
+
+/* Descriptor de patrón */
+struct holo_pattern {
+    u64 id;                            /* Identificador único del patrón */
+    char name[64];                     /* Nombre legible */
+    u32 encoding_type;                 /* Tipo de codificación usada */
+    u32 positions[REDUNDANCY_FACTOR];  /* Posiciones en espacio holográfico */
+    struct timespec64 creation_time;   /* Cuando se almacenó el patrón */
+    struct timespec64 last_access;     /* Último timestamp de acceso */
+    u32 retrieval_count;               /* Número de veces que se recuperó */
+    u32 coherence_score;               /* Métrica de calidad/confianza */
+    bool valid;                        /* Si este slot está en uso */
+    struct list_head list;             /* Para gestión de lista enlazada */
+    struct hlist_node hash_node;       /* Para tabla hash */
+};
+
+/* Estructura para estadísticas extendidas */
+struct holomem_extended_stats {
+    u32 pattern_count;                /* Número de patrones almacenados */
+    u64 holo_size;                    /* Tamaño de espacio holográfico (bytes) */
+    u64 total_data_size;              /* Total de bytes almacenados */
+    u64 store_ops;                    /* Total de operaciones de almacenamiento */
+    u64 retrieve_ops;                 /* Total de operaciones de recuperación */
+    u64 search_ops;                   /* Total de operaciones de búsqueda */
+    u64 access_frequency;             /* Frecuencia media de acceso */
+    u32 memory_utilization;           /* Porcentaje de utilización de memoria */
+    u32 retrieval_success_rate;       /* Tasa de éxito de recuperación (%) */
+    u32 cache_hit_rate;               /* Tasa de aciertos de caché (%) */
+};
+
+/* Contexto principal del módulo */
+struct holomem_ctx {
+    /* Espacio de almacenamiento holográfico */
+    struct complex_val *holo_space;
+    size_t holo_size;
+    
+    /* Gestión de patrones */
+    struct holo_pattern patterns[MAX_PATTERNS];
+    struct list_head pattern_list;    /* Lista enlazada de patrones activos */
+    DECLARE_HASHTABLE(pattern_hash, 10); /* Tabla hash para búsqueda rápida por ID */
+    atomic_t pattern_count;           /* Número de patrones almacenados */
+    u64 next_pattern_id;              /* Generador de IDs */
+    
+    /* Kernels de codificación con patrones de acceso optimizados */
+    struct {
+        struct complex_val *data;
+        size_t size;
+        void *avx_aligned;  /* Copia alineada para operaciones SIMD */
+    } kernels[3];  /* simbólico, emocional, contextual */
+    
+    /* Sistema de caché */
+    struct {
+        struct list_head lru_list;
+        struct cache_entry *entries;
+        spinlock_t lock;
+        int max_entries;
+        int current_entries;
+    } pattern_cache;
+    
+    /* Bloqueo de lectura-escritura para mejor paralelismo */
+    struct rw_semaphore rwsem;
+    
+    /* Contadores de rendimiento */
+    atomic_t store_ops;
+    atomic_t retrieve_ops;
+    atomic_t search_ops;
+    atomic_t cache_hits;
+    atomic_t cache_misses;
+    atomic_t successful_retrievals;
+    atomic_long_t total_store_bytes;
+    
+    /* Datos de optimización de CPU */
+    bool has_avx;
+    bool has_avx2;
+    bool has_avx512;
+    void (*fft_impl)(struct complex_val*, int, int, int);
+    void (*conv_impl)(struct complex_val*, struct complex_val*, int, struct complex_val*);
+    
+    /* Seguridad y auditoría */
+    struct {
+        spinlock_t lock;
+        struct audit_entry log[AUDIT_LOG_SIZE];
+        int index;
+    } audit;
+    u64 throttle_until;
+    int sequential_searches;
+    
+    /* Estado seguro para random */
+    struct {
+        u32 state[4];
+        spinlock_t lock;
+    } random_state;
+    
+    /* Integración con dispositivo */
+    struct miscdevice misc_dev;
+    struct proc_dir_entry *proc_entry;
+    struct kobject *sysfs_dir;
+};
+
+/* Comandos IOCTL */
+#define HOLOMEM_IOC_MAGIC 'h'
+#define HOLOMEM_IOCSTOREPAT    _IOWR(HOLOMEM_IOC_MAGIC, 1, struct holomem_store_cmd)
+#define HOLOMEM_IOCRETPAT      _IOWR(HOLOMEM_IOC_MAGIC, 2, struct holomem_retrieve_cmd)
+#define HOLOMEM_IOCSEARCHPAT   _IOWR(HOLOMEM_IOC_MAGIC, 3, struct holomem_search_cmd)
+#define HOLOMEM_IOCGETSTAT     _IOR(HOLOMEM_IOC_MAGIC, 4, struct holomem_stats)
+#define HOLOMEM_IOCFLUSH       _IO(HOLOMEM_IOC_MAGIC, 5)
+#define HOLOMEM_IOC_MAXNR 5
+
+/* Estructuras para comandos IOCTL */
+struct holomem_store_cmd {
+    const void __user *data;      /* Datos a almacenar */
+    size_t size;                  /* Tamaño de datos */
+    u32 encoding_type;            /* Tipo de codificación (0=simbólico, 1=emocional, 2=contextual) */
+    char name[64];                /* Nombre del patrón */
+    u64 pattern_id;               /* Salida: ID de patrón asignado */
+};
+
+struct holomem_retrieve_cmd {
+    u64 pattern_id;               /* ID del patrón a recuperar */
+    void __user *buffer;          /* Buffer de salida */
+    size_t buf_size;              /* Tamaño del buffer */
+    size_t data_size;             /* Salida: tamaño de datos real */
+    u32 coherence;                /* Salida: confianza/calidad de recuperación */
+};
+
+struct holomem_search_cmd {
+    const void __user *query;     /* Datos de consulta */
+    size_t query_size;            /* Tamaño de consulta */
+    u32 encoding_type;            /* Tipo de codificación */
+    u32 threshold;                /* Umbral de coherencia (0-10000) */
+    u32 max_results;              /* Máximo resultados a devolver */
+    u64 __user *results;          /* Salida: IDs de patrones */
+    u32 __user *scores;           /* Salida: puntajes de coherencia */
+    u32 result_count;             /* Salida: número de resultados */
+};
+
+struct holomem_stats {
+    u32 pattern_count;            /* Número de patrones almacenados */
+    u64 holo_size;                /* Tamaño de espacio holográfico (bytes) */
+    u64 total_data_size;          /* Total de bytes de datos almacenados */
+    u64 store_ops;                /* Total de operaciones de almacenamiento */
+    u64 retrieve_ops;             /* Total de operaciones de recuperación */
+    u64 search_ops;               /* Total de operaciones de búsqueda */
+    u32 cache_hit_rate;           /* Tasa de aciertos de caché (%) */
+    u32 retrieval_success_rate;   /* Tasa de éxito de recuperación (%) */
+};
+
+/* Instancia global del contexto */
+static struct holomem_ctx *g_ctx;
+
+/* Forward declarations de funciones */
+static int holomem_open(struct inode *inode, struct file *file);
+static int holomem_release(struct inode *inode, struct file *file);
+static long holomem_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+static ssize_t holomem_read(struct file *file, char __user *buf, size_t count, loff_t *pos);
+static ssize_t holomem_write(struct file *file, const char __user *buf, size_t count, loff_t *pos);
+static int holomem_proc_show(struct seq_file *m, void *v);
+static int holomem_proc_open(struct inode *inode, struct file *file);
+static int __init holomem_init(void);
+static void __exit holomem_exit(void);
+
+/* Funciones auxiliares para operaciones matemáticas */
+
+/* Tabla de seno para 0-90 grados (precisión de 1 grado) */
+static const int32_t sin_table[91] = {
+    0,      /* 0 */
+    4588,   /* 1 */
+    9176,   /* 2 */
+    13763,  /* 3 */
+    18350,  /* 4 */
+    22936,  /* 5 */
+    27519,  /* 6 */
+    32098,  /* 7 */
+    36671,  /* 8 */
+    41238,  /* 9 */
+    45801,  /* 10 */
+    50356,  /* 11 */
+    54903,  /* 12 */
+    59439,  /* 13 */
+    63965,  /* 14 */
+    68478,  /* 15 */
+    72979,  /* 16 */
+    77468,  /* 17 */
+    81941,  /* 18 */
+    86399,  /* 19 */
+    90841,  /* 20 */
+    95263,  /* 21 */
+    99667,  /* 22 */
+    104051, /* 23 */
+    108413, /* 24 */
+    112753, /* 25 */
+    117068, /* 26 */
+    121360, /* 27 */
+    125626, /* 28 */
+    129866, /* 29 */
+    134077, /* 30 */
+    138258, /* 31 */
+    142408, /* 32 */
+    146528, /* 33 */
+    150614, /* 34 */
+    154667, /* 35 */
+    158687, /* 36 */
+    162672, /* 37 */
+    166619, /* 38 */
+    170533, /* 39 */
+    174405, /* 40 */
+    178241, /* 41 */
+    182042, /* 42 */
+    185804, /* 43 */
+    189529, /* 44 */
+    193214, /* 45 */
+    196859, /* 46 */
+    200465, /* 47 */
+    204021, /* 48 */
+    207538, /* 49 */
+    211011, /* 50 */
+    214444, /* 51 */
+    217833, /* 52 */
+    221177, /* 53 */
+    224476, /* 54 */
+    227729, /* 55 */
+    230933, /* 56 */
+    234090, /* 57 */
+    237197, /* 58 */
+    240256, /* 59 */
+    243266, /* 60 */
+    246224, /* 61 */
+    249132, /* 62 */
+    251988, /* 63 */
+    254792, /* 64 */
+    257542, /* 65 */
+    260241, /* 66 */
+    262884, /* 67 */
+    265474, /* 68 */
+    268009, /* 69 */
+    270489, /* 70 */
+    272912, /* 71 */
+    275279, /* 72 */
+    277585, /* 73 */
+    279837, /* 74 */
+    282028, /* 75 */
+    284162, /* 76 */
+    286237, /* 77 */
+    288254, /* 78 */
+    290211, /* 79 */
+    292107, /* 80 */
+    293944, /* 81 */
+    295719, /* 82 */
+    297431, /* 83 */
+    299082, /* 84 */
+    300672, /* 85 */
+    302196, /* 86 */
+    303660, /* 87 */
+    305059, /* 88 */
+    306397, /* 89 */
+    307669  /* 90 */
+};
+
+/**
+ * sin_deg - Calcula el seno de un ángulo en grados (punto fijo)
+ * @angle: ángulo en grados (0-359)
+ *
+ * Retorna el seno del ángulo en representación de punto fijo.
+ */
+static inline int32_t sin_deg(int angle)
+{
+    /* Normalizar el ángulo entre 0-359 */
+    angle = angle % 360;
+    if (angle < 0) angle += 360;
+    
+    if (angle <= 90)
+        return sin_table[angle];
+    else if (angle <= 180)
+        return sin_table[180 - angle];
+    else if (angle <= 270)
+        return -sin_table[angle - 180];
+    else
+        return -sin_table[360 - angle];
+}
+
+/**
+ * cos_deg - Calcula el coseno de un ángulo en grados (punto fijo)
+ * @angle: ángulo en grados (0-359)
+ *
+ * Retorna el coseno del ángulo en representación de punto fijo.
+ */
+static inline int32_t cos_deg(int angle)
+{
+    /* cos(x) = sin(x + 90) */
+    return sin_deg(angle + 90);
+}
+
+/**
+ * int_sqrt64 - Calcula la raíz cuadrada entera de un entero de 64 bits
+ * @x: valor del cual calcular la raíz cuadrada
+ *
+ * Implementación eficiente de raíz cuadrada para enteros de 64 bits.
+ */
+static inline u64 int_sqrt64(u64 x)
+{
+    u64 op, res, one;
+    
+    op = x;
+    res = 0;
+    
+    /* Encuentra el bit más significativo */
+    one = (u64)1 << (sizeof(u64) * 8 - 2);
+    while (one > op) one >>= 2;
+    
+    while (one != 0) {
+        if (op >= res + one) {
+            op -= res + one;
+            res += one << 1;
+        }
+        res >>= 1;
+        one >>= 2;
+    }
+    
+    /* Ajuste final */
+    if (op > res) {
+        res++;
+    }
+    
+    return res;
+}
+
+/**
+ * cmplx_add - Suma dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a + b
+ */
+static inline struct complex_val cmplx_add(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = a.real + b.real;
+    result.imag = a.imag + b.imag;
+    return result;
+}
+
+/**
+ * cmplx_sub - Resta dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a - b
+ */
+static inline struct complex_val cmplx_sub(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = a.real - b.real;
+    result.imag = a.imag - b.imag;
+    return result;
+}
+
+/**
+ * cmplx_mul - Multiplica dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a * b
+ */
+static inline struct complex_val cmplx_mul(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = FIXED_MUL(a.real, b.real) - FIXED_MUL(a.imag, b.imag);
+    result.imag = FIXED_MUL(a.real, b.imag) + FIXED_MUL(a.imag, b.real);
+    return result;
+}
+
+/**
+ * get_secure_random - Genera un número aleatorio seguro
+ * 
+ * Utiliza un estado de generación protegido por spinlock para
+ * garantizar seguridad en la generación de números aleatorios.
+ */
+static u32 get_secure_random(struct holomem_ctx *ctx)
+{
+    u32 result;
+    unsigned long flags;
+    
+    spin_lock_irqsave(&ctx->random_state.lock, flags);
+    result = prandom_u32_state(ctx->random_state.state);
+    spin_unlock_irqrestore(&ctx->random_state.lock, flags);
+    
+    return result;
+}
+
+/**
+ * memory_audit - Audita el uso de memoria y registra actividad sospechosa
+ * @ctx: Contexto de memoria holográfica
+ * @operation: Tipo de operación realizada
+ * @pattern_id: ID del patrón involucrado (si aplica)
+ *
+ * Mantiene un registro de auditoría para operaciones importantes y
+ * detecta patrones de uso sospechosos.
+ */
+static void memory_audit(struct holomem_ctx *ctx, int operation, u64 pattern_id)
+{
+    struct timespec64 ts;
+    unsigned long flags;
+    
+    ktime_get_real_ts64(&ts);
+    
+    /* Registrar operación en buffer circular de auditoría */
+    spin_lock_irqsave(&ctx->audit.lock, flags);
+    
+    ctx->audit.log[ctx->audit.index].timestamp = ts;
+    ctx->audit.log[ctx->audit.index].operation = operation;
+    ctx->audit.log[ctx->audit.index].pattern_id = pattern_id;
+    ctx->audit.log[ctx->audit.index].user_id = current_uid();
+    
+    ctx->audit.index = (ctx->audit.index + 1) % AUDIT_LOG_SIZE;
+    
+    /* Detectar operaciones sospechosas (ejemplo: muchas búsquedas secuenciales) */
+    if (operation == HOLOMEM_OP_SEARCH) {
+        ctx->sequential_searches++;
+        if (ctx->sequential_searches > SUSPICIOUS_THRESHOLD) {
+            /* Registrar evento sospechoso */
+            pr_warn_ratelimited("HoloMem: Suspicious activity detected from UID %u\n", 
+                             __kuid_val(current_uid()));
+            
+            /* Implementar throttling o bloqueo temporal */
+            ctx->throttle_until = ktime_get_seconds() + THROTTLE_SECONDS;
+        }
+    } else {
+        ctx->sequential_searches = 0;
+    }
+    
+    spin_unlock_irqrestore(&ctx->audit.lock, flags);
+}
+
+/**
+ * validate_user_input - Valida entradas de usuario para prevenir ataques
+ * @data: Puntero a los datos de usuario
+ * @size: Tamaño de los datos
+ * @type: Tipo de codificación
+ *
+ * Realiza validaciones exhaustivas para prevenir desbordamientos,
+ * inyecciones y otros ataques.
+ */
+static int validate_user_input(const void __user *data, size_t size, u32 type)
+{
+    /* Verificar throttling de seguridad */
+    if (g_ctx->throttle_until > ktime_get_seconds()) {
+        pr_warn_ratelimited("HoloMem: Operation throttled due to suspicious activity\n");
+        return -EBUSY;
+    }
+    
+    /* Verificar puntero de usuario */
+    if (!access_ok(data, size))
+        return -EFAULT;
+    
+    /* Verificar rangos válidos */
+    if (size == 0 || size > MAX_INPUT_SIZE)
+        return -EINVAL;
+    
+    /* Verificar tipo de codificación válido */
+    if (type > MAX_ENCODING_TYPE)
+        return -EINVAL;
+    
+    return 0;
+}
+
+/**
+ * holomem_cache_init - Inicializa sistema de caché para patrones frecuentes
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Crea una caché LRU (Least Recently Used) para almacenar patrones 
+ * frecuentemente accedidos y mejorar el rendimiento.
+ */
+static int holomem_cache_init(struct holomem_ctx *ctx)
+{
+    int i;
+    
+    /* Inicializar estructuras de caché LRU */
+    INIT_LIST_HEAD(&ctx->pattern_cache.lru_list);
+    spin_lock_init(&ctx->pattern_cache.lock);
+    ctx->pattern_cache.max_entries = LRU_CACHE_SIZE;
+    ctx->pattern_cache.current_entries = 0;
+    
+    ctx->pattern_cache.entries = kzalloc(
+        sizeof(struct cache_entry) * ctx->pattern_cache.max_entries, 
+        GFP_KERNEL);
+    
+    if (!ctx->pattern_cache.entries)
+        return -ENOMEM;
+    
+    for (i = 0; i < ctx->pattern_cache.max_entries; i++) {
+        ctx->pattern_cache.entries[i].pattern_data = vmalloc(
+            PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+        
+        if (!ctx->pattern_cache.entries[i].pattern_data) {
+            /* Liberar recursos ya asignados */
+            for (int j = 0; j < i; j++) {
+                vfree(ctx->pattern_cache.entries[j].pattern_data);
+            }
+            kfree(ctx->pattern_cache.entries);
+            return -ENOMEM;
+        }
+        
+        ctx->pattern_cache.entries[i].valid = false;
+    }
+    
+    return 0;
+}
+
+/**
+ * cache_lookup - Busca un patrón en la caché
+ * @ctx: Contexto de memoria holográfica
+ * @pattern_id: ID del patrón a buscar
+ *
+ * Retorna puntero al patrón en caché o NULL si no se encuentra.
+ */
+static struct complex_val *cache_lookup(struct holomem_ctx *ctx, u64 pattern_id)
+{
+    unsigned long flags;
+    struct complex_val *result = NULL;
+    struct cache_entry *entry;
+    
+    spin_lock_irqsave(&ctx->pattern_cache.lock, flags);
+    
+    list_for_each_entry(entry, &ctx->pattern_cache.lru_list, lru_node) {
+        if (entry->pattern_id == pattern_id && entry->valid) {
+            /* Patrón encontrado, moverlo al principio de la lista LRU */
+            list_del(&entry->lru_node);
+            list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+            
+            result = entry->pattern_data;
+            atomic_inc(&ctx->cache_hits);
+            break;
+        }
+    }
+    
+    spin_unlock_irqrestore(&ctx->pattern_cache.lock, flags);
+    
+    if (!result)
+        atomic_inc(&ctx->cache_misses);
+        
+    return result;
+}
+
+/**
+ * cache_store - Almacena un patrón en la caché
+ * @ctx: Contexto de memoria holográfica
+ * @pattern_id: ID del patrón
+ * @pattern_data: Datos del patrón
+ *
+ * Almacena un patrón en la caché LRU, reemplazando el menos recientemente
+ * usado si es necesario.
+ */
+static void cache_store(struct holomem_ctx *ctx, u64 pattern_id, 
+                      struct complex_val *pattern_data)
+{
+    unsigned long flags;
+    struct cache_entry *entry;
+    bool found = false;
+    
+    spin_lock_irqsave(&ctx->pattern_cache.lock, flags);
+    
+    /* Verificar si ya existe en caché */
+    list_for_each_entry(entry, &ctx->pattern_cache.lru_list, lru_node) {
+        if (entry->pattern_id == pattern_id && entry->valid) {
+            found = true;
+            
+            /* Actualizar datos y mover al principio */
+            memcpy(entry->pattern_data, pattern_data, 
+                  PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+                  
+            list_del(&entry->lru_node);
+            list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+            break;
+        }
+    }
+    
+    if (!found) {
+        /* No está en caché, agregar nueva entrada */
+        if (ctx->pattern_cache.current_entries < ctx->pattern_cache.max_entries) {
+            /* Hay espacio disponible */
+            entry = &ctx->pattern_cache.entries[ctx->pattern_cache.current_entries++];
+        } else {
+            /* Reemplazar la entrada menos recientemente usada (final de la lista) */
+            entry = list_last_entry(&ctx->pattern_cache.lru_list, struct cache_entry, lru_node);
+            list_del(&entry->lru_node);
+        }
+        
+        entry->pattern_id = pattern_id;
+        entry->valid = true;
+        memcpy(entry

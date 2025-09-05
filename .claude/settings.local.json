@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(mv:*)",
+      "Bash(ren:*)",
+      "Bash(python test:*)",
+      "Bash(python:*)",
+      "Bash(touch:*)",
+      "Bash(sed:*)",
+      "Bash(mkdir:*)",
+      "Bash(venvScriptsactivate.bat)",
+      "Bash(pip install:*)",
+      "Bash(call venvScriptsactivate.bat)",
+      "Bash(.venvScriptspython.exe -m pip install --upgrade pip)",
+      "Bash(timeout:*)",
+      "Bash(start cmd /k python nexus_web.py)",
+      "Bash(curl:*)",
+      "Bash(start http://localhost:8000)"
+    ],
+    "deny": []
+  }
+}

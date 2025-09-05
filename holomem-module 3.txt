@@ -1,0 +1,1778 @@
+/* Variables para atributos sysfs */
+static ssize_t show_pattern_count(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    return sprintf(buf, "%d\n", atomic_read(&g_ctx->pattern_count));
+}
+static struct kobj_attribute pattern_count_attr = __ATTR(pattern_count, 0444, show_pattern_count, NULL);
+
+static ssize_t show_store_ops(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    return sprintf(buf, "%d\n", atomic_read(&g_ctx->store_ops));
+}
+static struct kobj_attribute store_ops_attr = __ATTR(store_ops, 0444, show_store_ops, NULL);
+
+static ssize_t show_retrieve_ops(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    return sprintf(buf, "%d\n", atomic_read(&g_ctx->retrieve_ops));
+}
+static struct kobj_attribute retrieve_ops_attr = __ATTR(retrieve_ops, 0444, show_retrieve_ops, NULL);
+
+static ssize_t show_search_ops(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    return sprintf(buf, "%d\n", atomic_read(&g_ctx->search_ops));
+}
+static struct kobj_attribute search_ops_attr = __ATTR(search_ops, 0444, show_search_ops, NULL);
+
+static ssize_t show_cache_hit_rate(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    u32 cache_accesses = atomic_read(&g_ctx->cache_hits) + atomic_read(&g_ctx->cache_misses);
+    u32 hit_rate = 0;
+    
+    if (cache_accesses > 0) {
+        hit_rate = (atomic_read(&g_ctx->cache_hits) * 100) / cache_accesses;
+    }
+    
+    return sprintf(buf, "%u\n", hit_rate);
+}
+static struct kobj_attribute cache_hit_rate_attr = __ATTR(cache_hit_rate, 0444, show_cache_hit_rate, NULL);
+
+static ssize_t show_memory_usage(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+    return sprintf(buf, "%lu\n", g_ctx->holo_size);
+}
+static struct kobj_attribute memory_usage_attr = __ATTR(memory_usage, 0444, show_memory_usage, NULL);
+
+/**
+ * holomem_register_metrics - Registra métricas para sistemas de monitoreo
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Expone contadores y métricas clave en sysfs para monitoreo en tiempo real.
+ */
+static int holomem_register_metrics(struct holomem_ctx *ctx)
+{
+    int ret = 0;
+    
+    /* Crear directorio en sysfs */
+    ctx->sysfs_dir = kobject_create_and_add("holomem", kernel_kobj);
+    if (!ctx->sysfs_dir)
+        return -ENOMEM;
+    
+    /* Registrar métricas individuales */
+    
+    /* Almacenamiento - Operaciones totales */
+    ret = sysfs_create_file(ctx->sysfs_dir, &store_ops_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    /* Recuperación - Operaciones totales */
+    ret = sysfs_create_file(ctx->sysfs_dir, &retrieve_ops_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    /* Búsqueda - Operaciones totales */
+    ret = sysfs_create_file(ctx->sysfs_dir, &search_ops_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    /* Patrones almacenados actualmente */
+    ret = sysfs_create_file(ctx->sysfs_dir, &pattern_count_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    /* Uso de memoria */
+    ret = sysfs_create_file(ctx->sysfs_dir, &memory_usage_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    /* Tasa de aciertos de caché */
+    ret = sysfs_create_file(ctx->sysfs_dir, &cache_hit_rate_attr.attr);
+    if (ret)
+        goto err_cleanup;
+    
+    return 0;
+    
+err_cleanup:
+    kobject_put(ctx->sysfs_dir);
+    return ret;
+}
+
+/**
+ * detect_cpu_capabilities - Detecta características avanzadas de CPU
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Identifica capacidades como SIMD, AVX, etc. para optimizar operaciones.
+ */
+static void detect_cpu_capabilities(struct holomem_ctx *ctx)
+{
+#if defined(CONFIG_X86)
+    ctx->has_avx = boot_cpu_has(X86_FEATURE_AVX);
+    ctx->has_avx2 = boot_cpu_has(X86_FEATURE_AVX2);
+    ctx->has_avx512 = boot_cpu_has(X86_FEATURE_AVX512F);
+    
+    pr_info("HoloMem: CPU features - AVX: %s, AVX2: %s, AVX512: %s\n",
+           ctx->has_avx ? "Yes" : "No",
+           ctx->has_avx2 ? "Yes" : "No",
+           ctx->has_avx512 ? "Yes" : "No");
+#else
+    ctx->has_avx = false;
+    ctx->has_avx2 = false;
+    ctx->has_avx512 = false;
+#endif
+}
+
+/**
+ * holomem_init - Inicializa el módulo de memoria holográfica
+ */
+static int __init holomem_init(void)
+{
+    int ret;
+    
+    pr_info("Holographic Memory Module v%s initializing\n", HOLOMEM_VERSION);
+    
+    /* Asignar e inicializar contexto */
+    g_ctx = kzalloc(sizeof(struct holomem_ctx), GFP_KERNEL);
+    if (!g_ctx)
+        return -ENOMEM;
+    
+    /* Inicializar semáforos RW */
+    init_rwsem(&g_ctx->rwsem);
+    
+    /* Inicializar lista de patrones */
+    INIT_LIST_HEAD(&g_ctx->pattern_list);
+    hash_init(g_ctx->pattern_hash);
+    atomic_set(&g_ctx->pattern_count, 0);
+    g_ctx->next_pattern_id = 1;  /* Empezar desde 1 */
+    
+    /* Inicializar estadísticas */
+    atomic_set(&g_ctx->store_ops, 0);
+    atomic_set(&g_ctx->retrieve_ops, 0);
+    atomic_set(&g_ctx->search_ops, 0);
+    atomic_set(&g_ctx->cache_hits, 0);
+    atomic_set(&g_ctx->cache_misses, 0);
+    atomic_set(&g_ctx->successful_retrievals, 0);
+    atomic_long_set(&g_ctx->total_store_bytes, 0);
+    
+    /* Inicializar random state */
+    spin_lock_init(&g_ctx->random_state.lock);
+    get_random_bytes(g_ctx->random_state.state, sizeof(g_ctx->random_state.state));
+    
+    /* Inicializar sistemas de auditoría */
+    spin_lock_init(&g_ctx->audit.lock);
+    g_ctx->audit.index = 0;
+    g_ctx->sequential_searches = 0;
+    g_ctx->throttle_until = 0;
+    
+    /* Detectar capacidades de CPU */
+    detect_cpu_capabilities(g_ctx);
+    
+    /* Asignar espacio de memoria holográfica */
+    g_ctx->holo_size = HOLOMEM_SIZE;
+    g_ctx->holo_space = vmalloc(g_ctx->holo_size);
+    if (!g_ctx->holo_space) {
+        ret = -ENOMEM;
+        goto err_holo_alloc;
+    }
+    
+    /* Limpiar espacio holográfico */
+    memset(g_ctx->holo_space, 0, g_ctx->holo_size);
+    
+    /* Inicializar kernels de codificación */
+    ret = initialize_encoding_kernels(g_ctx);
+    if (ret)
+        goto err_init_kernels;
+    
+    /* Inicializar caché */
+    ret = holomem_cache_init(g_ctx);
+    if (ret)
+        goto err_cache_init;
+    
+    /* Inicializar FFT */
+    ret = fft_init();
+    if (ret)
+        goto err_fft_init;
+    
+    /* Registrar como dispositivo misc */
+    g_ctx->misc_dev.minor = MISC_DYNAMIC_MINOR;
+    g_ctx->misc_dev.name = DEVICE_NAME;
+    g_ctx->misc_dev.fops = &holomem_fops;
+    
+    ret = misc_register(&g_ctx->misc_dev);
+    if (ret)
+        goto err_misc_reg;
+    
+    /* Crear entrada proc */
+    g_ctx->proc_entry = proc_create(DEVICE_NAME, 0444, NULL, &holomem_proc_fops);
+    if (!g_ctx->proc_entry) {
+        ret = -ENOMEM;
+        goto err_proc_create;
+    }
+    
+    /* Registrar métricas */
+    ret = holomem_register_metrics(g_ctx);
+    if (ret)
+        goto err_metrics;
+    
+    pr_info("Holographic Memory Module initialized successfully\n");
+    return 0;
+    
+err_metrics:
+    proc_remove(g_ctx->proc_entry);
+err_proc_create:
+    misc_deregister(&g_ctx->misc_dev);
+err_misc_reg:
+    fft_cleanup();
+err_fft_init:
+    for (int i = 0; i < g_ctx->pattern_cache.max_entries; i++) {
+        if (g_ctx->pattern_cache.entries[i].pattern_data)
+            vfree(g_ctx->pattern_cache.entries[i].pattern_data);
+    }
+    kfree(g_ctx->pattern_cache.entries);
+err_cache_init:
+    for (int i = 0; i < 3; i++) {
+        if (g_ctx->kernels[i].data)
+            vfree(g_ctx->kernels[i].data);
+        if (g_ctx->kernels[i].avx_aligned)
+            vfree(g_ctx->kernels[i].avx_aligned);
+    }
+err_init_kernels:
+    vfree(g_ctx->holo_space);
+err_holo_alloc:
+    kfree(g_ctx);
+    return ret;
+}
+
+/**
+ * holomem_exit - Limpia y sale del módulo
+ */
+static void __exit holomem_exit(void)
+{
+    pr_info("Holographic Memory Module unloading\n");
+    
+    /* Limpiar sysfs */
+    if (g_ctx->sysfs_dir) {
+        sysfs_remove_file(g_ctx->sysfs_dir, &pattern_count_attr.attr);
+        sysfs_remove_file(g_ctx->sysfs_dir, &store_ops_attr.attr);
+        sysfs_remove_file(g_ctx->sysfs_dir, &retrieve_ops_attr.attr);
+        sysfs_remove_file(g_ctx->sysfs_dir, &search_ops_attr.attr);
+        sysfs_remove_file(g_ctx->sysfs_dir, &memory_usage_attr.attr);
+        sysfs_remove_file(g_ctx->sysfs_dir, &cache_hit_rate_attr.attr);
+        kobject_put(g_ctx->sysfs_dir);
+    }
+    
+    /* Eliminar entrada proc */
+    if (g_ctx->proc_entry)
+        proc_remove(g_ctx->proc_entry);
+    
+    /* Anular registro de dispositivo misc */
+    misc_deregister(&g_ctx->misc_dev);
+    
+    /* Limpiar FFT */
+    fft_cleanup();
+    
+    /* Liberar caché */
+    for (int i = 0; i < g_ctx->pattern_cache.max_entries; i++) {
+        if (g_ctx->pattern_cache.entries[i].pattern_data)
+            vfree(g_ctx->pattern_cache.entries[i].pattern_data);
+    }
+    kfree(g_ctx->pattern_cache.entries);
+    
+    /* Liberar kernels de codificación */
+    for (int i = 0; i < 3; i++) {
+        if (g_ctx->kernels[i].data)
+            vfree(g_ctx->kernels[i].data);
+        if (g_ctx->kernels[i].avx_aligned)
+            vfree(g_ctx->kernels[i].avx_aligned);
+    }
+    
+    /* Liberar espacio holográfico */
+    vfree(g_ctx->holo_space);
+    
+    /* Liberar contexto */
+    kfree(g_ctx);
+    
+    pr_info("Holographic Memory Module unloaded\n");
+}
+
+module_init(holomem_init);
+module_exit(holomem_exit);rate, 0444, show_cache_hit_/**
+ * find_by_coherence - Encuentra patrones similares a un patrón de consulta
+ * @ctx: Contexto de memoria holográfica
+ * @query: Patrón de consulta
+ * @threshold: Umbral mínimo de coherencia (0-10000)
+ * @results: Buffer para índices de patrones de resultado
+ * @scores: Buffer para puntajes de coherencia
+ * @max_results: Número máximo de resultados a devolver
+ *
+ * Encuentra patrones que coinciden con un patrón de consulta con coherencia sobre umbral.
+ * Retorna número de patrones encontrados.
+ */
+static int find_by_coherence(struct holomem_ctx *ctx, struct complex_val *query,
+                          u32 threshold, int *results, u32 *scores, u32 max_results)
+{
+    int i, result_count = 0;
+    struct complex_val *pattern;
+    
+    /* Asignar buffer temporal de patrón */
+    pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+    if (!pattern)
+        return -ENOMEM;
+    
+    /* Verificar cada patrón almacenado */
+    for (i = 0; i < MAX_PATTERNS && result_count < max_results; i++) {
+        if (!ctx->patterns[i].valid)
+            continue;
+        
+        /* Primero comprobar caché */
+        struct complex_val *cached = cache_lookup(ctx, ctx->patterns[i].id);
+        u32 coherence;
+        
+        if (cached) {
+            /* Calcular coherencia con patrón en caché */
+            coherence = calculate_coherence(query, cached);
+        } else {
+            /* Recuperar el patrón del espacio holográfico */
+            retrieve_pattern(ctx, i, pattern);
+            
+            /* Calcular coherencia */
+            coherence = calculate_coherence(query, pattern);
+        }
+        
+        /* Si está sobre umbral, agregar a resultados */
+        if (coherence >= threshold) {
+            results[result_count] = i;
+            scores[result_count] = coherence;
+            ctx->patterns[i].coherence_score = coherence;
+            result_count++;
+        }
+    }
+    
+    vfree(pattern);
+    return result_count;
+}
+
+/**
+ * calculate_memory_stats - Recopila estadísticas detalladas de uso de memoria
+ * @ctx: Contexto de memoria holográfica
+ * @stats: Estructura para almacenar estadísticas
+ *
+ * Calcula métricas detalladas sobre uso de memoria, histogramas de acceso
+ * y eficiencia de almacenamiento.
+ */
+static void calculate_memory_stats(struct holomem_ctx *ctx, struct holomem_stats *stats)
+{
+    struct holo_pattern *pattern;
+    u64 total_accesses = 0;
+    
+    /* Inicializar estadísticas base */
+    stats->pattern_count = atomic_read(&ctx->pattern_count);
+    stats->holo_size = ctx->holo_size;
+    stats->store_ops = atomic_read(&ctx->store_ops);
+    stats->retrieve_ops = atomic_read(&ctx->retrieve_ops);
+    stats->search_ops = atomic_read(&ctx->search_ops);
+    
+    /* Calcular estadísticas adicionales */
+    list_for_each_entry(pattern, &ctx->pattern_list, list) {
+        total_accesses += pattern->retrieval_count;
+    }
+    
+    stats->total_data_size = atomic_long_read(&ctx->total_store_bytes);
+    
+    /* Calcular tasa de éxito de recuperación */
+    if (atomic_read(&ctx->retrieve_ops) > 0) {
+        stats->retrieval_success_rate = 
+            (atomic_read(&ctx->successful_retrievals) * 100) / 
+            atomic_read(&ctx->retrieve_ops);
+    } else {
+        stats->retrieval_success_rate = 0;
+    }
+    
+    /* Calcular tasa de aciertos de caché */
+    u32 cache_accesses = atomic_read(&ctx->cache_hits) + atomic_read(&ctx->cache_misses);
+    if (cache_accesses > 0) {
+        stats->cache_hit_rate = 
+            (atomic_read(&ctx->cache_hits) * 100) / cache_accesses;
+    } else {
+        stats->cache_hit_rate = 0;
+    }
+}
+
+/* Operaciones de archivo */
+static const struct file_operations holomem_fops = {
+    .owner = THIS_MODULE,
+    .open = holomem_open,
+    .release = holomem_release,
+    .unlocked_ioctl = holomem_ioctl,
+    .compat_ioctl = holomem_ioctl,
+    .read = holomem_read,
+    .write = holomem_write,
+};
+
+/* Operaciones de archivo para proc */
+static const struct proc_ops holomem_proc_fops = {
+    .proc_open = holomem_proc_open,
+    .proc_read = seq_read,
+    .proc_lseek = seq_lseek,
+    .proc_release = single_release,
+};
+
+/**
+ * holomem_open - Abrir el archivo de dispositivo
+ */
+static int holomem_open(struct inode *inode, struct file *file)
+{
+    /* Operación simple, nada especial que hacer */
+    return 0;
+}
+
+/**
+ * holomem_release - Liberar el archivo de dispositivo
+ */
+static int holomem_release(struct inode *inode, struct file *file)
+{
+    /* Operación simple, nada especial que hacer */
+    return 0;
+}
+
+/**
+ * holomem_ioctl - Procesa comandos ioctl
+ */
+static long holomem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+    int ret = 0;
+    
+    /* Verificar si el comando es válido */
+    if (_IOC_TYPE(cmd) != HOLOMEM_IOC_MAGIC)
+        return -ENOTTY;
+    if (_IOC_NR(cmd) > HOLOMEM_IOC_MAXNR)
+        return -ENOTTY;
+    
+    /* Bloquear para acceso multi-hilo */
+    if (down_read_trylock(&g_ctx->rwsem) == 0) {
+        /* El bloqueo no está disponible, podría indicar una operación de escritura */
+        if (cmd == HOLOMEM_IOCGETSTAT || cmd == HOLOMEM_IOCRETPAT || cmd == HOLOMEM_IOCSEARCHPAT) {
+            /* Para operaciones de lectura, podemos esperar */
+            down_read(&g_ctx->rwsem);
+        } else {
+            /* Para operaciones de escritura, necesitamos bloqueo exclusivo */
+            down_write(&g_ctx->rwsem);
+        }
+    }
+    
+    switch (cmd) {
+        case HOLOMEM_IOCSTOREPAT: {
+            struct holomem_store_cmd cmd_arg;
+            void *data = NULL;
+            struct complex_val *pattern = NULL;
+            int pat_idx = -1, i;
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Validar entrada de usuario */
+            ret = validate_user_input(cmd_arg.data, cmd_arg.size, cmd_arg.encoding_type);
+            if (ret) {
+                goto store_out;
+            }
+            
+            /* Asignar buffer para datos de entrada */
+            data = vmalloc(cmd_arg.size);
+            if (!data) {
+                ret = -ENOMEM;
+                goto store_out;
+            }
+            
+            /* Copiar datos desde usuario */
+            if (copy_from_user(data, cmd_arg.data, cmd_arg.size)) {
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Asignar buffer para patrón codificado */
+            pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!pattern) {
+                ret = -ENOMEM;
+                goto store_out;
+            }
+            
+            /* Encontrar un slot libre para patrón */
+            for (i = 0; i < MAX_PATTERNS; i++) {
+                if (!g_ctx->patterns[i].valid) {
+                    pat_idx = i;
+                    break;
+                }
+            }
+            
+            if (pat_idx < 0) {
+                ret = -ENOSPC;
+                goto store_out;
+            }
+            
+            /* Codificar el patrón */
+            ret = encode_pattern(g_ctx, data, cmd_arg.size, cmd_arg.encoding_type, pattern);
+            if (ret)
+                goto store_out;
+            
+            /* Almacenar el patrón */
+            ret = store_pattern(g_ctx, pattern, pat_idx);
+            if (ret)
+                goto store_out;
+            
+            /* Configurar metadatos del patrón */
+            g_ctx->patterns[pat_idx].id = g_ctx->next_pattern_id++;
+            g_ctx->patterns[pat_idx].encoding_type = cmd_arg.encoding_type;
+            g_ctx->patterns[pat_idx].retrieval_count = 0;
+            g_ctx->patterns[pat_idx].coherence_score = 10000;  /* Máxima puntuación para coincidencia exacta */
+            strlcpy(g_ctx->patterns[pat_idx].name, cmd_arg.name, sizeof(g_ctx->patterns[pat_idx].name));
+            ktime_get_real_ts64(&g_ctx->patterns[pat_idx].creation_time);
+            g_ctx->patterns[pat_idx].last_access = g_ctx->patterns[pat_idx].creation_time;
+            g_ctx->patterns[pat_idx].valid = true;
+            
+            /* Agregar a lista de patrones activos */
+            list_add(&g_ctx->patterns[pat_idx].list, &g_ctx->pattern_list);
+            
+            /* Agregar a tabla hash */
+            hash_add(g_ctx->pattern_hash, &g_ctx->patterns[pat_idx].hash_node, g_ctx->patterns[pat_idx].id);
+            
+            atomic_inc(&g_ctx->pattern_count);
+            
+            /* Devolver el ID asignado */
+            cmd_arg.pattern_id = g_ctx->patterns[pat_idx].id;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto store_out;
+            }
+            
+            /* Actualizar estadísticas */
+            atomic_inc(&g_ctx->store_ops);
+            atomic_long_add(cmd_arg.size, &g_ctx->total_store_bytes);
+            
+            /* Auditar operación */
+            memory_audit(g_ctx, HOLOMEM_OP_STORE, g_ctx->patterns[pat_idx].id);
+            
+store_out:
+            if (data)
+                vfree(data);
+            if (pattern)
+                vfree(pattern);
+            break;
+        }
+        
+        case HOLOMEM_IOCRETPAT: {
+            struct holomem_retrieve_cmd cmd_arg;
+            struct complex_val *pattern = NULL;
+            int pat_idx = -1;
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Buscar patrón por ID */
+            struct holo_pattern *found = NULL;
+            hash_for_each_possible(g_ctx->pattern_hash, found, hash_node, cmd_arg.pattern_id) {
+                if (found->valid && found->id == cmd_arg.pattern_id) {
+                    pat_idx = found - g_ctx->patterns;  /* Calcular índice basado en dirección */
+                    break;
+                }
+            }
+            
+            if (pat_idx < 0 || pat_idx >= MAX_PATTERNS) {
+                ret = -ENOENT;
+                goto retrieve_out;
+            }
+            
+            /* Asignar buffer para patrón recuperado */
+            pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!pattern) {
+                ret = -ENOMEM;
+                goto retrieve_out;
+            }
+            
+            /* Recuperar el patrón */
+            ret = retrieve_pattern(g_ctx, pat_idx, pattern);
+            if (ret)
+                goto retrieve_out;
+            
+            /* En una implementación real, decodificaríamos el patrón de vuelta a datos originales
+               aquí. Para simplificar, solo devolveremos el patrón crudo */
+            
+            /* Verificar si el buffer de usuario es suficientemente grande */
+            size_t data_size = PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val);
+            if (cmd_arg.buf_size < data_size) {
+                ret = -ENOSPC;
+                goto retrieve_out;
+            }
+            
+            /* Copiar patrón a usuario */
+            if (copy_to_user(cmd_arg.buffer, pattern, data_size)) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Actualizar valores de retorno */
+            cmd_arg.data_size = data_size;
+            cmd_arg.coherence = g_ctx->patterns[pat_idx].coherence_score;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto retrieve_out;
+            }
+            
+            /* Actualizar estadísticas */
+            atomic_inc(&g_ctx->retrieve_ops);
+            
+            /* Auditar operación */
+            memory_audit(g_ctx, HOLOMEM_OP_RETRIEVE, cmd_arg.pattern_id);
+            
+retrieve_out:
+            if (pattern)
+                vfree(pattern);
+            break;
+        }
+        
+        case HOLOMEM_IOCSEARCHPAT: {
+            struct holomem_search_cmd cmd_arg;
+            void *query_data = NULL;
+            struct complex_val *query_pattern = NULL;
+            int results[100], result_count = 0;
+            u32 scores[100];
+            
+            if (copy_from_user(&cmd_arg, (void __user *)arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Validar argumentos */
+            ret = validate_user_input(cmd_arg.query, cmd_arg.query_size, cmd_arg.encoding_type);
+            if (ret) {
+                goto search_out;
+            }
+            
+            if (cmd_arg.max_results > 100)
+                cmd_arg.max_results = 100;
+            
+            /* Asignar buffer para datos de consulta */
+            query_data = vmalloc(cmd_arg.query_size);
+            if (!query_data) {
+                ret = -ENOMEM;
+                goto search_out;
+            }
+            
+            /* Copiar datos de consulta desde usuario */
+            if (copy_from_user(query_data, cmd_arg.query, cmd_arg.query_size)) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Asignar buffer para patrón de consulta */
+            query_pattern = vmalloc(PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+            if (!query_pattern) {
+                ret = -ENOMEM;
+                goto search_out;
+            }
+            
+            /* Codificar la consulta */
+            ret = encode_pattern(g_ctx, query_data, cmd_arg.query_size, 
+                               cmd_arg.encoding_type, query_pattern);
+            if (ret)
+                goto search_out;
+            
+            /* Buscar patrones similares */
+            result_count = find_by_coherence(g_ctx, query_pattern, cmd_arg.threshold,
+                                          results, scores, cmd_arg.max_results);
+            if (result_count < 0) {
+                ret = result_count;
+                goto search_out;
+            }
+            
+            /* Copiar resultados a usuario */
+            u64 pattern_ids[100];
+            for (int i = 0; i < result_count; i++) {
+                pattern_ids[i] = g_ctx->patterns[results[i]].id;
+            }
+            
+            if (copy_to_user(cmd_arg.results, pattern_ids, result_count * sizeof(u64)) ||
+                copy_to_user(cmd_arg.scores, scores, result_count * sizeof(u32))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Actualizar valor de retorno */
+            cmd_arg.result_count = result_count;
+            if (copy_to_user((void __user *)arg, &cmd_arg, sizeof(cmd_arg))) {
+                ret = -EFAULT;
+                goto search_out;
+            }
+            
+            /* Actualizar estadísticas */
+            atomic_inc(&g_ctx->search_ops);
+            
+            /* Auditar operación */
+            memory_audit(g_ctx, HOLOMEM_OP_SEARCH, 0);
+            
+search_out:
+            if (query_data)
+                vfree(query_data);
+            if (query_pattern)
+                vfree(query_pattern);
+            break;
+        }
+        
+        case HOLOMEM_IOCGETSTAT: {
+            struct holomem_stats stats;
+            
+            /* Calcular estadísticas */
+            calculate_memory_stats(g_ctx, &stats);
+            
+            /* Copiar a usuario */
+            if (copy_to_user((void __user *)arg, &stats, sizeof(stats))) {
+                ret = -EFAULT;
+            }
+            break;
+        }
+        
+        case HOLOMEM_IOCFLUSH: {
+            int i;
+            
+            /* Necesitamos un bloqueo de escritura exclusivo para esto */
+            if (!down_write_trylock(&g_ctx->rwsem)) {
+                /* Ya tenemos el bloqueo, pero necesitamos cambiarlo a exclusivo */
+                up_read(&g_ctx->rwsem);
+                down_write(&g_ctx->rwsem);
+            }
+            
+            /* Limpiar espacio holográfico */
+            memset(g_ctx->holo_space, 0, g_ctx->holo_size);
+            
+            /* Limpiar registro de patrones */
+            for (i = 0; i < MAX_PATTERNS; i++) {
+                if (g_ctx->patterns[i].valid) {
+                    g_ctx->patterns[i].valid = false;
+                }
+            }
+            
+            /* Resetear tabla hash */
+            hash_init(g_ctx->pattern_hash);
+            
+            /* Resetear lista de patrones */
+            INIT_LIST_HEAD(&g_ctx->pattern_list);
+            atomic_set(&g_ctx->pattern_count, 0);
+            
+            /* Limpiar caché */
+            unsigned long flags;
+            spin_lock_irqsave(&g_ctx->pattern_cache.lock, flags);
+            INIT_LIST_HEAD(&g_ctx->pattern_cache.lru_list);
+            for (i = 0; i < g_ctx->pattern_cache.max_entries; i++) {
+                g_ctx->pattern_cache.entries[i].valid = false;
+            }
+            g_ctx->pattern_cache.current_entries = 0;
+            spin_unlock_irqrestore(&g_ctx->pattern_cache.lock, flags);
+            
+            /* Auditar operación */
+            memory_audit(g_ctx, HOLOMEM_OP_FLUSH, 0);
+            
+            break;
+        }
+        
+        default:
+            ret = -ENOTTY;
+    }
+    
+    /* Liberar bloqueo */
+    if (_IOC_NR(cmd) == _IOC_NR(HOLOMEM_IOCSTOREPAT) || 
+        _IOC_NR(cmd) == _IOC_NR(HOLOMEM_IOCFLUSH)) {
+        up_write(&g_ctx->rwsem);
+    } else {
+        up_read(&g_ctx->rwsem);
+    }
+    
+    return ret;
+}/*
+ * holomem.c - Módulo de kernel Linux para memoria holográfica
+ *
+ * Este módulo implementa un sistema de almacenamiento holográfico donde la
+ * información se distribuye en un espacio de memoria compartido utilizando
+ * principios similares a la holografía óptica. Cada patrón se almacena con
+ * redundancia y se puede recuperar incluso cuando partes del espacio de
+ * memoria están dañadas.
+ *
+ * Copyright (C) 2025 Obvlivorum Project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/fs.h>
+#include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/slab.h>
+#include <linux/uaccess.h>
+#include <linux/mutex.h>
+#include <linux/spinlock.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/mm.h>
+#include <linux/vmalloc.h>
+#include <linux/random.h>
+#include <linux/sched.h>
+#include <linux/jiffies.h>
+#include <linux/atomic.h>
+#include <linux/string.h>
+#include <linux/list.h>
+#include <linux/hash.h>
+#include <linux/miscdevice.h>
+#include <linux/sched/signal.h>
+#include <linux/sysfs.h>
+#include <linux/kobject.h>
+#include <linux/timekeeping.h>
+#include <linux/ratelimit.h>
+#include <linux/jhash.h>
+
+#define HOLOMEM_VERSION "1.0.0"
+#define DEVICE_NAME "holomem"
+#define CLASS_NAME "holographic"
+
+/* Configuración del módulo */
+#define HOLOMEM_SIZE (128 * 1024 * 1024)  /* 128 MB espacio holográfico */
+#define PATTERN_DIM 1024                  /* Dimensiones de patrones holográficos */
+#define MAX_PATTERNS 2048                 /* Máximo número de patrones */
+#define REDUNDANCY_FACTOR 7               /* Factor de redundancia */
+#define MAX_INPUT_SIZE (4 * 1024 * 1024)  /* Límite de tamaño de entrada (4MB) */
+#define MAX_ENCODING_TYPE 2               /* Máximo tipo de codificación válido */
+#define AUDIT_LOG_SIZE 1024               /* Tamaño del log de auditoría */
+#define SUSPICIOUS_THRESHOLD 50           /* Umbral para actividad sospechosa */
+#define THROTTLE_SECONDS 60               /* Segundos de throttling tras sospecha */
+#define LRU_CACHE_SIZE 16                 /* Tamaño de caché LRU */
+#define FFT_MAX_SIZE 2048                 /* Tamaño máximo para FFT (potencia de 2) */
+
+/* Operaciones para auditoría */
+#define HOLOMEM_OP_STORE    1
+#define HOLOMEM_OP_RETRIEVE 2
+#define HOLOMEM_OP_SEARCH   3
+#define HOLOMEM_OP_FLUSH    4
+
+/* Aritmética de punto fijo para operaciones complejas */
+#define FIXED_POINT_BITS 16
+#define FIXED_POINT_SCALE (1 << FIXED_POINT_BITS)
+#define FIXED_MUL(a, b) (((int64_t)(a) * (int64_t)(b)) >> FIXED_POINT_BITS)
+#define FIXED_DIV(a, b) (((int64_t)(a) << FIXED_POINT_BITS) / (int64_t)(b))
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Obvlivorum Project");
+MODULE_DESCRIPTION("Holographic Memory Storage System");
+MODULE_VERSION(HOLOMEM_VERSION);
+
+/* Representación de números complejos (punto fijo) */
+struct complex_val {
+    int32_t real;
+    int32_t imag;
+};
+
+/* Estructura para almacenar una entrada en caché */
+struct cache_entry {
+    u64 pattern_id;                    /* ID del patrón */
+    struct complex_val *pattern_data;  /* Datos del patrón */
+    bool valid;                        /* Si la entrada es válida */
+    struct list_head lru_node;         /* Nodo para lista LRU */
+};
+
+/* Estructura para entry del log de auditoría */
+struct audit_entry {
+    struct timespec64 timestamp;       /* Cuando ocurrió */
+    int operation;                     /* Tipo de operación */
+    u64 pattern_id;                    /* Patrón involucrado */
+    kuid_t user_id;                    /* Usuario que realizó la operación */
+};
+
+/* Descriptor de patrón */
+struct holo_pattern {
+    u64 id;                            /* Identificador único del patrón */
+    char name[64];                     /* Nombre legible */
+    u32 encoding_type;                 /* Tipo de codificación usada */
+    u32 positions[REDUNDANCY_FACTOR];  /* Posiciones en espacio holográfico */
+    struct timespec64 creation_time;   /* Cuando se almacenó el patrón */
+    struct timespec64 last_access;     /* Último timestamp de acceso */
+    u32 retrieval_count;               /* Número de veces que se recuperó */
+    u32 coherence_score;               /* Métrica de calidad/confianza */
+    bool valid;                        /* Si este slot está en uso */
+    struct list_head list;             /* Para gestión de lista enlazada */
+    struct hlist_node hash_node;       /* Para tabla hash */
+};
+
+/* Estructura para estadísticas extendidas */
+struct holomem_extended_stats {
+    u32 pattern_count;                /* Número de patrones almacenados */
+    u64 holo_size;                    /* Tamaño de espacio holográfico (bytes) */
+    u64 total_data_size;              /* Total de bytes almacenados */
+    u64 store_ops;                    /* Total de operaciones de almacenamiento */
+    u64 retrieve_ops;                 /* Total de operaciones de recuperación */
+    u64 search_ops;                   /* Total de operaciones de búsqueda */
+    u64 access_frequency;             /* Frecuencia media de acceso */
+    u32 memory_utilization;           /* Porcentaje de utilización de memoria */
+    u32 retrieval_success_rate;       /* Tasa de éxito de recuperación (%) */
+    u32 cache_hit_rate;               /* Tasa de aciertos de caché (%) */
+};
+
+/* Contexto principal del módulo */
+struct holomem_ctx {
+    /* Espacio de almacenamiento holográfico */
+    struct complex_val *holo_space;
+    size_t holo_size;
+    
+    /* Gestión de patrones */
+    struct holo_pattern patterns[MAX_PATTERNS];
+    struct list_head pattern_list;    /* Lista enlazada de patrones activos */
+    DECLARE_HASHTABLE(pattern_hash, 10); /* Tabla hash para búsqueda rápida por ID */
+    atomic_t pattern_count;           /* Número de patrones almacenados */
+    u64 next_pattern_id;              /* Generador de IDs */
+    
+    /* Kernels de codificación con patrones de acceso optimizados */
+    struct {
+        struct complex_val *data;
+        size_t size;
+        void *avx_aligned;  /* Copia alineada para operaciones SIMD */
+    } kernels[3];  /* simbólico, emocional, contextual */
+    
+    /* Sistema de caché */
+    struct {
+        struct list_head lru_list;
+        struct cache_entry *entries;
+        spinlock_t lock;
+        int max_entries;
+        int current_entries;
+    } pattern_cache;
+    
+    /* Bloqueo de lectura-escritura para mejor paralelismo */
+    struct rw_semaphore rwsem;
+    
+    /* Contadores de rendimiento */
+    atomic_t store_ops;
+    atomic_t retrieve_ops;
+    atomic_t search_ops;
+    atomic_t cache_hits;
+    atomic_t cache_misses;
+    atomic_t successful_retrievals;
+    atomic_long_t total_store_bytes;
+    
+    /* Datos de optimización de CPU */
+    bool has_avx;
+    bool has_avx2;
+    bool has_avx512;
+    void (*fft_impl)(struct complex_val*, int, int, int);
+    void (*conv_impl)(struct complex_val*, struct complex_val*, int, struct complex_val*);
+    
+    /* Seguridad y auditoría */
+    struct {
+        spinlock_t lock;
+        struct audit_entry log[AUDIT_LOG_SIZE];
+        int index;
+    } audit;
+    u64 throttle_until;
+    int sequential_searches;
+    
+    /* Estado seguro para random */
+    struct {
+        u32 state[4];
+        spinlock_t lock;
+    } random_state;
+    
+    /* Integración con dispositivo */
+    struct miscdevice misc_dev;
+    struct proc_dir_entry *proc_entry;
+    struct kobject *sysfs_dir;
+};
+
+/* Comandos IOCTL */
+#define HOLOMEM_IOC_MAGIC 'h'
+#define HOLOMEM_IOCSTOREPAT    _IOWR(HOLOMEM_IOC_MAGIC, 1, struct holomem_store_cmd)
+#define HOLOMEM_IOCRETPAT      _IOWR(HOLOMEM_IOC_MAGIC, 2, struct holomem_retrieve_cmd)
+#define HOLOMEM_IOCSEARCHPAT   _IOWR(HOLOMEM_IOC_MAGIC, 3, struct holomem_search_cmd)
+#define HOLOMEM_IOCGETSTAT     _IOR(HOLOMEM_IOC_MAGIC, 4, struct holomem_stats)
+#define HOLOMEM_IOCFLUSH       _IO(HOLOMEM_IOC_MAGIC, 5)
+#define HOLOMEM_IOC_MAXNR 5
+
+/* Estructuras para comandos IOCTL */
+struct holomem_store_cmd {
+    const void __user *data;      /* Datos a almacenar */
+    size_t size;                  /* Tamaño de datos */
+    u32 encoding_type;            /* Tipo de codificación (0=simbólico, 1=emocional, 2=contextual) */
+    char name[64];                /* Nombre del patrón */
+    u64 pattern_id;               /* Salida: ID de patrón asignado */
+};
+
+struct holomem_retrieve_cmd {
+    u64 pattern_id;               /* ID del patrón a recuperar */
+    void __user *buffer;          /* Buffer de salida */
+    size_t buf_size;              /* Tamaño del buffer */
+    size_t data_size;             /* Salida: tamaño de datos real */
+    u32 coherence;                /* Salida: confianza/calidad de recuperación */
+};
+
+struct holomem_search_cmd {
+    const void __user *query;     /* Datos de consulta */
+    size_t query_size;            /* Tamaño de consulta */
+    u32 encoding_type;            /* Tipo de codificación */
+    u32 threshold;                /* Umbral de coherencia (0-10000) */
+    u32 max_results;              /* Máximo resultados a devolver */
+    u64 __user *results;          /* Salida: IDs de patrones */
+    u32 __user *scores;           /* Salida: puntajes de coherencia */
+    u32 result_count;             /* Salida: número de resultados */
+};
+
+struct holomem_stats {
+    u32 pattern_count;            /* Número de patrones almacenados */
+    u64 holo_size;                /* Tamaño de espacio holográfico (bytes) */
+    u64 total_data_size;          /* Total de bytes de datos almacenados */
+    u64 store_ops;                /* Total de operaciones de almacenamiento */
+    u64 retrieve_ops;             /* Total de operaciones de recuperación */
+    u64 search_ops;               /* Total de operaciones de búsqueda */
+    u32 cache_hit_rate;           /* Tasa de aciertos de caché (%) */
+    u32 retrieval_success_rate;   /* Tasa de éxito de recuperación (%) */
+};
+
+/* Instancia global del contexto */
+static struct holomem_ctx *g_ctx;
+
+/* Forward declarations de funciones */
+static int holomem_open(struct inode *inode, struct file *file);
+static int holomem_release(struct inode *inode, struct file *file);
+static long holomem_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+static ssize_t holomem_read(struct file *file, char __user *buf, size_t count, loff_t *pos);
+static ssize_t holomem_write(struct file *file, const char __user *buf, size_t count, loff_t *pos);
+static int holomem_proc_show(struct seq_file *m, void *v);
+static int holomem_proc_open(struct inode *inode, struct file *file);
+static int __init holomem_init(void);
+static void __exit holomem_exit(void);
+
+/* Funciones auxiliares para operaciones matemáticas */
+
+/* Tabla de seno para 0-90 grados (precisión de 1 grado) */
+static const int32_t sin_table[91] = {
+    0,      /* 0 */
+    4588,   /* 1 */
+    9176,   /* 2 */
+    13763,  /* 3 */
+    18350,  /* 4 */
+    22936,  /* 5 */
+    27519,  /* 6 */
+    32098,  /* 7 */
+    36671,  /* 8 */
+    41238,  /* 9 */
+    45801,  /* 10 */
+    50356,  /* 11 */
+    54903,  /* 12 */
+    59439,  /* 13 */
+    63965,  /* 14 */
+    68478,  /* 15 */
+    72979,  /* 16 */
+    77468,  /* 17 */
+    81941,  /* 18 */
+    86399,  /* 19 */
+    90841,  /* 20 */
+    95263,  /* 21 */
+    99667,  /* 22 */
+    104051, /* 23 */
+    108413, /* 24 */
+    112753, /* 25 */
+    117068, /* 26 */
+    121360, /* 27 */
+    125626, /* 28 */
+    129866, /* 29 */
+    134077, /* 30 */
+    138258, /* 31 */
+    142408, /* 32 */
+    146528, /* 33 */
+    150614, /* 34 */
+    154667, /* 35 */
+    158687, /* 36 */
+    162672, /* 37 */
+    166619, /* 38 */
+    170533, /* 39 */
+    174405, /* 40 */
+    178241, /* 41 */
+    182042, /* 42 */
+    185804, /* 43 */
+    189529, /* 44 */
+    193214, /* 45 */
+    196859, /* 46 */
+    200465, /* 47 */
+    204021, /* 48 */
+    207538, /* 49 */
+    211011, /* 50 */
+    214444, /* 51 */
+    217833, /* 52 */
+    221177, /* 53 */
+    224476, /* 54 */
+    227729, /* 55 */
+    230933, /* 56 */
+    234090, /* 57 */
+    237197, /* 58 */
+    240256, /* 59 */
+    243266, /* 60 */
+    246224, /* 61 */
+    249132, /* 62 */
+    251988, /* 63 */
+    254792, /* 64 */
+    257542, /* 65 */
+    260241, /* 66 */
+    262884, /* 67 */
+    265474, /* 68 */
+    268009, /* 69 */
+    270489, /* 70 */
+    272912, /* 71 */
+    275279, /* 72 */
+    277585, /* 73 */
+    279837, /* 74 */
+    282028, /* 75 */
+    284162, /* 76 */
+    286237, /* 77 */
+    288254, /* 78 */
+    290211, /* 79 */
+    292107, /* 80 */
+    293944, /* 81 */
+    295719, /* 82 */
+    297431, /* 83 */
+    299082, /* 84 */
+    300672, /* 85 */
+    302196, /* 86 */
+    303660, /* 87 */
+    305059, /* 88 */
+    306397, /* 89 */
+    307669  /* 90 */
+};
+
+/**
+ * sin_deg - Calcula el seno de un ángulo en grados (punto fijo)
+ * @angle: ángulo en grados (0-359)
+ *
+ * Retorna el seno del ángulo en representación de punto fijo.
+ */
+static inline int32_t sin_deg(int angle)
+{
+    /* Normalizar el ángulo entre 0-359 */
+    angle = angle % 360;
+    if (angle < 0) angle += 360;
+    
+    if (angle <= 90)
+        return sin_table[angle];
+    else if (angle <= 180)
+        return sin_table[180 - angle];
+    else if (angle <= 270)
+        return -sin_table[angle - 180];
+    else
+        return -sin_table[360 - angle];
+}
+
+/**
+ * cos_deg - Calcula el coseno de un ángulo en grados (punto fijo)
+ * @angle: ángulo en grados (0-359)
+ *
+ * Retorna el coseno del ángulo en representación de punto fijo.
+ */
+static inline int32_t cos_deg(int angle)
+{
+    /* cos(x) = sin(x + 90) */
+    return sin_deg(angle + 90);
+}
+
+/**
+ * int_sqrt64 - Calcula la raíz cuadrada entera de un entero de 64 bits
+ * @x: valor del cual calcular la raíz cuadrada
+ *
+ * Implementación eficiente de raíz cuadrada para enteros de 64 bits.
+ */
+static inline u64 int_sqrt64(u64 x)
+{
+    u64 op, res, one;
+    
+    op = x;
+    res = 0;
+    
+    /* Encuentra el bit más significativo */
+    one = (u64)1 << (sizeof(u64) * 8 - 2);
+    while (one > op) one >>= 2;
+    
+    while (one != 0) {
+        if (op >= res + one) {
+            op -= res + one;
+            res += one << 1;
+        }
+        res >>= 1;
+        one >>= 2;
+    }
+    
+    /* Ajuste final */
+    if (op > res) {
+        res++;
+    }
+    
+    return res;
+}
+
+/**
+ * cmplx_add - Suma dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a + b
+ */
+static inline struct complex_val cmplx_add(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = a.real + b.real;
+    result.imag = a.imag + b.imag;
+    return result;
+}
+
+/**
+ * cmplx_sub - Resta dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a - b
+ */
+static inline struct complex_val cmplx_sub(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = a.real - b.real;
+    result.imag = a.imag - b.imag;
+    return result;
+}
+
+/**
+ * cmplx_mul - Multiplica dos números complejos
+ * @a: primer número complejo
+ * @b: segundo número complejo
+ *
+ * Retorna a * b
+ */
+static inline struct complex_val cmplx_mul(struct complex_val a, struct complex_val b)
+{
+    struct complex_val result;
+    result.real = FIXED_MUL(a.real, b.real) - FIXED_MUL(a.imag, b.imag);
+    result.imag = FIXED_MUL(a.real, b.imag) + FIXED_MUL(a.imag, b.real);
+    return result;
+}
+
+/**
+ * get_secure_random - Genera un número aleatorio seguro
+ * 
+ * Utiliza un estado de generación protegido por spinlock para
+ * garantizar seguridad en la generación de números aleatorios.
+ */
+static u32 get_secure_random(struct holomem_ctx *ctx)
+{
+    u32 result;
+    unsigned long flags;
+    
+    spin_lock_irqsave(&ctx->random_state.lock, flags);
+    result = prandom_u32_state(ctx->random_state.state);
+    spin_unlock_irqrestore(&ctx->random_state.lock, flags);
+    
+    return result;
+}
+
+/**
+ * memory_audit - Audita el uso de memoria y registra actividad sospechosa
+ * @ctx: Contexto de memoria holográfica
+ * @operation: Tipo de operación realizada
+ * @pattern_id: ID del patrón involucrado (si aplica)
+ *
+ * Mantiene un registro de auditoría para operaciones importantes y
+ * detecta patrones de uso sospechosos.
+ */
+static void memory_audit(struct holomem_ctx *ctx, int operation, u64 pattern_id)
+{
+    struct timespec64 ts;
+    unsigned long flags;
+    
+    ktime_get_real_ts64(&ts);
+    
+    /* Registrar operación en buffer circular de auditoría */
+    spin_lock_irqsave(&ctx->audit.lock, flags);
+    
+    ctx->audit.log[ctx->audit.index].timestamp = ts;
+    ctx->audit.log[ctx->audit.index].operation = operation;
+    ctx->audit.log[ctx->audit.index].pattern_id = pattern_id;
+    ctx->audit.log[ctx->audit.index].user_id = current_uid();
+    
+    ctx->audit.index = (ctx->audit.index + 1) % AUDIT_LOG_SIZE;
+    
+    /* Detectar operaciones sospechosas (ejemplo: muchas búsquedas secuenciales) */
+    if (operation == HOLOMEM_OP_SEARCH) {
+        ctx->sequential_searches++;
+        if (ctx->sequential_searches > SUSPICIOUS_THRESHOLD) {
+            /* Registrar evento sospechoso */
+            pr_warn_ratelimited("HoloMem: Suspicious activity detected from UID %u\n", 
+                             __kuid_val(current_uid()));
+            
+            /* Implementar throttling o bloqueo temporal */
+            ctx->throttle_until = ktime_get_seconds() + THROTTLE_SECONDS;
+        }
+    } else {
+        ctx->sequential_searches = 0;
+    }
+    
+    spin_unlock_irqrestore(&ctx->audit.lock, flags);
+}
+
+/**
+ * validate_user_input - Valida entradas de usuario para prevenir ataques
+ * @data: Puntero a los datos de usuario
+ * @size: Tamaño de los datos
+ * @type: Tipo de codificación
+ *
+ * Realiza validaciones exhaustivas para prevenir desbordamientos,
+ * inyecciones y otros ataques.
+ */
+static int validate_user_input(const void __user *data, size_t size, u32 type)
+{
+    /* Verificar throttling de seguridad */
+    if (g_ctx->throttle_until > ktime_get_seconds()) {
+        pr_warn_ratelimited("HoloMem: Operation throttled due to suspicious activity\n");
+        return -EBUSY;
+    }
+    
+    /* Verificar puntero de usuario */
+    if (!access_ok(data, size))
+        return -EFAULT;
+    
+    /* Verificar rangos válidos */
+    if (size == 0 || size > MAX_INPUT_SIZE)
+        return -EINVAL;
+    
+    /* Verificar tipo de codificación válido */
+    if (type > MAX_ENCODING_TYPE)
+        return -EINVAL;
+    
+    return 0;
+}
+
+/**
+ * holomem_cache_init - Inicializa sistema de caché para patrones frecuentes
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Crea una caché LRU (Least Recently Used) para almacenar patrones 
+ * frecuentemente accedidos y mejorar el rendimiento.
+ */
+static int holomem_cache_init(struct holomem_ctx *ctx)
+{
+    int i;
+    
+    /* Inicializar estructuras de caché LRU */
+    INIT_LIST_HEAD(&ctx->pattern_cache.lru_list);
+    spin_lock_init(&ctx->pattern_cache.lock);
+    ctx->pattern_cache.max_entries = LRU_CACHE_SIZE;
+    ctx->pattern_cache.current_entries = 0;
+    
+    ctx->pattern_cache.entries = kzalloc(
+        sizeof(struct cache_entry) * ctx->pattern_cache.max_entries, 
+        GFP_KERNEL);
+    
+    if (!ctx->pattern_cache.entries)
+        return -ENOMEM;
+    
+    for (i = 0; i < ctx->pattern_cache.max_entries; i++) {
+        ctx->pattern_cache.entries[i].pattern_data = vmalloc(
+            PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+        
+        if (!ctx->pattern_cache.entries[i].pattern_data) {
+            /* Liberar recursos ya asignados */
+            for (int j = 0; j < i; j++) {
+                vfree(ctx->pattern_cache.entries[j].pattern_data);
+            }
+            kfree(ctx->pattern_cache.entries);
+            return -ENOMEM;
+        }
+        
+        ctx->pattern_cache.entries[i].valid = false;
+    }
+    
+    return 0;
+}
+
+/**
+ * cache_lookup - Busca un patrón en la caché
+ * @ctx: Contexto de memoria holográfica
+ * @pattern_id: ID del patrón a buscar
+ *
+ * Retorna puntero al patrón en caché o NULL si no se encuentra.
+ */
+static struct complex_val *cache_lookup(struct holomem_ctx *ctx, u64 pattern_id)
+{
+    unsigned long flags;
+    struct complex_val *result = NULL;
+    struct cache_entry *entry;
+    
+    spin_lock_irqsave(&ctx->pattern_cache.lock, flags);
+    
+    list_for_each_entry(entry, &ctx->pattern_cache.lru_list, lru_node) {
+        if (entry->pattern_id == pattern_id && entry->valid) {
+            /* Patrón encontrado, moverlo al principio de la lista LRU */
+            list_del(&entry->lru_node);
+            list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+            
+            result = entry->pattern_data;
+            atomic_inc(&ctx->cache_hits);
+            break;
+        }
+    }
+    
+    spin_unlock_irqrestore(&ctx->pattern_cache.lock, flags);
+    
+    if (!result)
+        atomic_inc(&ctx->cache_misses);
+        
+    return result;
+}
+
+/**
+ * cache_store - Almacena un patrón en la caché
+ * @ctx: Contexto de memoria holográfica
+ * @pattern_id: ID del patrón
+ * @pattern_data: Datos del patrón
+ *
+ * Almacena un patrón en la caché LRU, reemplazando el menos recientemente
+ * usado si es necesario.
+ */
+static void cache_store(struct holomem_ctx *ctx, u64 pattern_id, 
+                      struct complex_val *pattern_data)
+{
+    unsigned long flags;
+    struct cache_entry *entry;
+    bool found = false;
+    
+    spin_lock_irqsave(&ctx->pattern_cache.lock, flags);
+    
+    /* Verificar si ya existe en caché */
+    list_for_each_entry(entry, &ctx->pattern_cache.lru_list, lru_node) {
+        if (entry->pattern_id == pattern_id && entry->valid) {
+            found = true;
+            
+            /* Actualizar datos y mover al principio */
+            memcpy(entry->pattern_data, pattern_data, 
+                  PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+                  
+            list_del(&entry->lru_node);
+            list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+            break;
+        }
+    }
+    
+    if (!found) {
+        /* No está en caché, agregar nueva entrada */
+        if (ctx->pattern_cache.current_entries < ctx->pattern_cache.max_entries) {
+            /* Hay espacio disponible */
+            entry = &ctx->pattern_cache.entries[ctx->pattern_cache.current_entries++];
+        } else {
+            /* Reemplazar la entrada menos recientemente usada (final de la lista) */
+            entry = list_last_entry(&ctx->pattern_cache.lru_list, struct cache_entry, lru_node);
+            list_del(&entry->lru_node);
+        }
+        
+        entry->pattern_id = pattern_id;
+        entry->valid = true;
+        memcpy(entry->pattern_data, pattern_data, 
+              PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+        
+        /* Agregar al principio de la lista LRU */
+        list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+    }
+    
+    spin_unlock_irqrestore(&ctx->pattern_cache.lock, flags);
+}
+
+/**
+ * initialize_encoding_kernels - Crear kernels de codificación para diferentes tipos de memoria
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Crea kernels especializados para codificar diferentes tipos de información
+ * en el espacio de memoria holográfica.
+ */
+static int initialize_encoding_kernels(struct holomem_ctx *ctx)
+{
+    int i, j;
+    
+    /* Asignar kernels */
+    /* Kernel simbólico (64x64) */
+    ctx->kernels[0].size = 64;
+    ctx->kernels[0].data = vmalloc(64 * 64 * sizeof(struct complex_val));
+    if (!ctx->kernels[0].data)
+        return -ENOMEM;
+    
+    /* Kernel emocional (32x32) */
+    ctx->kernels[1].size = 32;
+    ctx->kernels[1].data = vmalloc(32 * 32 * sizeof(struct complex_val));
+    if (!ctx->kernels[1].data) {
+        vfree(ctx->kernels[0].data);
+        return -ENOMEM;
+    }
+    
+    /* Kernel contextual (48x48) */
+    ctx->kernels[2].size = 48;
+    ctx->kernels[2].data = vmalloc(48 * 48 * sizeof(struct complex_val));
+    if (!ctx->kernels[2].data) {
+        vfree(ctx->kernels[0].data);
+        vfree(ctx->kernels[1].data);
+        return -ENOMEM;
+    }
+    
+    /* Generar kernel simbólico (64x64) */
+    for (i = 0; i < 64; i++) {
+        for (j = 0; j < 64; j++) {
+            /* Generar valor complejo con magnitud unitaria y fase aleatoria */
+            u32 angle = get_secure_random(ctx) % 360;
+            
+            ctx->kernels[0].data[i*64 + j].real = cos_deg(angle);
+            ctx->kernels[0].data[i*64 + j].imag = sin_deg(angle);
+        }
+    }
+    
+    /* Generar kernel emocional (32x32) con más variación */
+    for (i = 0; i < 32; i++) {
+        for (j = 0; j < 32; j++) {
+            u32 angle = (get_secure_random(ctx) % 360) + (i*j % 90);
+            
+            ctx->kernels[1].data[i*32 + j].real = cos_deg(angle);
+            ctx->kernels[1].data[i*32 + j].imag = sin_deg(angle);
+        }
+    }
+    
+    /* Generar kernel contextual (48x48) con patrones más suaves */
+    for (i = 0; i < 48; i++) {
+        for (j = 0; j < 48; j++) {
+            u32 angle = (get_secure_random(ctx) % 180) + ((i+j) % 180);
+            
+            ctx->kernels[2].data[i*48 + j].real = cos_deg(angle);
+            ctx->kernels[2].data[i*48 + j].imag = sin_deg(angle);
+        }
+    }
+    
+    return 0;
+}
+
+/* Buffers globales para operaciones FFT */
+static struct complex_val *fft_buffer1, *fft_buffer2;
+
+/**
+ * fft_init - Inicializa los buffers para FFT
+ *
+ * Asigna memoria para los buffers utilizados en la transformada
+ * rápida de Fourier.
+ */
+static int fft_init(void)
+{
+    /* Asignar buffers para FFT */
+    fft_buffer1 = vmalloc(FFT_MAX_SIZE * FFT_MAX_SIZE * sizeof(struct complex_val));
+    if (!fft_buffer1)
+        return -ENOMEM;
+        
+    fft_buffer2 = vmalloc(FFT_MAX_SIZE * FFT_MAX_SIZE * sizeof(struct complex_val));
+    if (!fft_buffer2) {
+        vfree(fft_buffer1);
+        return -ENOMEM;
+    }
+    
+    return 0;
+}
+
+/**
+ * fft_cleanup - Libera los recursos utilizados por FFT
+ */
+static void fft_cleanup(void)
+{
+    if (fft_buffer1)
+        vfree(fft_buffer1);
+    if (fft_buffer2)
+        vfree(fft_buffer2);
+}
+
+/**
+ * fft1d - Implementa FFT unidimensional
+ * @data: Datos complejos a transformar
+ * @n: Tamaño (debe ser potencia de 2)
+ * @inverse: Si es FFT inversa (1) o directa (0)
+ *
+ * Implementa la transformada rápida de Fourier usando el algoritmo
+ * de diezmado en tiempo (decimation-in-time).
+ */
+static void fft1d(struct complex_val *data, int n, int inverse)
+{
+    int i, j, k, m;
+    struct complex_val temp, w, u, t;
+    double angle;
+    
+    /* Ordenar por bit reverso */
+    j = 0;
+    for (i = 0; i < n - 1; i++) {
+        if (i < j) {
+            temp = data[i];
+            data[i] = data[j];
+            data[j] = temp;
+        }
+        
+        k = n >> 1;
+        while (k <= j) {
+            j -= k;
+            k >>= 1;
+        }
+        j += k;
+    }
+    
+    /* Mariposas FFT */
+    for (m = 2; m <= n; m <<= 1) {
+        int m2 = m >> 1;
+        
+        /* Factor W_m^0 */
+        w.real = FIXED_POINT_SCALE;
+        w.imag = 0;
+        
+        /* Calcular W_m^1 */
+        angle = (inverse ? 2 : -2) * M_PI / m;
+        struct complex_val wm1;
+        wm1.real = (int32_t)(cos(angle) * FIXED_POINT_SCALE);
+        wm1.imag = (int32_t)(sin(angle) * FIXED_POINT_SCALE);
+        
+        for (j = 0; j < m2; j++) {
+            for (i = j; i < n; i += m) {
+                k = i + m2;
+                
+                /* Mariposa: t = W_m^j * data[k] */
+                t = cmplx_mul(w, data[k]);
+                
+                /* Calculamos u = data[i] */
+                u = data[i];
+                
+                /* data[i] = u + t */
+                data[i] = cmplx_add(u, t);
+                
+                /* data[k] = u - t */
+                data[k] = cmplx_sub(u, t);
+            }
+            
+            /* Actualizar W: w = w * wm1 */
+            w = cmplx_mul(w, wm1);
+        }
+    }
+    
+    /* Normalizar si es inversa */
+    if (inverse) {
+        for (i = 0; i < n; i++) {
+            data[i].real = data[i].real / n;
+            data[i].imag = data[i].imag / n;
+        }
+    }
+}
+
+/**
+ * fft2d - Implementa FFT bidimensional
+ * @data: Matriz de datos complejos
+ * @nx: Tamaño en X (debe ser potencia de 2)
+ * @ny: Tamaño en Y (debe ser potencia de 2)
+ * @inverse: Si es FFT inversa (1) o directa (0)
+ *
+ * Aplica FFT 2D mediante FFTs 1D en filas y columnas.
+ */
+static void fft2d(struct complex_val *data, int nx, int ny, int inverse)
+{
+    int x, y;
+    struct complex_val *row, *col;
+    
+    /* Buffer temporal para columnas */
+    col = vmalloc(ny * sizeof(struct complex_val));
+    if (!col) {
+        pr_err("HoloMem: No memory for column buffer in FFT2D\n");
+        return;
+    }
+    
+    /* FFT en filas */
+    for (y = 0; y < ny; y++) {
+        row = &data[y * nx];
+        fft1d(row, nx, inverse);
+    }
+    
+    /* FFT en columnas */
+    for (x = 0; x < nx; x++) {
+        /* Extraer columna */
+        for (y = 0; y < ny; y++) {
+            col[y] = data[y * nx + x];
+        }
+        
+        /* FFT en columna */
+        fft1d(col, ny, inverse);
+        
+        /* Volver a colocar columna */
+        for (y = 0; y < ny; y++) {
+            data[y * nx + x] = col[y];
+        }
+    }
+    
+    vfree(col);
+}
+
+/**
+ * apply_fft_convolution - Realiza convolución vía FFT para máxima eficiencia
+ * @pattern: Patrón de entrada
+ * @kernel: Kernel para convolución
+ * @kernel_size: Tamaño del kernel
+ * @output: Buffer de salida para el resultado
+ *
+ * Utiliza la propiedad de que la convolución en el dominio espacial
+ * es equivalente a la multiplicación en el dominio de frecuencia.
+ */
+static int apply_fft_convolution(struct complex_val *pattern, 
+                              struct complex_val *kernel,
+                              int kernel_size, 
+                              struct complex_val *output)
+{
+    int i, j;
+    
+    /* Preparar buffers con zero-padding */
+    memset(fft_buffer1, 0, FFT_MAX_SIZE * FFT_MAX_SIZE * sizeof(struct complex_val));
+    memset(fft_buffer2, 0, FFT_MAX_SIZE * FFT_MAX_SIZE * sizeof(struct complex_val));
+    
+    /* Copiar datos a los buffers */
+    for (i = 0; i < PATTERN_DIM; i++) {
+        for (j = 0; j < PATTERN_DIM; j++) {
+            fft_buffer1[i * FFT_MAX_SIZE + j] = pattern[i * PATTERN_DIM + j];
+        }
+    }
+    
+    /* Copiar kernel con zero-padding centrado */
+    int offset = (FFT_MAX_SIZE - kernel_size) / 2;
+    for (i = 0; i < kernel_size; i++) {
+        for (j = 0; j < kernel_size; j++) {
+            fft_buffer2[(offset + i) * FFT_MAX_SIZE + (offset + j)] = 
+                kernel[i * kernel_size + j];
+        }
+    }
+    
+    /* Aplicar FFT a ambos buffers */
+    fft2d(fft_buffer1, FFT_MAX_SIZE, FFT_MAX_SIZE, 0);
+    fft2d(fft_buffer2, FFT_MAX_SIZE, FFT_MAX_SIZE, 0);
+    
+    /* Multiplicar en dominio de frecuencia (elemento por elemento) */
+    for (i = 0; i < FFT_MAX_SIZE * FFT_MAX_SIZE; i++) {
+        fft_buffer1[i] = cmplx_mul(fft_buffer1[i], fft_buffer2[i]);
+    }
+    
+    /* Aplicar FFT inversa al resultado */
+    fft2d(fft_buffer1, FFT_MAX_SIZE, FFT_MAX_SIZE, 1);
+    
+    /* Copiar resultado al buffer de salida (parte central) */
+    int out_offset = (FFT_MAX_SIZE - PATTERN_DIM) / 2;
+    for (i = 0; i < PATTERN_DIM; i++) {
+        for (j = 0; j < PATTERN_DIM; j++) {
+            output[i * PATTERN_DIM + j] = 
+                fft_buffer1[(out_offset + i) * FFT_MAX_SIZE + (out_offset + j)];
+        }
+    }
+    
+    return 0;
+}

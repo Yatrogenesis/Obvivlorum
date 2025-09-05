@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-09-04T21:19:32.586822",
+  "user_id": "default",
+  "config": {
+    "user_id": "default",
+    "logging": {
+      "level": "INFO",
+      "file": "ai_symbiote.log",
+      "max_size": "10MB",
+      "backup_count": 5
+    },
+    "components": {
+      "aion_protocol": {
+        "enabled": true,
+        "config_file": "AION/config.json"
+      },
+      "obvivlorum_bridge": {
+        "enabled": true,
+        "mock_mode": true
+      },
+      "windows_persistence": {
+        "enabled": true,
+        "auto_install": false
+      },
+      "linux_executor": {
+        "enabled": true,
+        "safe_mode": true
+      },
+      "task_facilitator": {
+        "enabled": true,
+        "learning_enabled": true,
+        "proactive_suggestions": true
+      }
+    },
+    "system": {
+      "heartbeat_interval": 60,
+      "status_file": "symbiote_status.json",
+      "auto_restart": true,
+      "max_restart_attempts": 3,
+      "background_mode": false
+    },
+    "security": {
+      "safe_mode": true,
+      "command_whitelist": [],
+      "blocked_commands": [
+        "rm -rf /",
+        "format",
+        "fdisk"
+      ]
+    }
+  },
+  "components": [
+    "aion",
+    "bridge",
+    "persistence",
+    "linux",
+    "tasks"
+  ]
+}

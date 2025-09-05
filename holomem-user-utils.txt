@@ -1,0 +1,209 @@
+/*
+ * holomem-util.c - User space utilities for holographic memory
+ *
+ * Copyright (C) 2025 Obvlivorum Project
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
+ 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <stdint.h>
+#include <time.h>
+
+/* IOCTL commands - must match kernel definitions */
+#define HOLOMEM_IOC_MAGIC 'h'
+#define HOLOMEM_IOCSTOREPAT    _IOWR(HOLOMEM_IOC_MAGIC, 1, struct holomem_store_cmd)
+#define HOLOMEM_IOCRETPAT      _IOWR(HOLOMEM_IOC_MAGIC, 2, struct holomem_retrieve_cmd)
+#define HOLOMEM_IOCSEARCHPAT   _IOWR(HOLOMEM_IOC_MAGIC, 3, struct holomem_search_cmd)
+#define HOLOMEM_IOCGETSTAT     _IOR(HOLOMEM_IOC_MAGIC, 4, struct holomem_stats)
+#define HOLOMEM_IOCFLUSH       _IO(HOLOMEM_IOC_MAGIC, 5)
+
+/* Matching structures for IOCTL */
+struct holomem_store_cmd {
+    const void *data;           /* Data to store */
+    size_t size;                /* Data size */
+    uint32_t encoding_type;     /* Encoding type (0=symbolic, 1=emotional, 2=contextual) */
+    char name[64];              /* Pattern name */
+    uint64_t pattern_id;        /* Output: assigned pattern ID */
+};
+
+struct holomem_retrieve_cmd {
+    uint64_t pattern_id;        /* Pattern ID to retrieve */
+    void *buffer;               /* Output buffer */
+    size_t buf_size;            /* Buffer size */
+    size_t data_size;           /* Output: actual data size */
+    uint32_t coherence;         /* Output: retrieval confidence/quality */
+};
+
+struct holomem_search_cmd {
+    const void *query;          /* Query data */
+    size_t query_size;          /* Query size */
+    uint32_t encoding_type;     /* Encoding type */
+    uint32_t threshold;         /* Coherence threshold (0-10000) */
+    uint32_t max_results;       /* Maximum results to return */
+    uint64_t *results;          /* Output: pattern IDs */
+    uint32_t *scores;           /* Output: coherence scores */
+    uint32_t result_count;      /* Output: number of results */
+};
+
+struct holomem_stats {
+    uint32_t pattern_count;     /* Number of stored patterns */
+    uint64_t holo_size;         /* Size of holographic space (bytes) */
+    uint64_t total_data_size;   /* Total bytes of data stored */
+    uint64_t store_ops;         /* Total store operations */
+    uint64_t retrieve_ops;      /* Total retrieve operations */
+    uint64_t search_ops;        /* Total search operations */
+};
+
+/* Complex value for pattern data */
+struct complex_val {
+    int32_t real;
+    int32_t imag;
+};
+
+#define PATTERN_DIM 1024        /* Must match kernel definition */
+#define DEVICE_PATH "/dev/holomem"
+
+/* Function declarations */
+int store_pattern(const char *file_path, uint32_t encoding_type, const char *name);
+int retrieve_pattern(uint64_t pattern_id, const char *output_file);
+int search_patterns(const char *query_file, uint32_t encoding_type, uint32_t threshold, uint32_t max_results);
+int show_statistics(void);
+int flush_memory(void);
+void print_usage(const char *prog_name);
+
+/* Main function */
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        print_usage(argv[0]);
+        return 1;
+    }
+    
+    if (strcmp(argv[1], "store") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "Error: store command requires file, encoding type, and name\n");
+            print_usage(argv[0]);
+            return 1;
+        }
+        return store_pattern(argv[2], atoi(argv[3]), argv[4]);
+    }
+    else if (strcmp(argv[1], "retrieve") == 0) {
+        if (argc < 4) {
+            fprintf(stderr, "Error: retrieve command requires pattern ID and output file\n");
+            print_usage(argv[0]);
+            return 1;
+        }
+        return retrieve_pattern(strtoull(argv[2], NULL, 10), argv[3]);
+    }
+    else if (strcmp(argv[1], "search") == 0) {
+        if (argc < 5) {
+            fprintf(stderr, "Error: search command requires query file, encoding type, and threshold\n");
+            print_usage(argv[0]);
+            return 1;
+        }
+        uint32_t max_results = 10;
+        if (argc > 5) {
+            max_results = atoi(argv[5]);
+        }
+        return search_patterns(argv[2], atoi(argv[3]), atoi(argv[4]), max_results);
+    }
+    else if (strcmp(argv[1], "stats") == 0) {
+        return show_statistics();
+    }
+    else if (strcmp(argv[1], "flush") == 0) {
+        return flush_memory();
+    }
+    else {
+        fprintf(stderr, "Error: Unknown command '%s'\n", argv[1]);
+        print_usage(argv[0]);
+        return 1;
+    }
+    
+    return 0;
+}
+
+/* Print usage information */
+void print_usage(const char *prog_name) {
+    printf("Holographic Memory Utility\n");
+    printf("Usage: %s <command> [arguments...]\n\n", prog_name);
+    printf("Commands:\n");
+    printf("  store <file> <encoding_type> <name>   Store a file in holographic memory\n");
+    printf("    encoding_type: 0=symbolic, 1=emotional, 2=contextual\n");
+    printf("  retrieve <pattern_id> <output_file>   Retrieve a pattern from memory\n");
+    printf("  search <query_file> <encoding_type> <threshold> [max_results]\n");
+    printf("    threshold: 0-10000, higher means more similar\n");
+    printf("    max_results: maximum number of results to return (default=10)\n");
+    printf("  stats                                 Show memory statistics\n");
+    printf("  flush                                 Clear all patterns from memory\n");
+}
+
+/* Store a pattern from file */
+int store_pattern(const char *file_path, uint32_t encoding_type, const char *name) {
+    int fd, dev_fd;
+    struct holomem_store_cmd cmd;
+    FILE *file;
+    void *data;
+    long file_size;
+    
+    /* Open input file */
+    file = fopen(file_path, "rb");
+    if (!file) {
+        fprintf(stderr, "Error opening file %s: %s\n", file_path, strerror(errno));
+        return 1;
+    }
+    
+    /* Get file size */
+    fseek(file, 0, SEEK_END);
+    file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    
+    if (file_size <= 0) {
+        fprintf(stderr, "Error: File is empty or invalid\n");
+        fclose(file);
+        return 1;
+    }
+    
+    /* Allocate buffer for file data */
+    data = malloc(file_size);
+    if (!data) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        fclose(file);
+        return 1;
+    }
+    
+    /* Read file data */
+    if (fread(data, 1, file_size, file) != (size_t)file_size) {
+        fprintf(stderr, "Error reading file: %s\n", strerror(errno));
+        free(data);
+        fclose(file);
+        return 1;
+    }
+    
+    fclose(file);
+    
+    /* Open device */
+    dev_fd = open(DEVICE_PATH, O_RDWR);
+    if (dev_fd < 0) {
+        fprintf(stderr, "Error opening device %s: %s\n", DEVICE_PATH, strerror(errno));
+        free(data);
+        return 1;
+    }
+    
+    /* Prepare command */
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.data = data;
+    cmd.size = file_size;
+    cmd.encoding_type = encoding_type;
+    strncpy(cmd.name, name, sizeof(cmd.name) - 1);
+    
+    /*

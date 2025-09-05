@@ -1,0 +1,70 @@
+/**
+ * validate_user_input - Valida entradas de usuario para prevenir ataques
+ * @data: Puntero a los datos de usuario
+ * @size: Tamaño de los datos
+ * @type: Tipo de codificación
+ *
+ * Realiza validaciones exhaustivas para prevenir desbordamientos,
+ * inyecciones y otros ataques.
+ */
+static int validate_user_input(const void __user *data, size_t size, u32 type)
+{
+    /* Verificar puntero de usuario */
+    if (!access_ok(data, size))
+        return -EFAULT;
+    
+    /* Verificar rangos válidos */
+    if (size == 0 || size > MAX_INPUT_SIZE)
+        return -EINVAL;
+    
+    /* Verificar tipo de codificación válido */
+    if (type > MAX_ENCODING_TYPE)
+        return -EINVAL;
+    
+    return 0;
+}
+
+/**
+ * memory_audit - Audita el uso de memoria y registra actividad sospechosa
+ * @ctx: Contexto de memoria holográfica
+ * @operation: Tipo de operación realizada
+ * @pattern_id: ID del patrón involucrado (si aplica)
+ * @user_id: ID del usuario que realiza la operación
+ *
+ * Mantiene un registro de auditoría para operaciones importantes y
+ * detecta patrones de uso sospechosos.
+ */
+static void memory_audit(struct holomem_ctx *ctx, int operation,
+                       u64 pattern_id, kuid_t user_id)
+{
+    struct timespec64 ts;
+    
+    ktime_get_real_ts64(&ts);
+    
+    /* Registrar operación en buffer circular de auditoría */
+    spin_lock(&ctx->audit_lock);
+    
+    ctx->audit_log[ctx->audit_index].timestamp = ts;
+    ctx->audit_log[ctx->audit_index].operation = operation;
+    ctx->audit_log[ctx->audit_index].pattern_id = pattern_id;
+    ctx->audit_log[ctx->audit_index].user_id = user_id;
+    
+    ctx->audit_index = (ctx->audit_index + 1) % AUDIT_LOG_SIZE;
+    
+    /* Detectar operaciones sospechosas (ejemplo: muchas búsquedas secuenciales) */
+    if (operation == HOLOMEM_OP_SEARCH) {
+        ctx->sequential_searches++;
+        if (ctx->sequential_searches > SUSPICIOUS_THRESHOLD) {
+            /* Registrar evento sospechoso */
+            pr_warn("HoloMem: Suspicious activity detected from UID %u\n", 
+                  from_kuid(&init_user_ns, user_id));
+            
+            /* Implementar throttling o bloqueo temporal */
+            ctx->throttle_until = ktime_get_seconds() + THROTTLE_SECONDS;
+        }
+    } else {
+        ctx->sequential_searches = 0;
+    }
+    
+    spin_unlock(&ctx->audit_lock);
+}

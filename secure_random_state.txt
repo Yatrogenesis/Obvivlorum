@@ -1,0 +1,27 @@
+/**
+ * secure_random_state - Genera y mantiene estado seguro para generación de números aleatorios
+ */
+struct random_state {
+    u32 state[4];
+    spinlock_t lock;
+};
+
+static struct random_state g_random_state;
+
+static void init_random_state(void)
+{
+    spin_lock_init(&g_random_state.lock);
+    get_random_bytes(g_random_state.state, sizeof(g_random_state.state));
+}
+
+static u32 get_secure_random(void)
+{
+    u32 result;
+    unsigned long flags;
+    
+    spin_lock_irqsave(&g_random_state.lock, flags);
+    result = prandom_u32_state(g_random_state.state);
+    spin_unlock_irqrestore(&g_random_state.lock, flags);
+    
+    return result;
+}

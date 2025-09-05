@@ -1,0 +1,70 @@
+/**
+ * holomem_cache_init - Inicializa sistema de caché para patrones frecuentes
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Crea una caché LRU (Least Recently Used) para almacenar patrones 
+ * frecuentemente accedidos y mejorar el rendimiento.
+ */
+static int holomem_cache_init(struct holomem_ctx *ctx)
+{
+    /* Inicializar estructuras de caché LRU */
+    INIT_LIST_HEAD(&ctx->pattern_cache.lru_list);
+    spin_lock_init(&ctx->pattern_cache.lock);
+    ctx->pattern_cache.max_entries = 16;  /* Configurable según recursos */
+    ctx->pattern_cache.current_entries = 0;
+    
+    ctx->pattern_cache.entries = kzalloc(
+        sizeof(struct cache_entry) * ctx->pattern_cache.max_entries, 
+        GFP_KERNEL);
+    
+    if (!ctx->pattern_cache.entries)
+        return -ENOMEM;
+    
+    for (int i = 0; i < ctx->pattern_cache.max_entries; i++) {
+        ctx->pattern_cache.entries[i].pattern_data = vmalloc(
+            PATTERN_DIM * PATTERN_DIM * sizeof(struct complex_val));
+        
+        if (!ctx->pattern_cache.entries[i].pattern_data) {
+            /* Liberar recursos ya asignados */
+            for (int j = 0; j < i; j++) {
+                vfree(ctx->pattern_cache.entries[j].pattern_data);
+            }
+            kfree(ctx->pattern_cache.entries);
+            return -ENOMEM;
+        }
+        
+        ctx->pattern_cache.entries[i].valid = false;
+    }
+    
+    return 0;
+}
+
+/**
+ * cache_lookup - Busca un patrón en la caché
+ * @ctx: Contexto de memoria holográfica
+ * @pattern_id: ID del patrón a buscar
+ *
+ * Retorna puntero al patrón en caché o NULL si no se encuentra.
+ */
+static struct complex_val *cache_lookup(struct holomem_ctx *ctx, u64 pattern_id)
+{
+    unsigned long flags;
+    struct complex_val *result = NULL;
+    struct cache_entry *entry;
+    
+    spin_lock_irqsave(&ctx->pattern_cache.lock, flags);
+    
+    list_for_each_entry(entry, &ctx->pattern_cache.lru_list, lru_node) {
+        if (entry->pattern_id == pattern_id && entry->valid) {
+            /* Patrón encontrado, moverlo al principio de la lista LRU */
+            list_del(&entry->lru_node);
+            list_add(&entry->lru_node, &ctx->pattern_cache.lru_list);
+            
+            result = entry->pattern_data;
+            break;
+        }
+    }
+    
+    spin_unlock_irqrestore(&ctx->pattern_cache.lock, flags);
+    return result;
+}

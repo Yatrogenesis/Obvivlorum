@@ -1,0 +1,73 @@
+# Makefile para el módulo de memoria holográfica
+
+# Nombre del módulo
+obj-m := holomem.o
+
+# Dirección del kernel (ajustar según sea necesario)
+KDIR := /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
+# Variables para instalación
+INSTALL_DIR := /lib/modules/$(shell uname -r)/extra
+
+# Flags de compilación
+ccflags-y := -Wall -Werror -O2
+
+# Si se define DEBUG, activar banderas de depuración
+ifdef DEBUG
+    ccflags-y += -DDEBUG -g
+endif
+
+# Si se define OPTIMIZE_AVX, activar optimización AVX
+ifdef OPTIMIZE_AVX
+    ccflags-y += -mavx -mavx2
+endif
+
+all:
+	$(MAKE) -C $(KDIR) M=$(PWD) modules
+
+clean:
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	rm -f *.o *.ko *.mod.c *.mod *.symvers *.order
+
+install:
+	mkdir -p $(INSTALL_DIR)
+	install -m 644 holomem.ko $(INSTALL_DIR)
+	depmod -a
+	@echo "Módulo instalado. Para cargarlo: 'modprobe holomem'"
+
+uninstall:
+	rm -f $(INSTALL_DIR)/holomem.ko
+	depmod -a
+	@echo "Módulo desinstalado."
+
+load:
+	/sbin/insmod holomem.ko
+
+unload:
+	/sbin/rmmod holomem
+
+check:
+	sparse holomem.c
+	$(KDIR)/scripts/checkpatch.pl --file --no-tree holomem.c
+
+test: all
+	@echo "Ejecutando pruebas básicas..."
+	./test_holomem.sh
+
+help:
+	@echo "Objetivos disponibles:"
+	@echo "  all       - Compilar el módulo"
+	@echo "  clean     - Limpiar archivos compilados"
+	@echo "  install   - Instalar el módulo"
+	@echo "  uninstall - Desinstalar el módulo"
+	@echo "  load      - Cargar el módulo"
+	@echo "  unload    - Descargar el módulo"
+	@echo "  check     - Verificar el código"
+	@echo "  test      - Ejecutar pruebas básicas"
+	@echo ""
+	@echo "Variables:"
+	@echo "  DEBUG=1         - Compilar con símbolos de depuración"
+	@echo "  OPTIMIZE_AVX=1  - Compilar con optimizaciones AVX"
+
+.PHONY: all clean install uninstall load unload check test help

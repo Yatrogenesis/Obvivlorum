@@ -1,0 +1,46 @@
+/**
+ * holomem_register_metrics - Registra métricas para sistemas de monitoreo
+ * @ctx: Contexto de memoria holográfica
+ *
+ * Expone contadores y métricas clave para sistemas de monitoreo como
+ * Prometheus, permitiendo vigilancia en tiempo real del rendimiento.
+ */
+static int holomem_register_metrics(struct holomem_ctx *ctx)
+{
+    /* Crear directorio en sysfs */
+    ctx->sysfs_dir = kobject_create_and_add("holomem", kernel_kobj);
+    if (!ctx->sysfs_dir)
+        return -ENOMEM;
+    
+    /* Registrar métricas individuales */
+    
+    /* Almacenamiento - Operaciones totales */
+    if (sysfs_create_file(ctx->sysfs_dir, &store_ops_attr.attr))
+        goto err_cleanup;
+    
+    /* Recuperación - Operaciones totales */
+    if (sysfs_create_file(ctx->sysfs_dir, &retrieve_ops_attr.attr))
+        goto err_cleanup;
+    
+    /* Búsqueda - Operaciones totales */
+    if (sysfs_create_file(ctx->sysfs_dir, &search_ops_attr.attr))
+        goto err_cleanup;
+    
+    /* Patrones almacenados actualmente */
+    if (sysfs_create_file(ctx->sysfs_dir, &pattern_count_attr.attr))
+        goto err_cleanup;
+    
+    /* Uso de memoria */
+    if (sysfs_create_file(ctx->sysfs_dir, &memory_usage_attr.attr))
+        goto err_cleanup;
+    
+    /* Tasa de aciertos de caché */
+    if (sysfs_create_file(ctx->sysfs_dir, &cache_hit_rate_attr.attr))
+        goto err_cleanup;
+    
+    return 0;
+    
+err_cleanup:
+    kobject_put(ctx->sysfs_dir);
+    return -ENOMEM;
+}

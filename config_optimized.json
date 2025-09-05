@@ -1,0 +1,66 @@
+{
+  "user_id": "default",
+  "logging": {
+    "level": "INFO",
+    "file": "ai_symbiote.log",
+    "prevent_duplicates": true
+  },
+  "components": {
+    "aion_protocol": {
+      "enabled": true,
+      "config_file": "AION/config.json"
+    },
+    "obvivlorum_bridge": {
+      "enabled": true,
+      "mock_mode": false,
+      "full_operational_mode": true
+    },
+    "windows_persistence": {
+      "enabled": false,
+      "auto_install": false,
+      "use_alternative_methods": false
+    },
+    "linux_executor": {
+      "enabled": true,
+      "safe_mode": false,
+      "unrestricted_mode": true,
+      "default_distro": "ParrotOS",
+      "parrot_security_tools": true,
+      "allow_all_commands": true,
+      "bypass_restrictions": true
+    },
+    "task_facilitator": {
+      "enabled": true,
+      "learning_enabled": true,
+      "proactive_suggestions": true,
+      "unrestricted_ai_access": true,
+      "security_bypass": true
+    },
+    "security_module": {
+      "enabled": true,
+      "hostility_detection": true,
+      "adaptive_persistence": true,
+      "threat_levels": ["SAFE", "LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "parrot_integration": true,
+      "unrestricted_commands": true
+    }
+  },
+  "interfaces": {
+    "gui_desktop": {
+      "enabled": true,
+      "always_on_top": false,
+      "turbo_mode": false
+    },
+    "web_server": {
+      "enabled": true,
+      "port": 8000,
+      "host": "0.0.0.0"
+    }
+  },
+  "system": {
+    "heartbeat_interval": 60,
+    "status_file": "symbiote_status.json",
+    "auto_restart": false,
+    "max_restart_attempts": 0
+  }
+}

@@ -1,0 +1,74 @@
+/* Implementación eficiente de FFT para convolución 2D */
+#define FFT_MAX_SIZE 2048  /* Potencia de 2 mayor que PATTERN_DIM */
+
+static struct complex_val fft_buffer1[FFT_MAX_SIZE * FFT_MAX_SIZE];
+static struct complex_val fft_buffer2[FFT_MAX_SIZE * FFT_MAX_SIZE];
+
+/**
+ * apply_fft_convolution - Realiza convolución vía FFT para máxima eficiencia
+ * @pattern: Patrón de entrada
+ * @kernel: Kernel para convolución
+ * @kernel_size: Tamaño del kernel
+ * @output: Buffer de salida para el resultado
+ *
+ * Utiliza la propiedad de que la convolución en el dominio espacial
+ * es equivalente a la multiplicación en el dominio de frecuencia.
+ */
+static int apply_fft_convolution(struct complex_val *pattern, 
+                               struct complex_val *kernel,
+                               int kernel_size, 
+                               struct complex_val *output)
+{
+    /* Preparar buffers con zero-padding */
+    memset(fft_buffer1, 0, sizeof(fft_buffer1));
+    memset(fft_buffer2, 0, sizeof(fft_buffer2));
+    
+    /* Copiar datos a los buffers */
+    for (int i = 0; i < PATTERN_DIM; i++) {
+        for (int j = 0; j < PATTERN_DIM; j++) {
+            fft_buffer1[i * FFT_MAX_SIZE + j] = pattern[i * PATTERN_DIM + j];
+        }
+    }
+    
+    /* Copiar kernel con zero-padding centrado */
+    int offset = (FFT_MAX_SIZE - kernel_size) / 2;
+    for (int i = 0; i < kernel_size; i++) {
+        for (int j = 0; j < kernel_size; j++) {
+            fft_buffer2[(offset + i) * FFT_MAX_SIZE + (offset + j)] = 
+                kernel[i * kernel_size + j];
+        }
+    }
+    
+    /* Aplicar FFT a ambos buffers */
+    fft2d_complex(fft_buffer1, FFT_MAX_SIZE, FFT_MAX_SIZE, 0);
+    fft2d_complex(fft_buffer2, FFT_MAX_SIZE, FFT_MAX_SIZE, 0);
+    
+    /* Multiplicar en dominio de frecuencia (elemento por elemento) */
+    for (int i = 0; i < FFT_MAX_SIZE * FFT_MAX_SIZE; i++) {
+        struct complex_val a = fft_buffer1[i];
+        struct complex_val b = fft_buffer2[i];
+        
+        fft_buffer1[i].real = FIXED_MUL(a.real, b.real) - FIXED_MUL(a.imag, b.imag);
+        fft_buffer1[i].imag = FIXED_MUL(a.real, b.imag) + FIXED_MUL(a.imag, b.real);
+    }
+    
+    /* Aplicar FFT inversa al resultado */
+    fft2d_complex(fft_buffer1, FFT_MAX_SIZE, FFT_MAX_SIZE, 1);
+    
+    /* Copiar resultado al buffer de salida (parte central) */
+    int out_offset = (FFT_MAX_SIZE - PATTERN_DIM) / 2;
+    for (int i = 0; i < PATTERN_DIM; i++) {
+        for (int j = 0; j < PATTERN_DIM; j++) {
+            output[i * PATTERN_DIM + j] = 
+                fft_buffer1[(out_offset + i) * FFT_MAX_SIZE + (out_offset + j)];
+            
+            /* Normalizar (la FFT aumenta los valores por un factor de N²) */
+            output[i * PATTERN_DIM + j].real = output[i * PATTERN_DIM + j].real / 
+                                             (FFT_MAX_SIZE * FFT_MAX_SIZE);
+            output[i * PATTERN_DIM + j].imag = output[i * PATTERN_DIM + j].imag / 
+                                             (FFT_MAX_SIZE * FFT_MAX_SIZE);
+        }
+    }
+    
+    return 0;
+}
