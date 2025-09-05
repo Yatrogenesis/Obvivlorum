@@ -32,18 +32,8 @@ exit /b 0
     REM Create on C: Desktop if exists
     if exist "%DESKTOP_C%" (
         set "SHORTCUT_PATH=%DESKTOP_C%\%SHORTCUT_NAME%.lnk"
-        powershell -Command "
-        $WshShell = New-Object -ComObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut('!SHORTCUT_PATH!')
-        $Shortcut.TargetPath = 'python'
-        $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'
-        $Shortcut.WorkingDirectory = '%PROJECT_DIR%'
-        $Shortcut.Description = '%DESCRIPTION%'
-        $Shortcut.IconLocation = 'shell32.dll,137'
-        $Shortcut.WindowStyle = 1
-        $Shortcut.Save()
-        "
-        if exist "!SHORTCUT_PATH!" (
+        powershell -Command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%DESKTOP_C%\%SHORTCUT_NAME%.lnk'); $Shortcut.TargetPath = 'python'; $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'; $Shortcut.WorkingDirectory = '%PROJECT_DIR%'; $Shortcut.Description = '%DESCRIPTION%'; $Shortcut.IconLocation = 'shell32.dll,137'; $Shortcut.WindowStyle = 1; $Shortcut.Save()"
+        if exist "%DESKTOP_C%\%SHORTCUT_NAME%.lnk" (
             echo   OK - C: Desktop created
         )
     )
@@ -51,18 +41,8 @@ exit /b 0
     REM Create on D: Desktop if exists
     if exist "%DESKTOP_D%" (
         set "SHORTCUT_PATH=%DESKTOP_D%\%SHORTCUT_NAME%.lnk"
-        powershell -Command "
-        $WshShell = New-Object -ComObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut('!SHORTCUT_PATH!')
-        $Shortcut.TargetPath = 'python'
-        $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'
-        $Shortcut.WorkingDirectory = '%PROJECT_DIR%'
-        $Shortcut.Description = '%DESCRIPTION%'
-        $Shortcut.IconLocation = 'shell32.dll,137'
-        $Shortcut.WindowStyle = 1
-        $Shortcut.Save()
-        "
-        if exist "!SHORTCUT_PATH!" (
+        powershell -Command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%DESKTOP_D%\%SHORTCUT_NAME%.lnk'); $Shortcut.TargetPath = 'python'; $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'; $Shortcut.WorkingDirectory = '%PROJECT_DIR%'; $Shortcut.Description = '%DESCRIPTION%'; $Shortcut.IconLocation = 'shell32.dll,137'; $Shortcut.WindowStyle = 1; $Shortcut.Save()"
+        if exist "%DESKTOP_D%\%SHORTCUT_NAME%.lnk" (
             echo   OK - D: Desktop created
         )
     )
@@ -71,18 +51,8 @@ exit /b 0
     set "STARTMENU=%APPDATA%\Microsoft\Windows\Start Menu\Programs"
     if exist "%STARTMENU%" (
         set "SHORTCUT_PATH=%STARTMENU%\%SHORTCUT_NAME%.lnk"
-        powershell -Command "
-        $WshShell = New-Object -ComObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut('!SHORTCUT_PATH!')
-        $Shortcut.TargetPath = 'python'
-        $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'
-        $Shortcut.WorkingDirectory = '%PROJECT_DIR%'
-        $Shortcut.Description = '%DESCRIPTION%'
-        $Shortcut.IconLocation = 'shell32.dll,137'
-        $Shortcut.WindowStyle = 1
-        $Shortcut.Save()
-        "
-        if exist "!SHORTCUT_PATH!" (
+        powershell -Command "$WshShell = New-Object -ComObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('%STARTMENU%\%SHORTCUT_NAME%.lnk'); $Shortcut.TargetPath = 'python'; $Shortcut.Arguments = '%PROJECT_DIR%%TARGET_FILE%'; $Shortcut.WorkingDirectory = '%PROJECT_DIR%'; $Shortcut.Description = '%DESCRIPTION%'; $Shortcut.IconLocation = 'shell32.dll,137'; $Shortcut.WindowStyle = 1; $Shortcut.Save()"
+        if exist "%STARTMENU%\%SHORTCUT_NAME%.lnk" (
             echo   OK - Start Menu created
         )
     )

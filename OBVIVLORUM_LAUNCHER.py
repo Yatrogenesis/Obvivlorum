@@ -281,7 +281,7 @@ class ObvivlorumLauncher:
                                 relief='solid',
                                 borderwidth=1,
                                 cursor='hand2')
-            card_frame.grid(row=row, col=col, padx=10, pady=10, sticky='nsew')
+            card_frame.grid(row=row, column=col, padx=10, pady=10, sticky='nsew')
             
             # Configure grid weights
             parent.grid_rowconfigure(row, weight=1)
