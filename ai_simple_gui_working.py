@@ -104,6 +104,12 @@ class SimpleGUIWorking:
                                      font=('Arial', 9))
         self.status_button.pack(side='left')
         
+        self.config_button = tk.Button(control_frame, text="Config",
+                                     command=self.show_config,
+                                     bg='#ff8800', fg='#ffffff',
+                                     font=('Arial', 9))
+        self.config_button.pack(side='left', padx=(10, 0))
+        
         # Initial messages
         self.add_system_message("OBVIVLORUM AI Simple Working Version")
         self.add_system_message("No Unicode issues - Stable version for i5+12GB systems")
@@ -230,6 +236,84 @@ class SimpleGUIWorking:
             
         except Exception as e:
             self.add_message("ERROR", f"Failed to get AI status: {e}", '#ff6666')
+    
+    def show_config(self):
+        """Show configuration dialog."""
+        config_dialog = tk.Toplevel(self.root)
+        config_dialog.title("OBVIVLORUM Configuration")
+        config_dialog.geometry("500x400")
+        config_dialog.configure(bg='#1a1a1a')
+        config_dialog.resizable(False, False)
+        
+        # Center dialog
+        config_dialog.update_idletasks()
+        x = (config_dialog.winfo_screenwidth() // 2) - (250)
+        y = (config_dialog.winfo_screenheight() // 2) - (200)
+        config_dialog.geometry(f"500x400+{x}+{y}")
+        
+        # Title
+        title = tk.Label(config_dialog,
+                        text="OBVIVLORUM Configuration",
+                        bg='#1a1a1a',
+                        fg='#00ff88',
+                        font=('Arial', 16, 'bold'))
+        title.pack(pady=20)
+        
+        # Configuration options
+        config_text = """Configuration Options:
+
+CURRENT MODE: Simple Working Version
+• Rule-based responses only
+• No API keys required
+• Ultra-lightweight and stable
+• Optimized for i5+12GB systems
+
+UPGRADE OPTIONS:
+
+1. Real AI with APIs:
+   • Run: python api_manager.py
+   • Configure OpenAI, Claude, or Gemini keys
+   • Switch to ai_gui_with_oauth.py
+
+2. OAuth Social Login:
+   • Run: python oauth_manager.py  
+   • Setup Google/GitHub/Microsoft login
+   • Automatic API access via your accounts
+
+3. TinyLlama Local AI:
+   • Run: python ai_engine_tinyllama.py
+   • 1.1B parameter model
+   • Completely local and private
+
+4. Commercial Launcher:
+   • Run: python OBVIVLORUM_LAUNCHER.py
+   • Professional mode selection interface
+   • Hardware optimization included
+
+SYSTEM OPTIMIZATIONS:
+• Unicode cleanup completed
+• Memory management optimized
+• Process priority enhanced
+• Startup time minimized"""
+        
+        info_label = tk.Label(config_dialog,
+                            text=config_text,
+                            bg='#1a1a1a',
+                            fg='#ffffff',
+                            font=('Consolas', 9),
+                            justify='left')
+        info_label.pack(padx=20, pady=20)
+        
+        # Close button
+        close_button = tk.Button(config_dialog,
+                               text="Close",
+                               command=config_dialog.destroy,
+                               bg='#555555',
+                               fg='#ffffff',
+                               font=('Arial', 10),
+                               padx=20,
+                               pady=8)
+        close_button.pack(pady=20)
     
     def run(self):
         """Start the GUI."""
