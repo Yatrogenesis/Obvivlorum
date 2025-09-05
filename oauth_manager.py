@@ -114,18 +114,18 @@ class OAuthManager:
     
     def _setup_real_oauth_configs(self):
         """Set up REAL OAuth configurations."""
-        # REAL Google OAuth - Uses Google's native application client ID
+        # REAL Google OAuth - Uses Google's desktop application with local server
         self.configs[OAuthProvider.GOOGLE] = OAuthConfig(
             provider=OAuthProvider.GOOGLE,
-            client_id="764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com",  # Google Sample native app
+            client_id="764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com",  # Google Sample desktop app
             client_secret="d-FL95Q19q7MQmFpd7hHD0Ty",
-            redirect_uri="urn:ietf:wg:oauth:2.0:oob",
+            redirect_uri="http://localhost:8080/callback",
             scope="openid email profile",
             auth_url="https://accounts.google.com/o/oauth2/v2/auth",
             token_url="https://oauth2.googleapis.com/token",
             user_info_url="https://www.googleapis.com/oauth2/v2/userinfo",
             enabled=True,
-            flow_type="installed"
+            flow_type="web"
         )
         
         # REAL GitHub OAuth - Uses device flow
