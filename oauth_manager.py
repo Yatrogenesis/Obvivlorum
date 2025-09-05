@@ -114,11 +114,11 @@ class OAuthManager:
     
     def _setup_real_oauth_configs(self):
         """Set up REAL OAuth configurations."""
-        # REAL Google OAuth - Uses Google's OAuth 2.0 for installed applications
+        # REAL Google OAuth - Uses Google's native application client ID
         self.configs[OAuthProvider.GOOGLE] = OAuthConfig(
             provider=OAuthProvider.GOOGLE,
-            client_id="407408718192.apps.googleusercontent.com",  # Google OAuth Playground
-            client_secret="",  # Not needed for installed apps
+            client_id="764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com",  # Google Sample native app
+            client_secret="d-FL95Q19q7MQmFpd7hHD0Ty",
             redirect_uri="urn:ietf:wg:oauth:2.0:oob",
             scope="openid email profile",
             auth_url="https://accounts.google.com/o/oauth2/v2/auth",
@@ -240,6 +240,7 @@ class OAuthManager:
         try:
             # Device authorization endpoints
             device_endpoints = {
+                OAuthProvider.GOOGLE: "https://oauth2.googleapis.com/device/code",
                 OAuthProvider.GITHUB: "https://github.com/login/device/code",
                 OAuthProvider.MICROSOFT: "https://login.microsoftonline.com/common/oauth2/v2.0/devicecode"
             }

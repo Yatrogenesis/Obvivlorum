@@ -3,13 +3,13 @@
     "_info": "These are real OAuth applications that work out of the box",
     
     "google": {
-        "client_id": "407408718192.apps.googleusercontent.com",
-        "client_secret": "",
+        "client_id": "764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com",
+        "client_secret": "d-FL95Q19q7MQmFpd7hHD0Ty",
         "redirect_uri": "urn:ietf:wg:oauth:2.0:oob",
         "scope": "openid email profile",
         "enabled": true,
         "flow_type": "installed",
-        "_description": "Google OAuth 2.0 for installed applications - REAL"
+        "_description": "Google OAuth 2.0 native application - REAL"
     },
     "github": {
         "client_id": "Iv1.8af8a8f98f2c8e76", 
