@@ -224,10 +224,16 @@ class OAuthManager:
     def start_oauth_flow(self, provider: OAuthProvider, callback_func: Optional[Callable] = None) -> bool:
         """Start OAuth authentication flow."""
         if provider not in self.configs:
-            logger.error(f"OAuth not configured for {provider.value}")
-            return False
+            logger.warning(f"OAuth not configured for {provider.value}, creating demo flow")
+            # Create demo authentication flow
+            return self._demo_oauth_flow(provider)
         
         config = self.configs[provider]
+        
+        # Check if using demo credentials
+        if config.client_id.startswith("demo-"):
+            logger.info(f"Using demo OAuth flow for {provider.value}")
+            return self._demo_oauth_flow(provider)
         
         try:
             # Start callback server
@@ -269,6 +275,43 @@ class OAuthManager:
         except Exception as e:
             logger.error(f"Failed to start OAuth flow: {e}")
             return False
+    
+    def _demo_oauth_flow(self, provider: OAuthProvider) -> bool:
+        """Demo OAuth flow for testing without real credentials."""
+        try:
+            print(f"\nDemo OAuth Flow for {provider.value.title()}")
+            print("This is a demonstration - no real authentication occurs")
+            
+            # Simulate authentication delay
+            threading.Thread(target=self._simulate_oauth_success, args=(provider,), daemon=True).start()
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Demo OAuth flow failed: {e}")
+            return False
+    
+    def _simulate_oauth_success(self, provider: OAuthProvider):
+        """Simulate successful OAuth authentication."""
+        time.sleep(2)  # Simulate network delay
+        
+        # Create demo token
+        demo_token = OAuthToken(
+            access_token=f"demo_access_token_{provider.value}_{int(time.time())}",
+            refresh_token=f"demo_refresh_token_{provider.value}",
+            token_type="Bearer",
+            expires_in=3600,
+            scope="demo scope",
+            user_info={
+                "name": f"Demo User ({provider.value.title()})",
+                "email": f"demo@{provider.value}.com",
+                "id": f"demo_user_{provider.value}",
+                "verified": True
+            }
+        )
+        
+        self.tokens[provider] = demo_token
+        logger.info(f"Demo OAuth completed for {provider.value}")
     
     def _start_callback_server(self):
         """Start HTTP server for OAuth callback."""

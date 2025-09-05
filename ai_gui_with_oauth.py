@@ -257,10 +257,14 @@ class OAuthGUI:
                 elif provider == OAuthProvider.GITHUB:
                     self.provider_combo.set("OpenAI")
                     self.on_provider_changed()
+                elif provider == OAuthProvider.MICROSOFT:
+                    self.provider_combo.set("OpenAI")
+                    self.on_provider_changed()
             else:
                 self.add_system_message("OAuth completed but failed to get user info")
         else:
-            self.add_system_message("OAuth flow not completed yet...")
+            # Check again after a short delay for demo flow
+            self.root.after(2000, lambda: self.check_oauth_completion(provider))
     
     def logout_current(self):
         """Logout current user."""

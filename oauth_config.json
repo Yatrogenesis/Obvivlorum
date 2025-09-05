@@ -1,0 +1,23 @@
+{
+    "google": {
+        "client_id": "demo-google-client-id",
+        "client_secret": "demo-google-client-secret",
+        "redirect_uri": "http://localhost:8080/callback",
+        "scope": "openid email profile",
+        "enabled": true
+    },
+    "github": {
+        "client_id": "demo-github-client-id", 
+        "client_secret": "demo-github-client-secret",
+        "redirect_uri": "http://localhost:8080/callback",
+        "scope": "user:email",
+        "enabled": true
+    },
+    "microsoft": {
+        "client_id": "demo-microsoft-client-id",
+        "client_secret": "demo-microsoft-client-secret", 
+        "redirect_uri": "http://localhost:8080/callback",
+        "scope": "openid profile email",
+        "enabled": true
+    }
+}
