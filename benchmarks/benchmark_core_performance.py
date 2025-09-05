@@ -312,7 +312,7 @@ class BenchmarkRunner:
     
     def run_all_benchmarks(self):
         """Run all benchmark suites"""
-        print("🚀 Starting Obvivlorum Performance Benchmarks")
+        print(" Starting Obvivlorum Performance Benchmarks")
         print("=" * 60)
         
         # System information

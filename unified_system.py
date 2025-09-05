@@ -6,8 +6,8 @@ OBVIVLORUM-NEXUS UNIFIED SYSTEM
 ================================
 
 Sistema Unificado que integra:
-- Obvivlorum: Framework cuántico-simbólico original
-- NEXUS AI: Motor neuroplástico avanzado
+- Obvivlorum: Framework cuantico-simbolico original
+- NEXUS AI: Motor neuroplastico avanzado
 - AION Protocol: Protocolos de desarrollo
 - AI Symbiote: Orquestador adaptativo
 
@@ -588,14 +588,14 @@ async def main():
     args = parser.parse_args()
     
     print("""
-╔══════════════════════════════════════════════════════════════╗
-║           OBVIVLORUM-NEXUS UNIFIED SYSTEM v2.0              ║
-║                                                              ║
-║  Quantum-Symbolic Framework + Neuroplastic AI Engine        ║
-║                                                              ║
-║  Author: Francisco Molina                                   ║
-║  ORCID: https://orcid.org/0009-0008-6093-8267              ║
-╚══════════════════════════════════════════════════════════════╝
+
+           OBVIVLORUM-NEXUS UNIFIED SYSTEM v2.0              
+                                                              
+  Quantum-Symbolic Framework + Neuroplastic AI Engine        
+                                                              
+  Author: Francisco Molina                                   
+  ORCID: https://orcid.org/0009-0008-6093-8267              
+
     """)
     
     # Load configuration
@@ -617,18 +617,18 @@ async def main():
             "symbols": ["test", "integration"],
             "test_mode": True
         })
-        print(f"   Quantum processing: {'✓' if obvivlorum_test else '✗'}")
+        print(f"   Quantum processing: {'[OK]' if obvivlorum_test else '[FAIL]'}")
         
         # Test NEXUS
         if unified.nexus:
             print("\n2. Testing NEXUS AI...")
             nexus_status = unified.nexus.get_status()
-            print(f"   NEXUS operational: {'✓' if nexus_status else '✗'}")
+            print(f"   NEXUS operational: {'[OK]' if nexus_status else '[FAIL]'}")
         
         # Test AION
         if unified.aion:
             print("\n3. Testing AION Protocol...")
-            print("   AION bridge active: ✓")
+            print("   AION bridge active: [OK]")
         
         # Test unified processing
         print("\n4. Testing Unified Processing...")
@@ -636,7 +636,7 @@ async def main():
             "type": "general",
             "test": True
         })
-        print(f"   Integration successful: {'✓' if unified_test else '✗'}")
+        print(f"   Integration successful: {'[OK]' if unified_test else '[FAIL]'}")
         
         print("\n[TEST COMPLETE] All systems operational")
         return

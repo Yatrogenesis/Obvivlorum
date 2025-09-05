@@ -52,11 +52,11 @@ class TestQuantumFormalism:
         state_vector = np.array([1, 2, 3], dtype=complex)
         quantum_state = QuantumState(state_vector)
         
-        # Check normalization: ||ψ|| = 1
+        # Check normalization: ||?|| = 1
         norm = np.linalg.norm(quantum_state.state_vector)
         assert np.isclose(norm, 1.0, atol=1e-10)
         
-        # Check density matrix trace: Tr(ρ) = 1
+        # Check density matrix trace: Tr(?) = 1
         trace = np.trace(quantum_state.density_matrix)
         assert np.isclose(trace, 1.0, atol=1e-10)
     
@@ -125,7 +125,7 @@ class TestConsciousnessMetrics:
         return ConsciousnessAssessment(test_network)
     
     def test_phi_calculation_bounds(self, consciousness_assessor):
-        """Test that Φ (phi) values are within reasonable bounds"""
+        """Test that ? (phi) values are within reasonable bounds"""
         test_states = [
             np.zeros(8),  # Inactive state
             np.ones(8),   # Fully active state

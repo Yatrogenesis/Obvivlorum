@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 
 class UnifiedConfigManager:
     """
-    GESTOR DE CONFIGURACIÓN UNIFICADO
+    GESTOR DE CONFIGURACION UNIFICADO
     
-    Características:
+    Caracteristicas:
     1. Un solo punto de entrada para todas las opciones
-    2. Detección automática de entorno (local/Colab/Kaggle)
+    2. Deteccion automatica de entorno (local/Colab/Kaggle)
     3. Sistema de advertencias inteligente por volumen de datos
-    4. Escalado incremental automático
+    4. Escalado incremental automatico
     """
     
     def __init__(self):
@@ -34,14 +34,14 @@ class UnifiedConfigManager:
         self.config_path = Path("config")
         self.config_path.mkdir(exist_ok=True)
         
-        # Detectar entorno automáticamente
+        # Detectar entorno automaticamente
         self.environment = self.detect_environment()
         self.scaling_level = self.configure_scaling_level(self.environment)
         
         logger.info(f"UnifiedConfigManager initialized - Environment: {self.environment}, Scaling: {self.scaling_level}")
     
     def detect_environment(self) -> str:
-        """Detección automática del entorno de ejecución"""
+        """Deteccion automatica del entorno de ejecucion"""
         # Google Colab detection
         if 'google.colab' in sys.modules:
             return "colab"
@@ -58,11 +58,11 @@ class UnifiedConfigManager:
         return "local"
     
     def configure_scaling_level(self, detected_env: str, user_preference: Optional[str] = None) -> str:
-        """Configuración inteligente del nivel de escalado"""
+        """Configuracion inteligente del nivel de escalado"""
         if user_preference:
             return self._validate_scaling_level(user_preference, detected_env)
         
-        # Auto-configuración según entorno
+        # Auto-configuracion segun entorno
         env_mapping = {
             "local": "level_1_local",
             "colab": "level_2_colab", 
@@ -72,7 +72,7 @@ class UnifiedConfigManager:
         return env_mapping.get(detected_env, "level_1_local")
     
     def _validate_scaling_level(self, level: str, env: str) -> str:
-        """Validación de nivel de escalado según entorno"""
+        """Validacion de nivel de escalado segun entorno"""
         valid_levels = {
             "local": ["level_1_local"],
             "colab": ["level_1_local", "level_2_colab"],
@@ -90,19 +90,19 @@ class UnifiedConfigManager:
         """Sistema de advertencias por volumen de datos"""
         warnings = {
             "level_2_colab": {
-                "message": "⚠️  ADVERTENCIA: Escalado a Google Colab (matrices 1024x1024)",
+                "message": "  ADVERTENCIA: Escalado a Google Colab (matrices 1024x1024)",
                 "details": "Uso de GPU T4/V100, 12GB memoria. Procesamiento intensivo.",
                 "matrix_size": 1024,
                 "confirmation_required": True
             },
             "level_3_kaggle": {
-                "message": "🚨 ADVERTENCIA: Escalado a Kaggle (matrices 2048x2048)",
+                "message": " ADVERTENCIA: Escalado a Kaggle (matrices 2048x2048)",
                 "details": "Uso masivo: 30GB RAM + GPU. Procesamiento muy intensivo.",
                 "matrix_size": 2048,
                 "confirmation_required": True
             },
             "level_4_hybrid": {
-                "message": "🔥 ADVERTENCIA: Escalado Híbrido (matrices 4096x4096+)",
+                "message": " ADVERTENCIA: Escalado Hibrido (matrices 4096x4096+)",
                 "details": "Sistema distribuido. Uso de recursos extremo.",
                 "matrix_size": 4096,
                 "confirmation_required": True
@@ -113,7 +113,7 @@ class UnifiedConfigManager:
             warning = warnings[scaling_level]
             print(f"\n{warning['message']}")
             print(f"{warning['details']}")
-            print(f"Tamaño de matriz objetivo: {warning['matrix_size']}x{warning['matrix_size']}")
+            print(f"Tamano de matriz objetivo: {warning['matrix_size']}x{warning['matrix_size']}")
             
             if warning['confirmation_required']:
                 response = input("\nEscriba 'CONFIRMO' para continuar o Enter para cancelar: ")
@@ -122,7 +122,7 @@ class UnifiedConfigManager:
         return True  # No warning needed for local
     
     def get_scaling_config(self, scaling_level: str) -> Dict[str, Any]:
-        """Obtener configuración específica del nivel de escalado"""
+        """Obtener configuracion especifica del nivel de escalado"""
         configs = {
             "level_1_local": {
                 "max_matrix_size": 200,
@@ -162,7 +162,7 @@ class UnifiedConfigManager:
         return configs.get(scaling_level, configs["level_1_local"])
     
     def save_config(self) -> str:
-        """Guardar configuración unificada"""
+        """Guardar configuracion unificada"""
         config = {
             "unified_system": {
                 "version": "2.1-UNIFIED",
@@ -182,7 +182,7 @@ class UnifiedConfigManager:
         return str(config_file)
     
     def load_config(self, config_file: Optional[str] = None) -> Dict[str, Any]:
-        """Cargar configuración unificada"""
+        """Cargar configuracion unificada"""
         if config_file is None:
             config_file = self.config_path / "unified_system_config.json"
         
@@ -194,7 +194,7 @@ class UnifiedConfigManager:
             return {}
     
     def get_system_info(self) -> Dict[str, Any]:
-        """Información completa del sistema para diagnóstico"""
+        """Informacion completa del sistema para diagnostico"""
         return {
             "environment": self.environment,
             "scaling_level": self.scaling_level,
@@ -207,28 +207,28 @@ class UnifiedConfigManager:
         }
 
 if __name__ == "__main__":
-    # Test básico del sistema
-    print("🚀 UNIFIED CONFIG MANAGER - TEST")
+    # Test basico del sistema
+    print(" UNIFIED CONFIG MANAGER - TEST")
     
     config_manager = UnifiedConfigManager()
     
-    # Mostrar información del sistema
+    # Mostrar informacion del sistema
     info = config_manager.get_system_info()
-    print(f"\n📊 INFORMACIÓN DEL SISTEMA:")
+    print(f"\n INFORMACION DEL SISTEMA:")
     for key, value in info.items():
         print(f"  {key}: {value}")
     
     # Test de advertencias
-    print(f"\n⚠️  TEST DE ADVERTENCIAS:")
+    print(f"\n  TEST DE ADVERTENCIAS:")
     for level in ["level_1_local", "level_2_colab", "level_3_kaggle"]:
         print(f"\nTesting {level}:")
-        # Para test automático, simular confirmación
+        # Para test automatico, simular confirmacion
         config_manager.scaling_level = level
-        # En test no interactivo, skip la confirmación
-        print(f"  Configuración: {config_manager.get_scaling_config(level)}")
+        # En test no interactivo, skip la confirmacion
+        print(f"  Configuracion: {config_manager.get_scaling_config(level)}")
     
-    # Guardar configuración
+    # Guardar configuracion
     config_file = config_manager.save_config()
-    print(f"\n💾 Configuración guardada en: {config_file}")
+    print(f"\n Configuracion guardada en: {config_file}")
     
-    print("\n✅ UNIFIED CONFIG MANAGER - TEST COMPLETADO")
+    print("\n UNIFIED CONFIG MANAGER - TEST COMPLETADO")

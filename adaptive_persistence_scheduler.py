@@ -7,7 +7,7 @@ Adaptive Persistence Scheduler for AI Symbiote
 
 Scheduler adaptativo que habilita/deshabilita persistencia basado en:
 1. Estabilidad del sistema (logs de arranque)
-2. Entorno de operación (lab/producción) 
+2. Entorno de operacion (lab/produccion) 
 3. Nivel de amenaza detectado
 4. Interruptores de control manual
 

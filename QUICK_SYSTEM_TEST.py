@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Test rápido del sistema AI Symbiote con Auditoría de Seguridad Avanzada
+Test rapido del sistema AI Symbiote con Auditoria de Seguridad Avanzada
 """
 import os
 import sys
@@ -14,7 +14,7 @@ import winreg
 from datetime import datetime
 
 def quick_test():
-    """Test rápido de funcionalidad."""
+    """Test rapido de funcionalidad."""
     print("AI SYMBIOTE - TEST RAPIDO")
     print("=" * 30)
     
@@ -110,14 +110,14 @@ def quick_test():
     except Exception as e:
         print(f"ERROR - {e}")
     
-    # AUDITORÍA DE SEGURIDAD AVANZADA
-    print("\n" + "🔒 AUDITORÍA DE SEGURIDAD AVANZADA")
+    # AUDITORIA DE SEGURIDAD AVANZADA
+    print("\n" + " AUDITORIA DE SEGURIDAD AVANZADA")
     print("=" * 40)
     
     security_tests_passed = 0
     security_total_tests = 5
     
-    # Test 1: Integridad de archivos críticos
+    # Test 1: Integridad de archivos criticos
     print("[SEC-1/5] Integridad de archivos... ", end="")
     integrity_result = test_file_integrity()
     if integrity_result["passed"]:
@@ -220,20 +220,20 @@ def quick_test():
     print(f"Resultado guardado: QUICK_TEST_RESULT.json")
     
     if total_combined_passed >= 9:
-        print("\n✅ PRÓXIMO PASO: Ejecutar START_SYSTEM_FIXED.bat")
-        print("💡 Sistema seguro y listo para producción")
+        print("\n PROXIMO PASO: Ejecutar START_SYSTEM_FIXED.bat")
+        print(" Sistema seguro y listo para produccion")
     elif tests_passed >= 6:
-        print("\n⚠️  PRÓXIMO PASO: Revisar warnings de seguridad")
-        print("🔧 Ejecutar adaptive_persistence_scheduler.py")
+        print("\n  PROXIMO PASO: Revisar warnings de seguridad")
+        print(" Ejecutar adaptive_persistence_scheduler.py")
     else:
-        print("\n❌ PRÓXIMO PASO: Ejecutar EMERGENCY_RECOVERY.bat")
-        print("🆘 Sistema requiere reparación completa")
+        print("\n PROXIMO PASO: Ejecutar EMERGENCY_RECOVERY.bat")
+        print(" Sistema requiere reparacion completa")
     
     return total_combined_passed >= 9
 
 
 def test_file_integrity():
-    """Test de integridad de archivos críticos mediante hashes."""
+    """Test de integridad de archivos criticos mediante hashes."""
     try:
         critical_files = {
             "D:/Obvivlorum/ai_symbiote.py": None,
@@ -277,14 +277,14 @@ def test_file_integrity():
         return {
             "passed": modified_files == 0,
             "issues": modified_files,
-            "details": "Archivos críticos verificados por hash SHA256"
+            "details": "Archivos criticos verificados por hash SHA256"
         }
         
     except Exception as e:
         return {
             "passed": False,
             "issues": "unknown",
-            "details": f"Error en verificación: {e}"
+            "details": f"Error en verificacion: {e}"
         }
 
 
@@ -424,7 +424,7 @@ def test_persistence_control():
 
 
 def test_threat_levels():
-    """Test de detección de amenazas."""
+    """Test de deteccion de amenazas."""
     try:
         threats_detected = 0
         

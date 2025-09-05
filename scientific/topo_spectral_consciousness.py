@@ -43,11 +43,11 @@ logger = logging.getLogger(__name__)
 
 class ConsciousnessState(Enum):
     """Consciousness states based on Topo-Spectral Index thresholds"""
-    DEEP_SLEEP = "deep_sleep"      # Ψ ∈ [0.12, 0.34]
-    LIGHT_SLEEP = "light_sleep"    # Ψ ∈ [0.31, 0.52] 
-    AWAKE = "awake"               # Ψ ∈ [0.58, 0.79]
-    ALERT = "alert"               # Ψ ∈ [0.74, 0.91]
-    PSYCHEDELIC = "psychedelic"   # Ψ ∈ [0.63, 0.88]
+    DEEP_SLEEP = "deep_sleep"      # ?  [0.12, 0.34]
+    LIGHT_SLEEP = "light_sleep"    # ?  [0.31, 0.52] 
+    AWAKE = "awake"               # ?  [0.58, 0.79]
+    ALERT = "alert"               # ?  [0.74, 0.91]
+    PSYCHEDELIC = "psychedelic"   # ?  [0.63, 0.88]
 
 @dataclass
 class SpectralCut:
@@ -70,9 +70,9 @@ class PersistentHomologyFeature:
 @dataclass
 class TopoSpectralAssessment:
     """Complete Topo-Spectral consciousness assessment"""
-    psi_index: float  # Topo-Spectral Consciousness Index Ψ
-    phi_spectral: float  # Spectral Information Integration Φ̂_spec
-    topological_resilience: float  # T̂
+    psi_index: float  # Topo-Spectral Consciousness Index ?
+    phi_spectral: float  # Spectral Information Integration ?_spec
+    topological_resilience: float  # T
     synchronization_factor: float  # Sync
     consciousness_state: ConsciousnessState
     timestamp: float
@@ -88,7 +88,7 @@ class TopoSpectralAssessment:
 
 class SpectralInformationIntegration:
     """
-    Implementation of Spectral Information Integration (Φ̂_spec)
+    Implementation of Spectral Information Integration (?_spec)
     Based on Definition 1 and Theorem 1 from Francisco Molina's paper
     """
     
@@ -107,7 +107,7 @@ class SpectralInformationIntegration:
         """
         Calculate spectral approximation of integrated information
         
-        Formula: Φ̂_spec(S, k) = min_{i=1,...,k} I(S₁^(i); S₂^(i)|Cᵢ)
+        Formula: ?_spec(S, k) = min_{i=1,...,k} I(S0^(i); S0^(i)|C?)
         
         Args:
             connectivity_matrix: Adjacency matrix of the network
@@ -133,7 +133,7 @@ class SpectralInformationIntegration:
         eigenvalues = eigenvalues[sort_indices]
         eigenvectors = eigenvectors[:, sort_indices]
         
-        # Extract Fiedler eigenvectors (v₂, v₃, ..., v_{k+1})
+        # Extract Fiedler eigenvectors (v0, v0, ..., v_{k+1})
         if len(eigenvalues) < self.k_cuts + 2:
             k_actual = len(eigenvalues) - 2
             if k_actual < 1:
@@ -223,7 +223,7 @@ class SpectralInformationIntegration:
     def _calculate_conductance(self, adjacency_matrix: np.ndarray,
                              subset_1: np.ndarray, subset_2: np.ndarray) -> float:
         """
-        Calculate conductance of a cut: h(S) = cut(S,S̄) / min(vol(S), vol(S̄))
+        Calculate conductance of a cut: h(S) = cut(S,S) / min(vol(S), vol(S))
         """
         if len(subset_1) == 0 or len(subset_2) == 0:
             return 0.0
@@ -293,7 +293,7 @@ class SpectralInformationIntegration:
 
 class TopologicalResilience:
     """
-    Implementation of Topological Resilience T̂(S) via Persistent Homology
+    Implementation of Topological Resilience T(S) via Persistent Homology
     Based on Definition 2 from Francisco Molina's paper
     """
     
@@ -302,9 +302,9 @@ class TopologicalResilience:
         
         # Dimension weights from paper (Equations 4-6)
         self.dimension_weights = {
-            0: 0.1,  # w₀ = 0.1 (connected components)
-            1: 0.7,  # w₁ = 0.7 (1-dimensional loops) 
-            2: 0.2   # w₂ = 0.2 (2-dimensional voids)
+            0: 0.1,  # w0 = 0.1 (connected components)
+            1: 0.7,  # w0 = 0.7 (1-dimensional loops) 
+            2: 0.2   # w0 = 0.2 (2-dimensional voids)
         }
         
         if not HAS_TOPOLOGY_LIBS:
@@ -314,9 +314,9 @@ class TopologicalResilience:
                                        max_dimension: int = 2,
                                        n_filtration_steps: int = 200) -> Tuple[float, List[PersistentHomologyFeature]]:
         """
-        Calculate topological resilience T̂(S) using persistent homology
+        Calculate topological resilience T(S) using persistent homology
         
-        Formula: T̂(S) = Σ_{d=0}^{d_max} w_d Σ_{i∈H_d} max(0, pers(f_i) - σ_d)
+        Formula: T(S) = ?_{d=0}^{d_max} w_d ?_{iH_d} max(0, pers(f_i) - ?_d)
         
         Args:
             connectivity_matrix: Network adjacency matrix
@@ -340,7 +340,7 @@ class TopologicalResilience:
         # Extract persistent homology features
         topology_features = self._extract_topology_features(diagrams)
         
-        # Calculate noise thresholds σ_d for each dimension
+        # Calculate noise thresholds ?_d for each dimension
         noise_thresholds = self._calculate_noise_thresholds(topology_features)
         
         # Calculate weighted topological resilience
@@ -369,7 +369,7 @@ class TopologicalResilience:
     def _connectivity_to_distance(self, connectivity_matrix: np.ndarray) -> np.ndarray:
         """
         Convert connectivity matrix to distance matrix for Rips filtration
-        Formula: D_ij = 1 - |A_ij| for i ≠ j
+        Formula: D_ij = 1 - |A_ij| for i != j
         """
         n = connectivity_matrix.shape[0]
         distance_matrix = np.ones((n, n))
@@ -417,7 +417,7 @@ class TopologicalResilience:
     
     def _calculate_noise_thresholds(self, features: List[PersistentHomologyFeature]) -> Dict[int, float]:
         """
-        Calculate noise thresholds σ_d = 0.1 * mean(pers(H_d))
+        Calculate noise thresholds ?_d = 0.1 * mean(pers(H_d))
         """
         thresholds = {}
         
@@ -451,7 +451,7 @@ class TemporalSynchronization:
         
         Args:
             temporal_window_ms: Temporal window W in milliseconds (default: 10s)
-            sensitivity_gamma: Sensitivity parameter γ (default: 2.0)
+            sensitivity_gamma: Sensitivity parameter ? (default: 2.0)
         """
         self.temporal_window = temporal_window_ms
         self.gamma = sensitivity_gamma
@@ -462,10 +462,10 @@ class TemporalSynchronization:
         """
         Calculate temporal synchronization factor
         
-        Formula: Sync(S_t) = exp(-γ · Var(dΨ(S_τ)/dτ)_{τ∈[t-W,t]})
+        Formula: Sync(S_t) = exp(-?  Var(d?(S_?)/d?)_{?[t-W,t]})
         
         Args:
-            psi_time_series: Time series of Ψ values
+            psi_time_series: Time series of ? values
             timestamps: Corresponding timestamps
             
         Returns:
@@ -474,7 +474,7 @@ class TemporalSynchronization:
         if len(psi_time_series) < 2:
             return 1.0  # Perfect synchronization for single point
         
-        # Calculate derivative dΨ/dτ using finite differences
+        # Calculate derivative d?/d? using finite differences
         psi_derivative = self._calculate_temporal_derivative(psi_time_series, timestamps)
         
         # Calculate variance of derivative
@@ -488,7 +488,7 @@ class TemporalSynchronization:
     def _calculate_temporal_derivative(self, psi_series: np.ndarray, 
                                      timestamps: np.ndarray) -> np.ndarray:
         """
-        Calculate temporal derivative dΨ/dτ using finite differences
+        Calculate temporal derivative d?/d? using finite differences
         """
         if len(psi_series) < 2:
             return np.array([0.0])
@@ -496,7 +496,7 @@ class TemporalSynchronization:
         # Calculate time differences
         dt = np.diff(timestamps)
         
-        # Calculate Ψ differences  
+        # Calculate ? differences  
         dpsi = np.diff(psi_series)
         
         # Avoid division by zero
@@ -509,7 +509,7 @@ class TemporalSynchronization:
 
 class TopoSpectralConsciousnessIndex:
     """
-    Main implementation of the Topo-Spectral Consciousness Index Ψ
+    Main implementation of the Topo-Spectral Consciousness Index ?
     Based on Definition 4 from Francisco Molina's paper
     """
     
@@ -544,7 +544,7 @@ class TopoSpectralConsciousnessIndex:
         """
         Calculate complete Topo-Spectral Consciousness Index
         
-        Formula: Ψ(S_t) = ³√(Φ̂_spec(S_t) · T̂(S_t) · Sync(S_t))
+        Formula: ?(S_t) = 0(?_spec(S_t)  T(S_t)  Sync(S_t))
         
         Args:
             connectivity_matrix: Network adjacency matrix
@@ -557,13 +557,13 @@ class TopoSpectralConsciousnessIndex:
         """
         self.logger.info("Calculating Topo-Spectral Consciousness Index...")
         
-        # 1. Calculate Spectral Information Integration Φ̂_spec
+        # 1. Calculate Spectral Information Integration ?_spec
         phi_spectral, spectral_cuts = self.spectral_integration.calculate_phi_spectral(
             connectivity_matrix, node_states
         )
         self.logger.debug(f"Spectral Information Integration: {phi_spectral:.4f}")
         
-        # 2. Calculate Topological Resilience T̂
+        # 2. Calculate Topological Resilience T
         topo_resilience, topology_features = self.topological_resilience.calculate_topological_resilience(
             connectivity_matrix, self.max_topology_dim
         )
@@ -589,7 +589,7 @@ class TopoSpectralConsciousnessIndex:
         else:
             psi_index = 0.0
         
-        self.logger.info(f"Topo-Spectral Index Ψ = {psi_index:.4f}")
+        self.logger.info(f"Topo-Spectral Index ? = {psi_index:.4f}")
         
         # 6. Classify consciousness state
         consciousness_state = self._classify_consciousness_state(psi_index)
@@ -627,7 +627,7 @@ class TopoSpectralConsciousnessIndex:
     
     def _classify_consciousness_state(self, psi_index: float) -> ConsciousnessState:
         """
-        Classify consciousness state based on Ψ index value
+        Classify consciousness state based on ? index value
         Using thresholds from research validation (Table II in paper)
         """
         # Check each state's threshold range
@@ -665,11 +665,11 @@ class TopoSpectralConsciousnessIndex:
         assessments = []
         psi_values = []
         
-        # Calculate Ψ for each time point
+        # Calculate ? for each time point
         for i, conn_matrix in enumerate(connectivity_matrices):
             node_states = node_states_sequence[i] if node_states_sequence else None
             
-            # For temporal sync, use previous Ψ values
+            # For temporal sync, use previous ? values
             psi_series = np.array(psi_values) if len(psi_values) > 0 else None
             time_series = timestamps[:len(psi_values)] if psi_series is not None else None
             
@@ -810,10 +810,10 @@ if __name__ == "__main__":
             # Calculate consciousness index
             assessment = calculator.calculate_consciousness_index(connectivity_matrix)
             
-            print(f"\n🧠 Topo-Spectral Consciousness Assessment:")
-            print(f"   Ψ Index: {assessment.psi_index:.4f}")
-            print(f"   Φ̂ Spectral: {assessment.phi_spectral:.4f}")
-            print(f"   T̂ Topological: {assessment.topological_resilience:.4f}")
+            print(f"\n Topo-Spectral Consciousness Assessment:")
+            print(f"   ? Index: {assessment.psi_index:.4f}")
+            print(f"   ? Spectral: {assessment.phi_spectral:.4f}")
+            print(f"   T Topological: {assessment.topological_resilience:.4f}")
             print(f"   Sync Factor: {assessment.synchronization_factor:.4f}")
             print(f"   Consciousness State: {assessment.consciousness_state.value}")
             print(f"   Spectral Cuts: {len(assessment.spectral_cuts)}")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 CLOUD SCALING MANAGER - FASE 6.3
-Gestión inteligente de recursos en la nube con escalado incremental
+Gestion inteligente de recursos en la nube con escalado incremental
 """
 
 import os
@@ -23,7 +23,7 @@ class CloudScalingManager:
     1. Local (200x200) - 0.01ms
     2. Google Colab (1024x1024) - 0.001ms  
     3. Kaggle (2048x2048) - 0.0005ms
-    4. Híbrido (4096x4096+) - Distribuido
+    4. Hibrido (4096x4096+) - Distribuido
     """
     
     def __init__(self):
@@ -35,7 +35,7 @@ class CloudScalingManager:
         logger.info(f"CloudScalingManager initialized - Environment: {self.current_environment}, Level: {self.scaling_level}")
     
     def _detect_environment(self) -> str:
-        """Detección automática del entorno de ejecución"""
+        """Deteccion automatica del entorno de ejecucion"""
         # Google Colab
         if 'google.colab' in sys.modules:
             return "colab"
@@ -55,7 +55,7 @@ class CloudScalingManager:
         return "local"
     
     def _analyze_resources(self) -> Dict[str, Any]:
-        """Análisis completo de recursos disponibles"""
+        """Analisis completo de recursos disponibles"""
         resources = {
             'environment': self.current_environment,
             'platform': platform.platform(),
@@ -66,7 +66,7 @@ class CloudScalingManager:
             'estimated_ram_gb': 8  # Conservative estimate
         }
         
-        # Estimación de RAM disponible
+        # Estimacion de RAM disponible
         try:
             import psutil
             resources['ram_total_gb'] = psutil.virtual_memory().total / (1024**3)
@@ -75,13 +75,13 @@ class CloudScalingManager:
         except ImportError:
             logger.warning("psutil not available, using conservative RAM estimates")
         
-        # Detección de GPU
+        # Deteccion de GPU
         resources.update(self._detect_gpu())
         
         return resources
     
     def _detect_gpu(self) -> Dict[str, Any]:
-        """Detección específica de GPU"""
+        """Deteccion especifica de GPU"""
         gpu_info = {
             'gpu_available': False,
             'gpu_memory_gb': 0,
@@ -112,7 +112,7 @@ class CloudScalingManager:
                 gpu_info['gpu_count'] = torch.cuda.device_count()
                 if gpu_info['gpu_count'] > 0:
                     gpu_info['gpu_type'] = torch.cuda.get_device_name(0)
-                    # Estimación conservadora si no tenemos nvidia-smi
+                    # Estimacion conservadora si no tenemos nvidia-smi
                     if gpu_info['gpu_memory_gb'] == 0:
                         gpu_info['gpu_memory_gb'] = 8  # Conservative estimate
         except ImportError:
@@ -131,7 +131,7 @@ class CloudScalingManager:
         return gpu_info
     
     def _determine_optimal_level(self) -> str:
-        """Determinación automática del nivel óptimo de escalado"""
+        """Determinacion automatica del nivel optimo de escalado"""
         env = self.current_environment
         resources = self.available_resources
         
@@ -151,8 +151,8 @@ class CloudScalingManager:
     
     def scale_computation(self, matrix_size: int, computation_type: str = "topo_spectral") -> Dict[str, Any]:
         """
-        ESCALADO DINÁMICO DE COMPUTACIÓN
-        Selecciona automáticamente el mejor método según recursos
+        ESCALADO DINAMICO DE COMPUTACION
+        Selecciona automaticamente el mejor metodo segun recursos
         """
         level_configs = {
             "level_1_local": {
@@ -195,7 +195,7 @@ class CloudScalingManager:
         
         config = level_configs.get(self.scaling_level, level_configs["level_1_local"])
         
-        # Validación de tamaño de matriz
+        # Validacion de tamano de matriz
         if matrix_size > config['max_matrix_size']:
             suggested_level = self._suggest_upgrade_level(matrix_size)
             raise ResourceConstraintError(
@@ -204,7 +204,7 @@ class CloudScalingManager:
                 f"Suggested upgrade: {suggested_level}"
             )
         
-        # Añadir información del entorno actual
+        # Anadir informacion del entorno actual
         config.update({
             'current_environment': self.current_environment,
             'available_gpu': self.available_resources['gpu_available'],
@@ -215,7 +215,7 @@ class CloudScalingManager:
         return config
     
     def _suggest_upgrade_level(self, matrix_size: int) -> str:
-        """Sugerir nivel de upgrade según tamaño de matriz"""
+        """Sugerir nivel de upgrade segun tamano de matriz"""
         if matrix_size <= 1024:
             return "level_2_colab"
         elif matrix_size <= 2048:
@@ -224,7 +224,7 @@ class CloudScalingManager:
             return "level_4_hybrid"
     
     def install_cloud_dependencies(self, dry_run: bool = False) -> bool:
-        """Instalación automática de dependencias según entorno"""
+        """Instalacion automatica de dependencias segun entorno"""
         if self.dependencies_installed and not dry_run:
             return True
         
@@ -259,9 +259,9 @@ class CloudScalingManager:
                     try:
                         subprocess.run([sys.executable, '-m', 'pip', 'install', package], 
                                      check=True, capture_output=True)
-                        logger.info(f"✅ Installed: {package}")
+                        logger.info(f" Installed: {package}")
                     except subprocess.CalledProcessError as e:
-                        logger.warning(f"⚠️  Warning: Failed to install {package}: {e}")
+                        logger.warning(f"  Warning: Failed to install {package}: {e}")
                         success = False
             
             if not dry_run:
@@ -309,8 +309,8 @@ class CloudScalingManager:
         return level_requirements.get(level, False)
     
     def get_resource_usage_estimate(self, matrix_size: int) -> Dict[str, Any]:
-        """Estimación de uso de recursos para un tamaño de matriz dado"""
-        # Estimaciones basadas en análisis empírico
+        """Estimacion de uso de recursos para un tamano de matriz dado"""
+        # Estimaciones basadas en analisis empirico
         base_memory_mb = matrix_size * matrix_size * 8 / (1024 * 1024)  # float64
         processing_memory_mb = base_memory_mb * 3  # FFT operations overhead
         
@@ -324,23 +324,23 @@ class CloudScalingManager:
         }
 
 class ResourceConstraintError(Exception):
-    """Excepción para limitaciones de recursos"""
+    """Excepcion para limitaciones de recursos"""
     pass
 
 if __name__ == "__main__":
     # Test del sistema de escalado
-    print("☁️  CLOUD SCALING MANAGER - TEST")
+    print("  CLOUD SCALING MANAGER - TEST")
     
     manager = CloudScalingManager()
     
-    # Información del entorno
-    print(f"\n🌍 ENTORNO DETECTADO:")
+    # Informacion del entorno
+    print(f"\n ENTORNO DETECTADO:")
     print(f"  Environment: {manager.current_environment}")
     print(f"  Available resources: {manager.available_resources}")
     print(f"  Optimal scaling level: {manager.scaling_level}")
     
-    # Test configuración de escalado
-    print(f"\n📊 TEST CONFIGURACIÓN DE ESCALADO:")
+    # Test configuracion de escalado
+    print(f"\n TEST CONFIGURACION DE ESCALADO:")
     try:
         config = manager.scale_computation(200, "topo_spectral")
         print(f"  Matrix 200x200: {config}")
@@ -348,19 +348,19 @@ if __name__ == "__main__":
         print(f"  Error: {e}")
     
     # Test recomendaciones
-    print(f"\n💡 RECOMENDACIONES DE ESCALADO:")
+    print(f"\n RECOMENDACIONES DE ESCALADO:")
     recommendations = manager.get_scaling_recommendations(0.001)
     for key, value in recommendations.items():
         print(f"  {key}: {value}")
     
     # Test uso de recursos
-    print(f"\n🔋 ESTIMACIÓN DE RECURSOS:")
+    print(f"\n ESTIMACION DE RECURSOS:")
     for size in [200, 1024, 2048]:
         usage = manager.get_resource_usage_estimate(size)
         print(f"  Matrix {size}x{size}: {usage['total_memory_mb']} MB, Level: {usage['scaling_level_required']}")
     
-    # Test instalación de dependencias (dry run)
-    print(f"\n📦 TEST INSTALACIÓN DE DEPENDENCIAS (DRY RUN):")
+    # Test instalacion de dependencias (dry run)
+    print(f"\n TEST INSTALACION DE DEPENDENCIAS (DRY RUN):")
     manager.install_cloud_dependencies(dry_run=True)
     
-    print("\n✅ CLOUD SCALING MANAGER - TEST COMPLETADO")
+    print("\n CLOUD SCALING MANAGER - TEST COMPLETADO")

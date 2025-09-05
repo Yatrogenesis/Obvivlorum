@@ -3,8 +3,8 @@
 ParrotOS GUI Integration - Sin Restricciones
 ============================================
 
-Integración gráfica completa con ParrotOS para testing
-sin límites ni restricciones según instrucciones del usuario
+Integracion grafica completa con ParrotOS para testing
+sin limites ni restricciones segun instrucciones del usuario
 """
 
 import tkinter as tk
@@ -28,7 +28,7 @@ class ParrotToolsGUI:
     
     def setup_window(self):
         """Configurar ventana principal"""
-        self.root.title("🦜 ParrotOS Integration - Unrestricted Mode")
+        self.root.title(" ParrotOS Integration - Unrestricted Mode")
         self.root.geometry("1400x800")
         self.root.configure(bg='#0f1419')
         
@@ -52,12 +52,12 @@ class ParrotToolsGUI:
         header.pack(fill='x')
         header.pack_propagate(False)
         
-        title = tk.Label(header, text="🦜 PARROTOS UNRESTRICTED MODE", 
+        title = tk.Label(header, text=" PARROTOS UNRESTRICTED MODE", 
                         fg=self.colors['accent'], bg=self.colors['panel'],
                         font=('JetBrains Mono', 16, 'bold'))
         title.pack(expand=True)
         
-        subtitle = tk.Label(header, text="Testing Mode - No Limits • No Restrictions • Full Access", 
+        subtitle = tk.Label(header, text="Testing Mode - No Limits  No Restrictions  Full Access", 
                            fg=self.colors['success'], bg=self.colors['panel'],
                            font=('JetBrains Mono', 10))
         subtitle.pack()
@@ -77,12 +77,12 @@ class ParrotToolsGUI:
     
     def create_tools_panel(self, parent):
         """Panel de herramientas"""
-        tools_frame = tk.LabelFrame(parent, text="🔧 ParrotOS Tools", 
+        tools_frame = tk.LabelFrame(parent, text=" ParrotOS Tools", 
                                    fg=self.colors['text'], bg=self.colors['panel'],
                                    font=('JetBrains Mono', 12, 'bold'))
         tools_frame.pack(side='left', fill='y', padx=(0, 5))
         
-        # Categorías de herramientas
+        # Categorias de herramientas
         categories = {
             "Network Analysis": [
                 ("Nmap Port Scan", "nmap -sS -O"),
@@ -110,7 +110,7 @@ class ParrotToolsGUI:
             ]
         }
         
-        # Crear botones por categoría
+        # Crear botones por categoria
         for category, tools in categories.items():
             cat_frame = tk.LabelFrame(tools_frame, text=category,
                                      fg=self.colors['accent'], bg=self.colors['panel'],
@@ -127,12 +127,12 @@ class ParrotToolsGUI:
     
     def create_output_panel(self, parent):
         """Panel de salida"""
-        output_frame = tk.LabelFrame(parent, text="📟 Output Terminal", 
+        output_frame = tk.LabelFrame(parent, text=" Output Terminal", 
                                     fg=self.colors['text'], bg=self.colors['panel'],
                                     font=('JetBrains Mono', 12, 'bold'))
         output_frame.pack(side='right', fill='both', expand=True, padx=(5, 0))
         
-        # Notebook para múltiples terminales
+        # Notebook para multiples terminales
         self.notebook = ttk.Notebook(output_frame)
         self.notebook.pack(fill='both', expand=True, padx=5, pady=5)
         
@@ -140,7 +140,7 @@ class ParrotToolsGUI:
         self.create_terminal_tab("Main Terminal")
     
     def create_terminal_tab(self, tab_name):
-        """Crear pestaña de terminal"""
+        """Crear pestana de terminal"""
         frame = tk.Frame(self.notebook, bg=self.colors['bg'])
         self.notebook.add(frame, text=tab_name)
         
@@ -152,7 +152,7 @@ class ParrotToolsGUI:
         terminal.pack(fill='both', expand=True)
         
         # Info inicial
-        terminal.insert(tk.END, f"🦜 ParrotOS Terminal - {tab_name}\n")
+        terminal.insert(tk.END, f" ParrotOS Terminal - {tab_name}\n")
         terminal.insert(tk.END, "=" * 50 + "\n")
         terminal.insert(tk.END, "Ready for unrestricted testing!\n\n")
         
@@ -160,7 +160,7 @@ class ParrotToolsGUI:
         return terminal
     
     def create_command_panel(self, parent):
-        """Panel de línea de comandos"""
+        """Panel de linea de comandos"""
         cmd_frame = tk.Frame(parent, bg=self.colors['bg'])
         cmd_frame.pack(fill='x', pady=(10, 0))
         
@@ -168,7 +168,7 @@ class ParrotToolsGUI:
         input_frame = tk.Frame(cmd_frame, bg=self.colors['panel'])
         input_frame.pack(fill='x')
         
-        tk.Label(input_frame, text="🦜 $ ", 
+        tk.Label(input_frame, text=" $ ", 
                 fg=self.colors['accent'], bg=self.colors['panel'],
                 font=('JetBrains Mono', 12, 'bold')).pack(side='left')
         
@@ -179,7 +179,7 @@ class ParrotToolsGUI:
         self.command_entry.pack(side='left', fill='x', expand=True)
         self.command_entry.bind('<Return>', self.execute_custom_command)
         
-        # Botones de acción
+        # Botones de accion
         btn_frame = tk.Frame(input_frame, bg=self.colors['panel'])
         btn_frame.pack(side='right')
         
@@ -205,30 +205,30 @@ class ParrotToolsGUI:
         """Ejecutar herramienta sin restricciones"""
         def execute():
             try:
-                # Crear nueva pestaña para esta herramienta
+                # Crear nueva pestana para esta herramienta
                 tab_name = f"{tool_name}"
                 if tab_name not in self.output_widgets:
                     terminal = self.create_terminal_tab(tab_name)
                 else:
                     terminal = self.output_widgets[tab_name]
                 
-                # Cambiar a la pestaña
+                # Cambiar a la pestana
                 for i, tab_id in enumerate(self.notebook.tabs()):
                     if self.notebook.tab(tab_id, 'text') == tab_name:
                         self.notebook.select(i)
                         break
                 
-                terminal.insert(tk.END, f"🚀 Executing: {command}\n")
+                terminal.insert(tk.END, f" Executing: {command}\n")
                 terminal.insert(tk.END, "-" * 50 + "\n")
                 terminal.see(tk.END)
                 
-                # Mostrar diálogo de parámetros si es necesario
+                # Mostrar dialogo de parametros si es necesario
                 if command.endswith(("curl -I", "dig", "traceroute", "nc -zv")):
                     target = tk.simpledialog.askstring("Target", f"Enter target for {tool_name}:")
                     if target:
                         command = f"{command} {target}"
                     else:
-                        terminal.insert(tk.END, "❌ Operation cancelled\n\n")
+                        terminal.insert(tk.END, " Operation cancelled\n\n")
                         return
                 
                 # Ejecutar comando
@@ -249,16 +249,16 @@ class ParrotToolsGUI:
                             terminal.see(tk.END)
                             self.root.update()
                     
-                    terminal.insert(tk.END, f"\n✅ Command completed (exit code: {process.returncode})\n\n")
+                    terminal.insert(tk.END, f"\n Command completed (exit code: {process.returncode})\n\n")
                     
                 else:
                     # Windows - mostrar mensaje informativo
-                    terminal.insert(tk.END, "ℹ️ ParrotOS tools are designed for Linux systems\n")
+                    terminal.insert(tk.END, "? ParrotOS tools are designed for Linux systems\n")
                     terminal.insert(tk.END, f"Command that would run: {command}\n")
-                    terminal.insert(tk.END, "💡 Use WSL or Linux VM for full functionality\n\n")
+                    terminal.insert(tk.END, " Use WSL or Linux VM for full functionality\n\n")
                 
             except Exception as e:
-                terminal.insert(tk.END, f"❌ Error: {e}\n\n")
+                terminal.insert(tk.END, f" Error: {e}\n\n")
             
             terminal.see(tk.END)
         
@@ -278,7 +278,7 @@ class ParrotToolsGUI:
         tab_text = self.notebook.tab(current_tab, 'text')
         terminal = self.output_widgets[tab_text]
         
-        terminal.insert(tk.END, f"🦜 $ {command}\n")
+        terminal.insert(tk.END, f" $ {command}\n")
         
         # Limpiar entrada
         self.command_entry.delete(0, tk.END)
@@ -292,36 +292,36 @@ class ParrotToolsGUI:
         tab_text = self.notebook.tab(current_tab, 'text')
         terminal = self.output_widgets[tab_text]
         terminal.delete(1.0, tk.END)
-        terminal.insert(tk.END, f"🦜 ParrotOS Terminal - {tab_text}\n")
+        terminal.insert(tk.END, f" ParrotOS Terminal - {tab_text}\n")
         terminal.insert(tk.END, "=" * 50 + "\n")
         terminal.insert(tk.END, "Terminal cleared. Ready for new commands!\n\n")
     
     def create_new_tab(self):
-        """Crear nueva pestaña"""
+        """Crear nueva pestana"""
         tab_count = len(self.output_widgets) + 1
         tab_name = f"Terminal {tab_count}"
         self.create_terminal_tab(tab_name)
         
-        # Cambiar a la nueva pestaña
+        # Cambiar a la nueva pestana
         self.notebook.select(len(self.notebook.tabs()) - 1)
     
     def run(self):
-        """Ejecutar aplicación"""
+        """Ejecutar aplicacion"""
         # Mostrar advertencia/info inicial
-        messagebox.showinfo("🦜 ParrotOS Mode", 
+        messagebox.showinfo(" ParrotOS Mode", 
                            "ParrotOS Integration Mode Activated\n\n"
-                           "⚠️ This mode provides unrestricted access for testing\n"
-                           "🔧 All tools available without limitations\n"
-                           "🚀 Use responsibly for legitimate testing only")
+                           " This mode provides unrestricted access for testing\n"
+                           " All tools available without limitations\n"
+                           " Use responsibly for legitimate testing only")
         
         self.root.mainloop()
 
 def main():
-    """Función principal"""
+    """Funcion principal"""
     # Verificar si estamos en Linux para funcionalidad completa
     if os.name != 'posix':
-        print("⚠️ Warning: ParrotOS tools work best on Linux systems")
-        print("💡 Consider using WSL or a Linux VM for full functionality")
+        print(" Warning: ParrotOS tools work best on Linux systems")
+        print(" Consider using WSL or a Linux VM for full functionality")
     
     app = ParrotToolsGUI()
     app.run()

@@ -3,7 +3,7 @@
 Brutal UI Desktop - FIXED VERSION
 =================================
 
-Versión corregida sin AnimatedButton complejo y imports simplificados
+Version corregida sin AnimatedButton complejo y imports simplificados
 """
 
 import tkinter as tk
@@ -48,7 +48,7 @@ class BrutalTheme:
     }
 
 class ConfigPanel(tk.Frame):
-    """Panel de configuración avanzada"""
+    """Panel de configuracion avanzada"""
     
     def __init__(self, parent):
         super().__init__(parent, bg=BrutalTheme.COLORS["bg_primary"])
@@ -61,8 +61,8 @@ class ConfigPanel(tk.Frame):
         self._create_widgets()
     
     def _create_widgets(self):
-        """Crear widgets de configuración"""
-        # Título
+        """Crear widgets de configuracion"""
+        # Titulo
         title = tk.Label(self, text="CONFIG - CONFIGURACION BRUTAL", 
                         fg=BrutalTheme.COLORS['accent_primary'],
                         bg=BrutalTheme.COLORS['bg_primary'],
@@ -76,11 +76,11 @@ class ConfigPanel(tk.Frame):
         # Modo del sistema
         self._create_mode_section(options_frame)
         
-        # Botones de acción
+        # Botones de accion
         self._create_action_buttons(options_frame)
     
     def _create_mode_section(self, parent):
-        """Sección de modo del sistema"""
+        """Seccion de modo del sistema"""
         frame = tk.LabelFrame(parent, text="Modo del Sistema", 
                              fg=BrutalTheme.COLORS['text_primary'],
                              bg=BrutalTheme.COLORS['bg_secondary'],
@@ -90,8 +90,8 @@ class ConfigPanel(tk.Frame):
         self.mode_var = tk.StringVar(value="gui_desktop")
         
         modes = [
-            ("Standard", "standard", "Modo estándar de operación"),
-            ("GUI Desktop", "gui_desktop", "Interfaz gráfica desktop"),
+            ("Standard", "standard", "Modo estandar de operacion"),
+            ("GUI Desktop", "gui_desktop", "Interfaz grafica desktop"),
             ("ParrotOS Mode", "parrot", "Modo ParrotOS sin restricciones"),
             ("Web Server", "web_server", "Servidor web completo"),
         ]
@@ -106,7 +106,7 @@ class ConfigPanel(tk.Frame):
             rb.pack(anchor='w', padx=10, pady=2)
     
     def _create_action_buttons(self, parent):
-        """Botones de acción"""
+        """Botones de accion"""
         button_frame = tk.Frame(parent, bg=BrutalTheme.COLORS['bg_primary'])
         button_frame.pack(fill='x', pady=20)
         
@@ -156,7 +156,7 @@ class ConfigPanel(tk.Frame):
             messagebox.showerror("Error", f"Error al lanzar sistema: {e}")
     
     def _launch_parrot_gui(self):
-        """Lanzar ParrotOS en modo gráfico"""
+        """Lanzar ParrotOS en modo grafico"""
         try:
             subprocess.Popen([sys.executable, "parrot_gui_integration.py"])
             messagebox.showinfo("ParrotOS Launched", "ParrotOS mode launched successfully")
@@ -168,7 +168,7 @@ class ConfigPanel(tk.Frame):
         messagebox.showinfo("UI Test", "UI is working correctly!\nNo blinking detected!")
 
 class BrutalUIDesktop:
-    """Aplicación desktop brutalmente impresionante - FIXED VERSION"""
+    """Aplicacion desktop brutalmente impresionante - FIXED VERSION"""
     
     def __init__(self):
         print("Initializing Brutal UI Desktop...")
@@ -208,7 +208,7 @@ class BrutalUIDesktop:
                                  font=BrutalTheme.FONTS['subtitle'])
         subtitle_label.pack()
         
-        # Panel de configuración
+        # Panel de configuracion
         config_panel = ConfigPanel(self.root)
         config_panel.pack(fill='both', expand=True)
         
@@ -217,14 +217,14 @@ class BrutalUIDesktop:
         footer.pack(fill='x')
         footer.pack_propagate(False)
         
-        footer_text = tk.Label(footer, text="POWER - Single Click Launch • Full Configuration • ParrotOS Ready", 
+        footer_text = tk.Label(footer, text="POWER - Single Click Launch  Full Configuration  ParrotOS Ready", 
                               fg=BrutalTheme.COLORS['text_secondary'],
                               bg=BrutalTheme.COLORS['bg_secondary'],
                               font=BrutalTheme.FONTS['body'])
         footer_text.pack(expand=True)
     
     def run(self):
-        """Ejecutar aplicación"""
+        """Ejecutar aplicacion"""
         print("Starting Brutal UI mainloop...")
         try:
             self.root.mainloop()
@@ -234,7 +234,7 @@ class BrutalUIDesktop:
             raise
 
 def main():
-    """Función principal"""
+    """Funcion principal"""
     print("=" * 60)
     print("OBVIVLORUM - BRUTAL DESKTOP (FIXED VERSION)")
     print("=" * 60)

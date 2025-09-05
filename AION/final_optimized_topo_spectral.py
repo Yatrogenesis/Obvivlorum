@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-VERSIÓN FINAL OPTIMIZADA TOPO-SPECTRAL - OBJETIVO <5ms GARANTIZADO
+VERSION FINAL OPTIMIZADA TOPO-SPECTRAL - OBJETIVO <5ms GARANTIZADO
 ===================================================================
 
 OPTIMIZACIONES EXTREMAS PARA CUMPLIR EL OBJETIVO DE FASE 3:
-1. Eliminar Ripser completamente - usar aproximación topológica directa
-2. Eigendecomposición limitada solo a Fiedler vector
+1. Eliminar Ripser completamente - usar aproximacion topologica directa
+2. Eigendecomposicion limitada solo a Fiedler vector
 3. Cache agresivo con persistencia
-4. Aproximaciones controladas manteniendo esencia científica
+4. Aproximaciones controladas manteniendo esencia cientifica
 5. Operaciones vectorizadas con NumPy optimizado
 
-COMPROMISO CIENTÍFICO BALANCEADO:
-- Mantiene ecuación exacta: Ψ(St) = ³√(Φ̂spec(St) · T̂(St) · Sync(St))
-- Φ̂spec: Cálculo espectral exact con Fiedler vector
-- T̂: Aproximación topológica basada en clustering y conectividad
-- Sync: Factor de sincronización basado en eigenvalue gap
+COMPROMISO CIENTIFICO BALANCEADO:
+- Mantiene ecuacion exacta: ?(St) = 0(?spec(St)  T(St)  Sync(St))
+- ?spec: Calculo espectral exact con Fiedler vector
+- T: Aproximacion topologica basada en clustering y conectividad
+- Sync: Factor de sincronizacion basado en eigenvalue gap
 
 RESULTADO ESPERADO: <3ms para matrices 100x100
 
@@ -40,7 +40,7 @@ except ImportError:
 
 @njit(cache=True, fastmath=True) if NUMBA_AVAILABLE else lambda f: f
 def fast_fiedler_vector(adjacency):
-    """Cálculo ultra-rápido del vector de Fiedler (aproximación)"""
+    """Calculo ultra-rapido del vector de Fiedler (aproximacion)"""
     n = adjacency.shape[0]
     
     # Grados
@@ -50,11 +50,11 @@ def fast_fiedler_vector(adjacency):
             degrees[i] += adjacency[i, j]
     
     # Laplaciano simplificado (solo para Fiedler)
-    # Usar iteración de potencia para el segundo eigenvalue
+    # Usar iteracion de potencia para el segundo eigenvalue
     x = np.random.rand(n)
     x = x - np.mean(x)  # Ortogonal al vector constante
     
-    # Iteraciones de potencia (suficientes para aproximación)
+    # Iteraciones de potencia (suficientes para aproximacion)
     for _ in range(10):  # Reducido para velocidad
         # Lx
         Lx = np.zeros(n)
@@ -64,7 +64,7 @@ def fast_fiedler_vector(adjacency):
                 if adjacency[i, j] > 0:
                     Lx[i] -= adjacency[i, j] * x[j]
         
-        # Normalización y ortogonalización
+        # Normalizacion y ortogonalizacion
         Lx = Lx - np.mean(Lx)
         norm = np.sqrt(np.sum(Lx * Lx))
         if norm > 1e-10:
@@ -74,7 +74,7 @@ def fast_fiedler_vector(adjacency):
 
 @njit(cache=True, fastmath=True) if NUMBA_AVAILABLE else lambda f: f  
 def fast_conductance(adjacency, threshold, eigenvector):
-    """Conductancia ultra-rápida basada en threshold"""
+    """Conductancia ultra-rapida basada en threshold"""
     n = adjacency.shape[0]
     
     cut_edges = 0.0
@@ -100,7 +100,7 @@ def fast_conductance(adjacency, threshold, eigenvector):
 
 @njit(cache=True, fastmath=True) if NUMBA_AVAILABLE else lambda f: f
 def fast_clustering_coefficient(adjacency):
-    """Coeficiente de clustering ultra-rápido como proxy topológico"""
+    """Coeficiente de clustering ultra-rapido como proxy topologico"""
     n = adjacency.shape[0]
     total_clustering = 0.0
     
@@ -132,7 +132,7 @@ def fast_clustering_coefficient(adjacency):
 
 @njit(cache=True, fastmath=True) if NUMBA_AVAILABLE else lambda f: f
 def fast_path_length_estimate(adjacency):
-    """Estimación rápida de path length característico"""
+    """Estimacion rapida de path length caracteristico"""
     n = adjacency.shape[0]
     
     # Usar solo una muestra de nodos para velocidad
@@ -147,7 +147,7 @@ def fast_path_length_estimate(adjacency):
         queue = [start]
         queue_idx = 0
         
-        # Límite de profundidad para velocidad
+        # Limite de profundidad para velocidad
         max_depth = 5
         
         while queue_idx < len(queue) and distances[queue[queue_idx]] < max_depth:
@@ -169,7 +169,7 @@ def fast_path_length_estimate(adjacency):
 
 class FinalOptimizedTopoSpectral:
     """
-    IMPLEMENTACIÓN FINAL ULTRA-OPTIMIZADA
+    IMPLEMENTACION FINAL ULTRA-OPTIMIZADA
     Objetivo garantizado: <5ms para matrices hasta 200x200
     """
     
@@ -177,14 +177,14 @@ class FinalOptimizedTopoSpectral:
         self.cache = {}
         self.computation_count = 0
         
-        # Warm-up Numba si está disponible
+        # Warm-up Numba si esta disponible
         if NUMBA_AVAILABLE:
             self._warmup_numba()
         
         print("Final optimized Topo-Spectral engine ready")
     
     def _warmup_numba(self):
-        """Pre-compilación rápida"""
+        """Pre-compilacion rapida"""
         dummy = np.random.rand(5, 5)
         dummy_vec = np.random.rand(5)
         
@@ -198,12 +198,12 @@ class FinalOptimizedTopoSpectral:
     def calculate_psi_ultra_fast(self, connectivity_matrix: np.ndarray,
                                 node_states: Optional[np.ndarray] = None) -> Dict[str, Any]:
         """
-        CÁLCULO ULTRA-RÁPIDO FINAL DEL ÍNDICE PSI
+        CALCULO ULTRA-RAPIDO FINAL DEL INDICE PSI
         Target garantizado: <5ms
         """
         start_time = time.perf_counter()
         
-        # Cache ultra-rápido
+        # Cache ultra-rapido
         cache_key = self._ultra_fast_hash(connectivity_matrix)
         if cache_key in self.cache:
             cached = self.cache[cache_key].copy()
@@ -218,17 +218,17 @@ class FinalOptimizedTopoSpectral:
         phi_spectral = self._ultra_fast_spectral_phi(connectivity_matrix, node_states)
         spectral_time = (time.perf_counter() - spectral_start) * 1000
         
-        # 2. COMPONENTE TOPOLÓGICO (aproximación directa)
+        # 2. COMPONENTE TOPOLOGICO (aproximacion directa)
         topo_start = time.perf_counter()
         topological_resilience = self._ultra_fast_topological_proxy(connectivity_matrix)
         topo_time = (time.perf_counter() - topo_start) * 1000
         
-        # 3. FACTOR DE SINCRONIZACIÓN (ultra-simplificado)
+        # 3. FACTOR DE SINCRONIZACION (ultra-simplificado)
         sync_start = time.perf_counter()
         sync_factor = self._ultra_fast_sync(connectivity_matrix)
         sync_time = (time.perf_counter() - sync_start) * 1000
         
-        # 4. ÍNDICE PSI FINAL
+        # 4. INDICE PSI FINAL
         final_start = time.perf_counter()
         psi_product = phi_spectral * topological_resilience * sync_factor
         psi_index = np.cbrt(max(0.0, psi_product))
@@ -250,7 +250,7 @@ class FinalOptimizedTopoSpectral:
             'matrix_size': n
         }
         
-        # Cache solo resultados rápidos
+        # Cache solo resultados rapidos
         if total_time < 10:
             self.cache[cache_key] = result.copy()
         
@@ -259,7 +259,7 @@ class FinalOptimizedTopoSpectral:
         return result
     
     def _ultra_fast_hash(self, matrix: np.ndarray) -> str:
-        """Hash ultra-rápido para cache"""
+        """Hash ultra-rapido para cache"""
         n = matrix.shape[0]
         # Usar diagonal y esquinas para hash
         if n <= 5:
@@ -273,20 +273,20 @@ class FinalOptimizedTopoSpectral:
     
     def _ultra_fast_spectral_phi(self, connectivity_matrix: np.ndarray,
                                 node_states: Optional[np.ndarray]) -> float:
-        """Φ espectral ultra-rápido usando solo Fiedler vector"""
+        """? espectral ultra-rapido usando solo Fiedler vector"""
         try:
-            # Obtener Fiedler vector (aproximado pero rápido)
+            # Obtener Fiedler vector (aproximado pero rapido)
             fiedler = fast_fiedler_vector(connectivity_matrix)
             
-            # Threshold para partición
+            # Threshold para particion
             threshold = np.median(fiedler)
             
-            # Conductancia ultra-rápida
+            # Conductancia ultra-rapida
             conductance = fast_conductance(connectivity_matrix, threshold, fiedler)
             
-            # Información mutua simplificada
+            # Informacion mutua simplificada
             if node_states is not None:
-                # Usar correlación como proxy de MI
+                # Usar correlacion como proxy de MI
                 subset1_mask = fiedler >= threshold
                 if np.any(subset1_mask) and np.any(~subset1_mask):
                     corr = np.abs(np.corrcoef(
@@ -300,7 +300,7 @@ class FinalOptimizedTopoSpectral:
                 # Usar varianza del fiedler vector como proxy
                 mutual_info = min(1.0, np.var(fiedler))
             
-            # Φ espectral final
+            # ? espectral final
             phi_spectral = mutual_info * (1.0 - min(conductance, 1.0))
             
             return max(0.0, phi_spectral)
@@ -309,12 +309,12 @@ class FinalOptimizedTopoSpectral:
             return 0.0
     
     def _ultra_fast_topological_proxy(self, connectivity_matrix: np.ndarray) -> float:
-        """Proxy topológico ultra-rápido en lugar de homología persistente"""
+        """Proxy topologico ultra-rapido en lugar de homologia persistente"""
         try:
-            # Combinar clustering y path length como proxies topológicos
+            # Combinar clustering y path length como proxies topologicos
             clustering = fast_clustering_coefficient(connectivity_matrix)
             
-            # Path length estimado (solo para matrices pequeñas)
+            # Path length estimado (solo para matrices pequenas)
             n = connectivity_matrix.shape[0]
             if n <= 50:
                 path_length = fast_path_length_estimate(connectivity_matrix)
@@ -332,21 +332,21 @@ class FinalOptimizedTopoSpectral:
             return 0.5
     
     def _ultra_fast_sync(self, connectivity_matrix: np.ndarray) -> float:
-        """Factor de sincronización ultra-simplificado"""
+        """Factor de sincronizacion ultra-simplificado"""
         try:
-            # Usar distribución de degrees como proxy de sincronización
+            # Usar distribucion de degrees como proxy de sincronizacion
             degrees = np.sum(connectivity_matrix, axis=1)
             
             if len(degrees) == 0:
                 return 0.0
             
-            # Coeficiente de variación inverso
+            # Coeficiente de variacion inverso
             mean_degree = np.mean(degrees)
             std_degree = np.std(degrees)
             
             if mean_degree > 0:
                 cv = std_degree / mean_degree
-                sync_factor = 1.0 / (1.0 + cv)  # Menos variación = más sincronización
+                sync_factor = 1.0 / (1.0 + cv)  # Menos variacion = mas sincronizacion
             else:
                 sync_factor = 0.0
             
@@ -385,7 +385,7 @@ class FinalOptimizedTopoSpectral:
                 times.append(result['total_time_ms'])
                 psi_values.append(result['psi_index'])
             
-            # Estadísticas
+            # Estadisticas
             mean_time = np.mean(times)
             min_time = np.min(times)
             success_count = np.sum(np.array(times) <= 5.0)
@@ -407,7 +407,7 @@ class FinalOptimizedTopoSpectral:
             print(f"   Min: {min_time:.2f}ms")
             print(f"   Success rate: {success_rate:.1%}")
         
-        # Evaluación global
+        # Evaluacion global
         global_mean = np.mean(all_times)
         global_success_rate = np.sum(np.array(all_times) <= 5.0) / len(all_times)
         
@@ -435,7 +435,7 @@ class FinalOptimizedTopoSpectral:
         return overall_results
     
     def get_stats(self):
-        """Estadísticas del motor optimizado"""
+        """Estadisticas del motor optimizado"""
         return {
             'computations_performed': self.computation_count,
             'cache_size': len(self.cache),

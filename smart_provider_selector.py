@@ -5,9 +5,9 @@
 Smart Provider Selector for Multi-Provider AI Engine
 =====================================================
 
-Sistema inteligente de selección de proveedores de IA basado en:
+Sistema inteligente de seleccion de proveedores de IA basado en:
 - Tipo de tarea detectada
-- Métricas históricas de rendimiento
+- Metricas historicas de rendimiento
 - Disponibilidad y costo
 - Contexto de la consulta
 
@@ -54,7 +54,7 @@ class ProviderType(Enum):
     FALLBACK = "fallback"
 
 class ProviderMetrics:
-    """Métricas de rendimiento de un proveedor"""
+    """Metricas de rendimiento de un proveedor"""
     
     def __init__(self, provider_type: ProviderType, window_size: int = 100):
         self.provider_type = provider_type
@@ -104,7 +104,7 @@ class ProviderMetrics:
             penalty = min(0.5, self.consecutive_failures * 0.1)
             base_availability *= (1 - penalty)
         
-        # Penalizar si el último fallo fue muy reciente
+        # Penalizar si el ultimo fallo fue muy reciente
         if self.last_failure_time:
             time_since_failure = datetime.now() - self.last_failure_time
             if time_since_failure < timedelta(minutes=5):
@@ -119,7 +119,7 @@ class ProviderMetrics:
         return statistics.mean(self.response_times)
     
     def get_task_success_rate(self, task_type: TaskType) -> float:
-        """Obtener tasa de éxito para un tipo de tarea específico"""
+        """Obtener tasa de exito para un tipo de tarea especifico"""
         if task_type not in self.task_performance:
             return 0.5  # Sin datos, asumir rendimiento medio
         
@@ -150,17 +150,17 @@ class SmartProviderSelector:
         self.current_budget = self.config.get("monthly_budget", 100.0)
         self.budget_used = 0.0
         
-        # Inicializar métricas para cada proveedor
+        # Inicializar metricas para cada proveedor
         for provider in ProviderType:
             self.metrics[provider] = ProviderMetrics(provider)
         
-        # Cargar métricas históricas si existen
+        # Cargar metricas historicas si existen
         self._load_historical_metrics()
         
         logger.info("Smart Provider Selector initialized")
     
     def _default_config(self) -> Dict[str, Any]:
-        """Configuración por defecto"""
+        """Configuracion por defecto"""
         return {
             "prefer_local": True,
             "max_response_time": 30.0,  # segundos
@@ -209,7 +209,7 @@ class SmartProviderSelector:
             TaskType.TRANSLATION: [
                 r"\b(translate|translation|spanish|french|german|chinese|japanese)\b",
                 r"\b(from\s+\w+\s+to\s+\w+)\b",
-                r"\b(idioma|langue|sprache|语言|言語)\b"
+                r"\b(idioma|langue|sprache|??|??)\b"
             ],
             TaskType.SUMMARIZATION: [
                 r"\b(summarize|summary|brief|concise|main\s+points|key\s+takeaways)\b",
@@ -307,10 +307,10 @@ class SmartProviderSelector:
                 matches = re.findall(pattern, query_lower, re.IGNORECASE)
                 task_scores[task_type] += len(matches)
         
-        # Si hay contexto, usarlo para mejorar la detección
+        # Si hay contexto, usarlo para mejorar la deteccion
         if context:
             if context.get("previous_task_type"):
-                # Dar peso al tipo de tarea anterior (continuidad de conversación)
+                # Dar peso al tipo de tarea anterior (continuidad de conversacion)
                 prev_type = context["previous_task_type"]
                 if isinstance(prev_type, str):
                     try:
@@ -329,13 +329,13 @@ class SmartProviderSelector:
         return detected_type
     
     def estimate_tokens(self, text: str) -> int:
-        """Estimar número de tokens en un texto"""
-        # Usar tiktoken si está disponible, sino estimación simple
+        """Estimar numero de tokens en un texto"""
+        # Usar tiktoken si esta disponible, sino estimacion simple
         try:
             encoding = tiktoken.get_encoding("cl100k_base")
             return len(encoding.encode(text))
         except:
-            # Estimación simple: ~4 caracteres por token
+            # Estimacion simple: ~4 caracteres por token
             return len(text) // 4
     
     def calculate_cost(self, provider: ProviderType, tokens: int) -> float:
@@ -414,7 +414,7 @@ class SmartProviderSelector:
                     selection_reason = "Fallback due to no suitable provider"
                     break
         
-        # Si aún no hay proveedor, usar LOCAL_GGUF como último recurso
+        # Si aun no hay proveedor, usar LOCAL_GGUF como ultimo recurso
         if not selected_provider:
             selected_provider = ProviderType.LOCAL_GGUF
             selection_reason = "Last resort fallback"
@@ -444,7 +444,7 @@ class SmartProviderSelector:
     def _calculate_provider_score(self, provider: ProviderType, task_type: TaskType,
                                  estimated_tokens: int, max_latency: float,
                                  quality_required: float) -> float:
-        """Calcular score para un proveedor específico"""
+        """Calcular score para un proveedor especifico"""
         score = 0.0
         weights = {
             "task_performance": 0.3,
@@ -469,11 +469,11 @@ class SmartProviderSelector:
         # 2. Calidad
         quality_score = metrics.get_quality_score()
         
-        # Mapear calidad de capabilities a score numérico
+        # Mapear calidad de capabilities a score numerico
         quality_map = {"low": 0.4, "medium": 0.6, "good": 0.8, "excellent": 1.0}
         baseline_quality = quality_map.get(capabilities.get("quality", "medium"), 0.6)
         
-        # Combinar métricas históricas con baseline
+        # Combinar metricas historicas con baseline
         combined_quality = (quality_score * 0.7 + baseline_quality * 0.3)
         
         if combined_quality >= quality_required:
@@ -511,7 +511,7 @@ class SmartProviderSelector:
         
         # Bonus/Penalizaciones adicionales
         
-        # Preferir local si está configurado
+        # Preferir local si esta configurado
         if self.config.get("prefer_local") and provider == ProviderType.LOCAL_GGUF:
             score += 0.1
         
@@ -524,7 +524,7 @@ class SmartProviderSelector:
         if task_type in task_preferences:
             preferred_providers = task_preferences[task_type]
             if provider in preferred_providers:
-                # Bonus basado en posición en la lista de preferencias
+                # Bonus basado en posicion en la lista de preferencias
                 position = preferred_providers.index(provider)
                 score += (0.2 - position * 0.05)
         
@@ -548,7 +548,7 @@ class SmartProviderSelector:
         cost = self.calculate_cost(provider, tokens_used)
         self.budget_used += cost
         
-        # Guardar métricas
+        # Guardar metricas
         self._save_metrics()
         
         logger.info(f"Recorded result for {provider.value}: "
@@ -556,7 +556,7 @@ class SmartProviderSelector:
                    f"tokens={tokens_used}, cost=${cost:.4f}")
     
     def _save_metrics(self):
-        """Guardar métricas en archivo"""
+        """Guardar metricas en archivo"""
         metrics_data = {}
         
         for provider, metrics in self.metrics.items():
@@ -581,7 +581,7 @@ class SmartProviderSelector:
             }, f, indent=2)
     
     def _load_historical_metrics(self):
-        """Cargar métricas históricas si existen"""
+        """Cargar metricas historicas si existen"""
         metrics_file = Path("provider_metrics.json")
         
         if not metrics_file.exists():
@@ -593,7 +593,7 @@ class SmartProviderSelector:
             
             self.budget_used = data.get("budget_used", 0)
             
-            # Restaurar métricas básicas
+            # Restaurar metricas basicas
             for provider_str, provider_data in data.get("metrics", {}).items():
                 try:
                     provider = ProviderType(provider_str)
@@ -619,7 +619,7 @@ class SmartProviderSelector:
             logger.error(f"Error loading historical metrics: {e}")
     
     def get_provider_stats(self) -> Dict[str, Any]:
-        """Obtener estadísticas de todos los proveedores"""
+        """Obtener estadisticas de todos los proveedores"""
         stats = {
             "budget": {
                 "total": self.current_budget,
@@ -686,7 +686,7 @@ if __name__ == "__main__":
             quality_score=random.uniform(0.6, 1.0) if success else None
         )
     
-    # Mostrar estadísticas
+    # Mostrar estadisticas
     print("\n=== PROVIDER STATISTICS ===")
     stats = selector.get_provider_stats()
     print(json.dumps(stats, indent=2))

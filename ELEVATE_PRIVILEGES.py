@@ -26,7 +26,7 @@ def elevate_self():
         return True
     else:
         print("[!] Se requieren privilegios de administrador")
-        print("Solicitando elevación...")
+        print("Solicitando elevacion...")
         try:
             # Intentar elevar privilegios
             ctypes.windll.shell32.ShellExecuteW(
@@ -45,7 +45,7 @@ def configure_with_admin_privileges():
     print()
     
     if not is_admin():
-        print("ERROR: Esta función requiere privilegios de administrador")
+        print("ERROR: Esta funcion requiere privilegios de administrador")
         return False
     
     success_count = 0
@@ -64,12 +64,12 @@ def configure_with_admin_privileges():
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
         if result.returncode == 0:
-            print("  ✓ Tarea programada creada exitosamente")
+            print("  [OK] Tarea programada creada exitosamente")
             success_count += 1
         else:
-            print(f"  ✗ Error: {result.stderr}")
+            print(f"  [FAIL] Error: {result.stderr}")
     except Exception as e:
-        print(f"  ✗ Exception: {e}")
+        print(f"  [FAIL] Exception: {e}")
     
     # 2. Configurar registro HKLM
     print("[2/6] Configurando registro del sistema (HKLM)...")
@@ -78,10 +78,10 @@ def configure_with_admin_privileges():
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_SET_VALUE) as key:
             batch_path = r"D:\Obvivlorum\START_SYSTEM_FIXED.bat"
             winreg.SetValueEx(key, "AISymbiote_System", 0, winreg.REG_SZ, batch_path)
-            print("  ✓ Registro HKLM configurado")
+            print("  [OK] Registro HKLM configurado")
             success_count += 1
     except Exception as e:
-        print(f"  ✗ Error en registro HKLM: {e}")
+        print(f"  [FAIL] Error en registro HKLM: {e}")
     
     # 3. Crear servicio de Windows (opcional)
     print("[3/6] Configurando servicio de Windows...")
@@ -123,10 +123,10 @@ if __name__ == '__main__':
         
         with open(service_wrapper, 'w') as f:
             f.write(wrapper_content)
-        print("  ✓ Wrapper de servicio creado")
+        print("  [OK] Wrapper de servicio creado")
         success_count += 1
     except Exception as e:
-        print(f"  ✗ Error en servicio: {e}")
+        print(f"  [FAIL] Error en servicio: {e}")
     
     # 4. Configurar permisos de carpeta
     print("[4/6] Configurando permisos de carpetas...")
@@ -135,12 +135,12 @@ if __name__ == '__main__':
         cmd = ['icacls', 'D:\\Obvivlorum', '/grant', 'Everyone:(OI)(CI)F', '/T']
         result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
         if result.returncode == 0:
-            print("  ✓ Permisos de carpeta configurados")
+            print("  [OK] Permisos de carpeta configurados")
             success_count += 1
         else:
-            print(f"  ✗ Error en permisos: {result.stderr}")
+            print(f"  [FAIL] Error en permisos: {result.stderr}")
     except Exception as e:
-        print(f"  ✗ Error configurando permisos: {e}")
+        print(f"  [FAIL] Error configurando permisos: {e}")
     
     # 5. Configurar firewall (permitir Python)
     print("[5/6] Configurando reglas de firewall...")
@@ -154,15 +154,15 @@ if __name__ == '__main__':
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
         if result.returncode == 0:
-            print("  ✓ Regla de firewall agregada")
+            print("  [OK] Regla de firewall agregada")
             success_count += 1
         else:
-            print("  ⚠ Warning: No se pudo configurar firewall")
+            print("   Warning: No se pudo configurar firewall")
     except Exception as e:
-        print(f"  ⚠ Warning firewall: {e}")
+        print(f"   Warning firewall: {e}")
     
-    # 6. Crear configuración persistente
-    print("[6/6] Guardando configuración de privilegios...")
+    # 6. Crear configuracion persistente
+    print("[6/6] Guardando configuracion de privilegios...")
     try:
         config = {
             "admin_configured": True,
@@ -178,10 +178,10 @@ if __name__ == '__main__':
         os.makedirs(os.path.dirname(config_file), exist_ok=True)
         with open(config_file, 'w') as f:
             json.dump(config, f, indent=2)
-        print("  ✓ Configuración guardada")
+        print("  [OK] Configuracion guardada")
         success_count += 1
     except Exception as e:
-        print(f"  ✗ Error guardando config: {e}")
+        print(f"  [FAIL] Error guardando config: {e}")
     
     # Resumen
     print()
@@ -189,20 +189,20 @@ if __name__ == '__main__':
     print(f"CONFIGURACION COMPLETADA: {success_count}/{total_tasks} tareas exitosas")
     
     if success_count >= 4:
-        print("✓ SISTEMA CONFIGURADO EXITOSAMENTE")
-        print("El AI Symbiote ahora debería funcionar sin errores de permisos")
+        print("[OK] SISTEMA CONFIGURADO EXITOSAMENTE")
+        print("El AI Symbiote ahora deberia funcionar sin errores de permisos")
     else:
-        print("⚠ CONFIGURACION PARCIAL")
-        print("Algunas configuraciones fallaron, pero el sistema debería funcionar")
+        print(" CONFIGURACION PARCIAL")
+        print("Algunas configuraciones fallaron, pero el sistema deberia funcionar")
     
     return success_count >= 4
 
 def main():
-    """Función principal."""
+    """Funcion principal."""
     if not elevate_self():
         return
     
-    print("Ejecutándose con privilegios de administrador...")
+    print("Ejecutandose con privilegios de administrador...")
     configure_with_admin_privileges()
     input("\nPresiona Enter para continuar...")
 

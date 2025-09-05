@@ -40,7 +40,7 @@ def small_world_network():
 
 @pytest.fixture
 def random_network():
-    """Create Erdős-Rényi random network"""
+    """Create Erd?s-Renyi random network"""
     G = nx.erdos_renyi_graph(15, 0.3, seed=123)
     adjacency_matrix = nx.adjacency_matrix(G).toarray().astype(float)
     adjacency_matrix = adjacency_matrix * np.random.uniform(0.2, 0.8, adjacency_matrix.shape)
@@ -239,7 +239,7 @@ class TestTemporalSynchronization:
         sync = TemporalSynchronization()
         
         # Test with stable time series
-        stable_psi = np.ones(20) * 0.7  # Constant Ψ values
+        stable_psi = np.ones(20) * 0.7  # Constant ? values
         timestamps = np.arange(20) * 100  # 100ms intervals
         
         sync_factor = sync.calculate_synchronization_factor(stable_psi, timestamps)
@@ -316,7 +316,7 @@ class TestTopoSpectralConsciousnessIndex:
         assert 0 <= assessment.synchronization_factor <= 1.0
         assert assessment.consciousness_state in ConsciousnessState
         
-        # Verify formula: Ψ = ³√(Φ̂ * T̂ * Sync)
+        # Verify formula: ? = 0(? * T * Sync)
         expected_psi = np.power(
             assessment.phi_spectral * assessment.topological_resilience * assessment.synchronization_factor,
             1/3
@@ -324,8 +324,8 @@ class TestTopoSpectralConsciousnessIndex:
         assert np.isclose(assessment.psi_index, expected_psi, rtol=1e-6)
     
     def test_consciousness_state_classification(self, consciousness_calculator):
-        """Test consciousness state classification based on Ψ thresholds"""
-        # Test different Ψ values and expected classifications
+        """Test consciousness state classification based on ? thresholds"""
+        # Test different ? values and expected classifications
         test_cases = [
             (0.25, ConsciousnessState.DEEP_SLEEP),
             (0.45, ConsciousnessState.LIGHT_SLEEP), 
@@ -512,7 +512,7 @@ class TestMathematicalProperties:
     
     @pytest.mark.skipif(not TOPO_SPECTRAL_AVAILABLE, reason="Topo-Spectral framework not available")
     def test_geometric_mean_property(self, topo_spectral_calculator):
-        """Test that Ψ follows geometric mean formula"""
+        """Test that ? follows geometric mean formula"""
         # Create simple test case with known values
         test_matrix = np.eye(10) + 0.1 * np.random.random((10, 10))
         test_matrix = (test_matrix + test_matrix.T) / 2  # Make symmetric
@@ -540,7 +540,7 @@ class TestMathematicalProperties:
             assessment = topo_spectral_calculator.calculate_consciousness_index(adj_matrix)
             psi_values.append(assessment.psi_index)
         
-        # All Ψ values should be in valid range regardless of network size
+        # All ? values should be in valid range regardless of network size
         assert all(0 <= psi <= 1.0 for psi in psi_values)
     
     def test_spectral_approximation_error_bounds(self, small_world_network):
@@ -716,15 +716,15 @@ if __name__ == "__main__":
             assessment = calculator.calculate_consciousness_index(test_matrix)
             
             print(f"\nTopo-Spectral Assessment:")
-            print(f"  Ψ Index: {assessment.psi_index:.4f}")
-            print(f"  Φ̂ Spectral: {assessment.phi_spectral:.4f}")
-            print(f"  T̂ Topological: {assessment.topological_resilience:.4f}")
+            print(f"  ? Index: {assessment.psi_index:.4f}")
+            print(f"  ? Spectral: {assessment.phi_spectral:.4f}")
+            print(f"  T Topological: {assessment.topological_resilience:.4f}")
             print(f"  Sync Factor: {assessment.synchronization_factor:.4f}")
             print(f"  Consciousness State: {assessment.consciousness_state.value}")
             
-            print("\n✅ Basic tests passed!")
+            print("\n Basic tests passed!")
         else:
-            print("❌ Network validation failed")
+            print(" Network validation failed")
     else:
-        print("❌ Topo-Spectral framework not available")
+        print(" Topo-Spectral framework not available")
         print("Install required packages: pip install ripser persim numba")

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 TEST SUITE SIMPLE - SISTEMA UNIFICADO FASE 6
-Validación completa del sistema unificado sin caracteres Unicode
+Validacion completa del sistema unificado sin caracteres Unicode
 """
 
 import unittest
@@ -35,7 +35,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         logging.basicConfig(level=logging.WARNING)
     
     def tearDown(self):
-        """Cleanup después de cada test"""
+        """Cleanup despues de cada test"""
         os.chdir(self.original_cwd)
         import shutil
         try:
@@ -44,7 +44,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
             pass
     
     def test_1_unified_config_basic(self):
-        """Test 1: Configuración unificada básica"""
+        """Test 1: Configuracion unificada basica"""
         config_manager = UnifiedConfigManager()
         self.assertIsInstance(config_manager, UnifiedConfigManager)
         self.assertIn(config_manager.environment, ["local", "colab", "kaggle", "jupyter"])
@@ -52,7 +52,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_2_environment_detection(self):
-        """Test 2: Detección de entorno"""
+        """Test 2: Deteccion de entorno"""
         config_manager = UnifiedConfigManager()
         detected_env = config_manager.detect_environment()
         self.assertIsInstance(detected_env, str)
@@ -61,7 +61,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_3_scaling_config(self):
-        """Test 3: Configuración de escalado"""
+        """Test 3: Configuracion de escalado"""
         config_manager = UnifiedConfigManager()
         config = config_manager.get_scaling_config("level_1_local")
         self.assertIsInstance(config, dict)
@@ -71,7 +71,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_4_consciousness_basic(self):
-        """Test 4: Conciencia básica"""
+        """Test 4: Conciencia basica"""
         consciousness = ConsciousnessIntegration(self.temp_dir)
         self.assertIsInstance(consciousness, ConsciousnessIntegration)
         self.assertTrue(consciousness.is_system_conscious())
@@ -102,7 +102,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_6_cloud_scaling_basic(self):
-        """Test 6: Escalado en la nube básico"""
+        """Test 6: Escalado en la nube basico"""
         scaling_manager = CloudScalingManager()
         self.assertIsInstance(scaling_manager, CloudScalingManager)
         
@@ -114,10 +114,10 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_7_scaling_computation(self):
-        """Test 7: Computación con escalado"""
+        """Test 7: Computacion con escalado"""
         scaling_manager = CloudScalingManager()
         
-        # Test configuración válida
+        # Test configuracion valida
         config = scaling_manager.scale_computation(100, "topo_spectral")
         self.assertIsInstance(config, dict)
         self.assertIn("max_matrix_size", config)
@@ -125,7 +125,7 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_8_resource_estimation(self):
-        """Test 8: Estimación de recursos"""
+        """Test 8: Estimacion de recursos"""
         scaling_manager = CloudScalingManager()
         
         for size in [200, 500]:
@@ -137,12 +137,12 @@ class TestUnifiedSystemCore(unittest.TestCase):
         return True
     
     def test_9_system_integration(self):
-        """Test 9: Integración del sistema"""
+        """Test 9: Integracion del sistema"""
         config_manager = UnifiedConfigManager()
         consciousness = ConsciousnessIntegration(self.temp_dir)
         scaling_manager = CloudScalingManager()
         
-        # Verificar integración básica
+        # Verificar integracion basica
         self.assertTrue(config_manager.consciousness_integration)
         self.assertTrue(consciousness.is_system_conscious())
         self.assertIsInstance(scaling_manager.scaling_level, str)

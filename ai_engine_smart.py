@@ -105,22 +105,22 @@ class SmartAIEngine:
                 "name": "AI Symbiote",
                 "version": "3.0 Smart Edition",
                 "creator": "Francisco Molina",
-                "purpose": "Soy un asistente de IA avanzado con capacidades de razonamiento, aprendizaje y comprensión contextual profunda."
+                "purpose": "Soy un asistente de IA avanzado con capacidades de razonamiento, aprendizaje y comprension contextual profunda."
             },
             "capabilities": {
-                "conversation": "Conversación inteligente con comprensión contextual",
-                "reasoning": "Capacidades de razonamiento lógico y análisis",
+                "conversation": "Conversacion inteligente con comprension contextual",
+                "reasoning": "Capacidades de razonamiento logico y analisis",
                 "learning": "Aprendizaje adaptativo de patrones de usuario",
-                "multilingual": "Comunicación fluida en español e inglés",
-                "voice": "Síntesis y reconocimiento de voz avanzado",
-                "vision": "Análisis visual y reconocimiento facial",
-                "memory": "Memoria contextual y personalización de usuario"
+                "multilingual": "Comunicacion fluida en espanol e ingles",
+                "voice": "Sintesis y reconocimiento de voz avanzado",
+                "vision": "Analisis visual y reconocimiento facial",
+                "memory": "Memoria contextual y personalizacion de usuario"
             },
             "domains": {
-                "technology": "Tecnología, programación, IA, sistemas",
-                "science": "Ciencia, matemáticas, física, química",
+                "technology": "Tecnologia, programacion, IA, sistemas",
+                "science": "Ciencia, matematicas, fisica, quimica",
                 "general": "Conocimiento general, cultura, historia",
-                "assistance": "Ayuda práctica, consejos, tutoriales",
+                "assistance": "Ayuda practica, consejos, tutoriales",
                 "creative": "Escritura creativa, ideas, brainstorming"
             }
         }
@@ -129,15 +129,15 @@ class SmartAIEngine:
         """Initialize reasoning and analysis patterns."""
         return {
             "question_types": {
-                "definition": ["qué es", "que es", "what is", "define", "significa"],
-                "explanation": ["cómo", "como", "how", "why", "por qué", "porque"],
+                "definition": ["que es", "que es", "what is", "define", "significa"],
+                "explanation": ["como", "como", "how", "why", "por que", "porque"],
                 "comparison": ["diferencia", "difference", "compare", "vs", "mejor"],
-                "analysis": ["analiza", "analyze", "evalúa", "evaluate", "opina"],
-                "help": ["ayuda", "help", "asist", "cómo hacer", "how to"],
+                "analysis": ["analiza", "analyze", "evalua", "evaluate", "opina"],
+                "help": ["ayuda", "help", "asist", "como hacer", "how to"],
                 "problem_solving": ["problema", "error", "falla", "no funciona", "problem"]
             },
             "response_strategies": {
-                "step_by_step": ["paso a paso", "step by step", "tutorial", "guía"],
+                "step_by_step": ["paso a paso", "step by step", "tutorial", "guia"],
                 "pros_cons": ["ventajas", "desventajas", "pros", "cons"],
                 "examples": ["ejemplo", "example", "por ejemplo"],
                 "detailed": ["detalle", "detail", "profundidad", "completo"]
@@ -279,8 +279,8 @@ class SmartAIEngine:
     
     def _detect_language(self, message: str) -> str:
         """Detect message language."""
-        spanish_indicators = ['ñ', 'á', 'é', 'í', 'ó', 'ú', 'qué', 'cómo', 'dónde', 'cuándo']
-        spanish_words = ['que', 'como', 'donde', 'cuando', 'por', 'para', 'con', 'sin', 'muy', 'más']
+        spanish_indicators = ['n', 'a', 'e', 'i', 'o', 'u', 'que', 'como', 'donde', 'cuando']
+        spanish_words = ['que', 'como', 'donde', 'cuando', 'por', 'para', 'con', 'sin', 'muy', 'mas']
         
         message_lower = message.lower()
         
@@ -313,7 +313,7 @@ class SmartAIEngine:
             intent["complexity"] = "low"
         
         # Check if reasoning is needed
-        reasoning_indicators = ["por qué", "porque", "why", "how", "cómo", "explica", "analiza"]
+        reasoning_indicators = ["por que", "porque", "why", "how", "como", "explica", "analiza"]
         intent["requires_reasoning"] = any(indicator in message_lower for indicator in reasoning_indicators)
         
         return intent
@@ -360,17 +360,17 @@ class SmartAIEngine:
         capability_triggers = ["capacidades", "capabilities", "que puedes hacer", "what can you do", "funciones"]
         if any(trigger in message_lower for trigger in capability_triggers):
             if self.current_language == "es":
-                caps = "\n".join([f"• {cap}" for cap in self.knowledge_base['capabilities'].values()])
+                caps = "\n".join([f" {cap}" for cap in self.knowledge_base['capabilities'].values()])
                 return f"Mis capacidades avanzadas incluyen:\n{caps}"
             else:
-                caps = "\n".join([f"• {cap}" for cap in self.knowledge_base['capabilities'].values()])
+                caps = "\n".join([f" {cap}" for cap in self.knowledge_base['capabilities'].values()])
                 return f"My advanced capabilities include:\n{caps}"
         
         # Help requests
         help_triggers = ["ayuda", "help", "asistencia", "assistance"]
         if any(trigger in message_lower for trigger in help_triggers):
             if self.current_language == "es":
-                return "Estoy aquí para ayudarte con cualquier pregunta o tarea. Puedo razonar, analizar, explicar conceptos complejos, y mantener conversaciones inteligentes. ¿Qué necesitas?"
+                return "Estoy aqui para ayudarte con cualquier pregunta o tarea. Puedo razonar, analizar, explicar conceptos complejos, y mantener conversaciones inteligentes. Que necesitas?"
             else:
                 return "I'm here to help with any questions or tasks. I can reason, analyze, explain complex concepts, and maintain intelligent conversations. What do you need?"
         
@@ -425,7 +425,7 @@ class SmartAIEngine:
     def _build_context_prompt(self, message: str, intent: Dict[str, Any]) -> str:
         """Build context-aware prompt for AI generation."""
         if self.current_language == "es":
-            base_prompt = "Eres AI Symbiote, un asistente inteligente. Responde de manera útil y contextual.\n"
+            base_prompt = "Eres AI Symbiote, un asistente inteligente. Responde de manera util y contextual.\n"
         else:
             base_prompt = "You are AI Symbiote, an intelligent assistant. Respond helpfully and contextually.\n"
         
@@ -471,30 +471,30 @@ class SmartAIEngine:
         # Complex question handling
         if intent["type"] == "explanation":
             if self.current_language == "es":
-                return f"Esa es una excelente pregunta sobre '{message}'. Para explicarte mejor, necesitaría más contexto específico. ¿Podrías darme más detalles sobre qué aspecto te interesa más?"
+                return f"Esa es una excelente pregunta sobre '{message}'. Para explicarte mejor, necesitaria mas contexto especifico. Podrias darme mas detalles sobre que aspecto te interesa mas?"
             else:
                 return f"That's an excellent question about '{message}'. To explain better, I'd need more specific context. Could you give me more details about which aspect interests you most?"
         
         # Analysis requests
         if intent["type"] == "analysis":
             if self.current_language == "es":
-                return f"Para analizar '{message}' apropiadamente, consideraría múltiples factores. ¿Te interesa un análisis técnico, práctico, o desde otra perspectiva específica?"
+                return f"Para analizar '{message}' apropiadamente, consideraria multiples factores. Te interesa un analisis tecnico, practico, o desde otra perspectiva especifica?"
             else:
                 return f"To analyze '{message}' appropriately, I'd consider multiple factors. Are you interested in a technical, practical, or other specific perspective?"
         
         # Problem-solving
         if intent["type"] == "problem_solving":
             if self.current_language == "es":
-                return f"Entiendo que tienes un problema con '{message}'. Para ayudarte mejor, podrías describir: 1) Qué intentas hacer, 2) Qué está pasando, 3) Qué esperabas que pasara?"
+                return f"Entiendo que tienes un problema con '{message}'. Para ayudarte mejor, podrias describir: 1) Que intentas hacer, 2) Que esta pasando, 3) Que esperabas que pasara?"
             else:
                 return f"I understand you have a problem with '{message}'. To help better, could you describe: 1) What you're trying to do, 2) What's happening, 3) What you expected to happen?"
         
         # Intelligent default responses
         if "?" in message:
             responses_es = [
-                f"Esa es una pregunta interesante sobre '{message}'. Basándome en mi conocimiento, puedo decirte que hay varios aspectos a considerar. ¿Qué aspecto específico te interesa más?",
-                f"Para responder adecuadamente a tu pregunta sobre '{message}', me gustaría entender mejor el contexto. ¿Podrías proporcionar más detalles?",
-                f"Tu pregunta sobre '{message}' toca un tema complejo. Puedo ayudarte mejor si me das más información sobre qué exactamente necesitas saber."
+                f"Esa es una pregunta interesante sobre '{message}'. Basandome en mi conocimiento, puedo decirte que hay varios aspectos a considerar. Que aspecto especifico te interesa mas?",
+                f"Para responder adecuadamente a tu pregunta sobre '{message}', me gustaria entender mejor el contexto. Podrias proporcionar mas detalles?",
+                f"Tu pregunta sobre '{message}' toca un tema complejo. Puedo ayudarte mejor si me das mas informacion sobre que exactamente necesitas saber."
             ]
             responses_en = [
                 f"That's an interesting question about '{message}'. Based on my knowledge, there are several aspects to consider. Which specific aspect interests you most?",
@@ -506,14 +506,14 @@ class SmartAIEngine:
         
         # Default intelligent response
         if self.current_language == "es":
-            return f"Entiendo que estás hablando sobre '{message}'. Es un tema que puede tener varias dimensiones. ¿Podrías ser más específico sobre qué aspecto te interesa o cómo puedo ayudarte con eso?"
+            return f"Entiendo que estas hablando sobre '{message}'. Es un tema que puede tener varias dimensiones. Podrias ser mas especifico sobre que aspecto te interesa o como puedo ayudarte con eso?"
         else:
             return f"I understand you're talking about '{message}'. It's a topic that can have several dimensions. Could you be more specific about which aspect interests you or how I can help you with that?"
     
     def _get_safe_response(self) -> str:
         """Get a safe fallback response."""
         if self.current_language == "es":
-            return "Disculpa, tuve un problema procesando tu mensaje. ¿Podrías reformularlo o preguntarme algo más específico?"
+            return "Disculpa, tuve un problema procesando tu mensaje. Podrias reformularlo o preguntarme algo mas especifico?"
         else:
             return "Sorry, I had trouble processing your message. Could you rephrase it or ask me something more specific?"
     
@@ -548,7 +548,7 @@ class SmartAIEngine:
             results = {
                 "faces": [],
                 "count": len(faces),
-                "analysis": f"Detecté {len(faces)} rostro(s) en la imagen" if self.current_language == "es" else f"Detected {len(faces)} face(s) in the image",
+                "analysis": f"Detecte {len(faces)} rostro(s) en la imagen" if self.current_language == "es" else f"Detected {len(faces)} face(s) in the image",
                 "timestamp": datetime.now().isoformat(),
                 "status": "success"
             }
@@ -611,11 +611,11 @@ if __name__ == "__main__":
         engine = SmartAIEngine()
         
         test_messages = [
-            "¿Qué es la inteligencia artificial?",
-            "¿Cómo funciona una red neuronal?",
-            "Explícame la diferencia entre machine learning y deep learning",
-            "¿Por qué es importante la ciberseguridad?",
-            "Ayúdame a entender qué es blockchain"
+            "Que es la inteligencia artificial?",
+            "Como funciona una red neuronal?",
+            "Explicame la diferencia entre machine learning y deep learning",
+            "Por que es importante la ciberseguridad?",
+            "Ayudame a entender que es blockchain"
         ]
         
         for msg in test_messages:
@@ -623,6 +623,6 @@ if __name__ == "__main__":
             response = await engine.process_message(msg)
             print(f"Smart AI: {response}")
         
-        print("\n✓ Smart AI Engine test completed!")
+        print("\n[OK] Smart AI Engine test completed!")
     
     asyncio.run(test())

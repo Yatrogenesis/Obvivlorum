@@ -163,25 +163,25 @@ async def send_periodic_updates():
 async def lifespan(app: FastAPI):
     """Handle application lifespan events."""
     # Startup
-    print("🚀 AI Symbiote API starting up...")
+    print(" AI Symbiote API starting up...")
     
     # Start background task
     task = asyncio.create_task(send_periodic_updates())
     
-    print("✅ AI Symbiote API started successfully")
-    print("🌐 Frontend should connect to: http://localhost:8000")
-    print("📚 API Documentation: http://localhost:8000/api/docs")
+    print(" AI Symbiote API started successfully")
+    print(" Frontend should connect to: http://localhost:8000")
+    print(" API Documentation: http://localhost:8000/api/docs")
     
     yield
     
     # Shutdown
-    print("🛑 AI Symbiote API shutting down...")
+    print(" AI Symbiote API shutting down...")
     task.cancel()
     try:
         await task
     except asyncio.CancelledError:
         pass
-    print("✅ AI Symbiote API shutdown complete")
+    print(" AI Symbiote API shutdown complete")
 
 # Create FastAPI app with lifespan
 app = FastAPI(
@@ -619,7 +619,7 @@ async def health_check():
     }
 
 if __name__ == "__main__":
-    print("🚀 Starting AI Symbiote API Server...")
+    print(" Starting AI Symbiote API Server...")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",

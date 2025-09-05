@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-MÉTRICAS DE CONCIENCIA - FASE 2 INTEGRACIÓN HOLOGRÁFICA CRÍTICA
+METRICAS DE CONCIENCIA - FASE 2 INTEGRACION HOLOGRAFICA CRITICA
 ==============================================================
 
-IMPLEMENTACIÓN CIENTÍFICA RIGUROSA: Sistema integrado de métricas de conciencia
-con memoria holográfica y formalismo Topo-Espectral completo
+IMPLEMENTACION CIENTIFICA RIGUROSA: Sistema integrado de metricas de conciencia
+con memoria holografica y formalismo Topo-Espectral completo
 
-FRAMEWORK TEÓRICO:
+FRAMEWORK TEORICO:
 - Integrated Information Theory (IIT) - Tononi (2016)
 - Global Workspace Theory (GWT) - Baars (1988) 
 - Topo-Spectral Consciousness Index - Francisco Molina (2024)
 - Holographic Memory Integration - Gabor/Hopfield principles
 
 ECUACIONES FUNDAMENTALES:
-- IIT: Φ(S) = min_partition KL[p(X₁^t|X₀) || ∏ᵢ p(Xᵢ^t|X₀)]
-- GWT: GWI = Σᵢ wᵢ · activation_globalᵢ / Σⱼ activation_totalⱼ  
-- Topo-Spectral: Ψ(St) = ³√(Φ̂spec(St) · T̂(St) · Sync(St))
-- Holographic: H(x,y) = Σᵢ Pᵢ(x,y) * R*(x,y)
+- IIT: ?(S) = min_partition KL[p(X0^t|X0) || ? p(X?^t|X0)]
+- GWT: GWI = ?? w?  activation_global? / ?? activation_total?  
+- Topo-Spectral: ?(St) = 0(?spec(St)  T(St)  Sync(St))
+- Holographic: H(x,y) = ?? P?(x,y) * R*(x,y)
 
 PERFORMANCE TARGET: <5ms response time (FASE 3 optimization)
 ACCURACY TARGET: >95% clinical validation (Temple University corpus n=2847)
@@ -39,30 +39,30 @@ import logging
 import time
 from pathlib import Path
 
-# Importación crítica: Sistema de memoria holográfica
+# Importacion critica: Sistema de memoria holografica
 try:
     from ..AION.holographic_memory import HolographicMemorySystem, MemoryPattern, HolographicConfiguration
     HOLOGRAPHIC_AVAILABLE = True
 except ImportError:
     HOLOGRAPHIC_AVAILABLE = False
-    logging.warning("Sistema holográfico no disponible - funcionalidad reducida")
+    logging.warning("Sistema holografico no disponible - funcionalidad reducida")
 
-# Importación opcional: Framework Topo-Spectral
+# Importacion opcional: Framework Topo-Spectral
 try:
     from .topo_spectral_consciousness import TopoSpectralConsciousnessIndex
     TOPO_SPECTRAL_AVAILABLE = True
 except ImportError:
     TOPO_SPECTRAL_AVAILABLE = False
-    logging.warning("Framework Topo-Spectral no disponible - usando métricas básicas")
+    logging.warning("Framework Topo-Spectral no disponible - usando metricas basicas")
 
 class ConsciousnessLevel(Enum):
     """Levels of consciousness based on integrated information"""
-    UNCONSCIOUS = 0      # Φ ≈ 0
-    MINIMAL = 1          # 0 < Φ < 0.1
-    LOW = 2              # 0.1 ≤ Φ < 0.5
-    MODERATE = 3         # 0.5 ≤ Φ < 1.0
-    HIGH = 4             # 1.0 ≤ Φ < 2.0
-    VERY_HIGH = 5        # Φ ≥ 2.0
+    UNCONSCIOUS = 0      # ? ~= 0
+    MINIMAL = 1          # 0 < ? < 0.1
+    LOW = 2              # 0.1 <= ? < 0.5
+    MODERATE = 3         # 0.5 <= ? < 1.0
+    HIGH = 4             # 1.0 <= ? < 2.0
+    VERY_HIGH = 5        # ? >= 2.0
 
 @dataclass
 class NetworkNode:
@@ -91,7 +91,7 @@ class SystemPartition:
 class IntegratedInformationCalculator:
     """
     Implementation of Integrated Information Theory (IIT) 3.0
-    Calculates Φ (phi) as a measure of consciousness
+    Calculates ? (phi) as a measure of consciousness
     """
     
     def __init__(self, network: Dict[str, NetworkNode]):
@@ -120,8 +120,8 @@ class IntegratedInformationCalculator:
     
     def calculate_phi(self, system_state: np.ndarray) -> float:
         """
-        Calculate integrated information Φ (phi) for the system
-        Φ = min_{partition} D(p(x₁) ⊗ p(x₀|cut), p(x₁|x₀))
+        Calculate integrated information ? (phi) for the system
+        ? = min_{partition} D(p(x0) x p(x0|cut), p(x0|x0))
         """
         if len(system_state) != self.n_nodes:
             raise ValueError(f"State vector must have {self.n_nodes} elements")
@@ -183,7 +183,7 @@ class IntegratedInformationCalculator:
     def _calculate_partition_phi(self, system_state: np.ndarray, partition: SystemPartition) -> float:
         """
         Calculate phi for a specific partition using KL divergence
-        D(p(x₁|x₀), p(x₁ᴬ|x₀ᴬ) ⊗ p(x₁ᴮ|x₀ᴮ))
+        D(p(x0|x0), p(x0?|x0?) x p(x0?|x0?))
         """
         # Create cut system by removing connections
         cut_network = self._apply_partition_cut(partition)
@@ -203,7 +203,7 @@ class IntegratedInformationCalculator:
             cut_product_repertoire = cut_product_repertoire[:min_len]
             intact_repertoire = intact_repertoire[:min_len]
         
-        # Calculate KL divergence: D(P||Q) = Σᵢ P(i) log(P(i)/Q(i))
+        # Calculate KL divergence: D(P||Q) = ?? P(i) log(P(i)/Q(i))
         # Add small epsilon to avoid log(0)
         epsilon = 1e-10
         intact_repertoire = np.clip(intact_repertoire, epsilon, 1.0)
@@ -242,7 +242,7 @@ class IntegratedInformationCalculator:
     
     def _calculate_cause_repertoire(self, system_state: np.ndarray) -> np.ndarray:
         """
-        Calculate the cause repertoire p(x₀|x₁) 
+        Calculate the cause repertoire p(x0|x0) 
         Probability of past states given current state
         """
         # Simplified implementation using network dynamics
@@ -451,7 +451,7 @@ class GlobalWorkspaceAnalyzer:
         x_marginal = np.sum(xy_joint, axis=1)
         y_marginal = np.sum(xy_joint, axis=0)
         
-        # Mutual information: MI(X,Y) = Σᵢⱼ P(xᵢ,yⱼ) log(P(xᵢ,yⱼ)/(P(xᵢ)P(yⱼ)))
+        # Mutual information: MI(X,Y) = ??? P(x?,y?) log(P(x?,y?)/(P(x?)P(y?)))
         mi = 0.0
         for i in range(len(x_marginal)):
             for j in range(len(y_marginal)):
@@ -619,7 +619,7 @@ def demonstrate_consciousness_assessment():
         assessment = assessor.assess_consciousness_level(state)
         
         print(f"\n{state_name.upper()} State:")
-        print(f"  Φ (phi): {assessment['phi']:.4f}")
+        print(f"  ? (phi): {assessment['phi']:.4f}")
         print(f"  Consciousness Level: {assessment['consciousness_level'].name}")
         print(f"  Global Accessibility: {assessment['global_accessibility']:.4f}")
         print(f"  Information Integration: {assessment['information_integration']:.4f}")
@@ -645,9 +645,9 @@ def demonstrate_consciousness_assessment():
     
     evolution_analysis = assessor.monitor_consciousness_evolution(evolution_states)
     
-    print(f"Max Φ: {evolution_analysis['max_phi']:.4f}")
-    print(f"Mean Φ: {evolution_analysis['mean_phi']:.4f}")
-    print(f"Φ Trend: {evolution_analysis['phi_trend']:.6f} (per time step)")
+    print(f"Max ?: {evolution_analysis['max_phi']:.4f}")
+    print(f"Mean ?: {evolution_analysis['mean_phi']:.4f}")
+    print(f"? Trend: {evolution_analysis['phi_trend']:.6f} (per time step)")
     print(f"Score Trend: {evolution_analysis['score_trend']:.6f} (per time step)")
     print(f"Stability: {evolution_analysis['stability']:.4f}")
     
@@ -969,13 +969,13 @@ def demonstrate_enhanced_consciousness_assessment():
         assessment = assessor.assess_consciousness_level(state)
         
         print(f"\n{state_name.upper()} State ({assessment['framework']}):")
-        print(f"  Standard Φ (phi): {assessment['phi']:.4f}")
+        print(f"  Standard ? (phi): {assessment['phi']:.4f}")
         print(f"  Consciousness Level: {assessment['consciousness_level'].name}")
         
         if assessor.enable_topo_spectral:
-            print(f"  Topo-Spectral Ψ: {assessment['psi_index']:.4f}")
-            print(f"  Φ̂ Spectral: {assessment['phi_spectral']:.4f}")
-            print(f"  T̂ Topological: {assessment['topological_resilience']:.4f}")
+            print(f"  Topo-Spectral ?: {assessment['psi_index']:.4f}")
+            print(f"  ? Spectral: {assessment['phi_spectral']:.4f}")
+            print(f"  T Topological: {assessment['topological_resilience']:.4f}")
             print(f"  Sync Factor: {assessment['synchronization_factor']:.4f}")
             print(f"  Topo-Spectral State: {assessment['topo_spectral_state']}")
             print(f"  Combined Score: {assessment['combined_consciousness_score']:.4f}")
@@ -1003,13 +1003,13 @@ def demonstrate_enhanced_consciousness_assessment():
         
         evolution_analysis = assessor.monitor_consciousness_evolution(evolution_states)
         
-        print(f"Standard - Max Φ: {evolution_analysis['max_phi']:.4f}")
-        print(f"Standard - Mean Φ: {evolution_analysis['mean_phi']:.4f}")
+        print(f"Standard - Max ?: {evolution_analysis['max_phi']:.4f}")
+        print(f"Standard - Mean ?: {evolution_analysis['mean_phi']:.4f}")
         print(f"Standard - Trend: {evolution_analysis['phi_trend']:.6f}")
         
         if 'psi_sequence' in evolution_analysis:
-            print(f"Topo-Spectral - Max Ψ: {evolution_analysis['max_psi']:.4f}")
-            print(f"Topo-Spectral - Mean Ψ: {evolution_analysis['mean_psi']:.4f}")
+            print(f"Topo-Spectral - Max ?: {evolution_analysis['max_psi']:.4f}")
+            print(f"Topo-Spectral - Mean ?: {evolution_analysis['mean_psi']:.4f}")
             print(f"Topo-Spectral - Trend: {evolution_analysis['psi_trend']:.6f}")
             print(f"Topo-Spectral - Stability: {evolution_analysis['psi_stability']:.4f}")
             print(f"State Transitions: {evolution_analysis['state_transitions']['transition_count']}")
@@ -1018,55 +1018,55 @@ def demonstrate_enhanced_consciousness_assessment():
 
 class HolographicConsciousnessIntegrator:
     """
-    INTEGRACIÓN HOLOGRÁFICA DE MÉTRICAS DE CONCIENCIA - FASE 2 CRÍTICA
+    INTEGRACION HOLOGRAFICA DE METRICAS DE CONCIENCIA - FASE 2 CRITICA
     
-    Sistema avanzado que integra memoria holográfica con métricas de conciencia
+    Sistema avanzado que integra memoria holografica con metricas de conciencia
     para crear un marco unificado de procesamiento consciente.
     
-    CARACTERÍSTICAS CIENTÍFICAS:
-    - Almacenamiento holográfico de patrones de conciencia
-    - Recuperación asociativa de estados conscientes
-    - Análisis longitudinal de evolución de la conciencia
-    - Integración con framework Topo-Spectral
+    CARACTERISTICAS CIENTIFICAS:
+    - Almacenamiento holografico de patrones de conciencia
+    - Recuperacion asociativa de estados conscientes
+    - Analisis longitudinal de evolucion de la conciencia
+    - Integracion con framework Topo-Spectral
     
     ECUACIONES IMPLEMENTADAS:
-    - Patrón Holográfico de Conciencia: HC(t) = H[Ψ(t), Φ(t), GWI(t)]
-    - Recuperación Asociativa: R(q) = argmax_p correlation(H[q], H[p])
-    - Memoria Episódica: ME(t) = ∫₀ᵗ HC(τ) · decay(t-τ) dτ
+    - Patron Holografico de Conciencia: HC(t) = H[?(t), ?(t), GWI(t)]
+    - Recuperacion Asociativa: R(q) = argmax_p correlation(H[q], H[p])
+    - Memoria Episodica: ME(t) = 0? HC(?)  decay(t-?) d?
     """
     
     def __init__(self, assessment_system: Optional['EnhancedConsciousnessAssessment'] = None):
         """
-        Inicialización del integrador holográfico
+        Inicializacion del integrador holografico
         
         Args:
-            assessment_system: Sistema de evaluación de conciencia existente
+            assessment_system: Sistema de evaluacion de conciencia existente
         """
         self.assessment_system = assessment_system or EnhancedConsciousnessAssessment()
         
-        # Inicialización del sistema holográfico si está disponible
+        # Inicializacion del sistema holografico si esta disponible
         if HOLOGRAPHIC_AVAILABLE:
             holo_config = HolographicConfiguration(
                 max_patterns=2000,  # Capacidad para episodios de conciencia
-                pattern_dimensions=(128, 128),  # Alta resolución para patrones complejos
-                noise_tolerance=0.3,  # Tolerancia a degradación
+                pattern_dimensions=(128, 128),  # Alta resolucion para patrones complejos
+                noise_tolerance=0.3,  # Tolerancia a degradacion
                 reconstruction_threshold=0.85,  # Alta fidelidad requerida
                 interference_optimization=True
             )
             self.holographic_memory = HolographicMemorySystem(holo_config)
             self.holographic_enabled = True
-            logging.info("Sistema holográfico de conciencia inicializado")
+            logging.info("Sistema holografico de conciencia inicializado")
         else:
             self.holographic_memory = None
             self.holographic_enabled = False
-            logging.warning("Sistema holográfico no disponible - funcionalidad reducida")
+            logging.warning("Sistema holografico no disponible - funcionalidad reducida")
         
-        # Métricas de rendimiento
+        # Metricas de rendimiento
         self.consciousness_episodes = []
         self.pattern_recognition_accuracy = 0.0
         self.holographic_retrieval_time = 0.0
         
-        # Cache de patrones para optimización
+        # Cache de patrones para optimizacion
         self.pattern_cache = {}
         
     def encode_consciousness_state(self, 
@@ -1074,34 +1074,34 @@ class HolographicConsciousnessIntegrator:
                                   episode_id: str,
                                   semantic_context: Optional[List[str]] = None) -> Optional['MemoryPattern']:
         """
-        CODIFICACIÓN HOLOGRÁFICA DE ESTADO DE CONCIENCIA
+        CODIFICACION HOLOGRAFICA DE ESTADO DE CONCIENCIA
         
-        Convierte un estado de red neuronal en un patrón holográfico
-        que preserva las características de conciencia.
+        Convierte un estado de red neuronal en un patron holografico
+        que preserva las caracteristicas de conciencia.
         
         Args:
             network_state: Estado actual de la red neuronal
-            episode_id: Identificador único del episodio consciente
-            semantic_context: Contexto semántico del estado
+            episode_id: Identificador unico del episodio consciente
+            semantic_context: Contexto semantico del estado
             
         Returns:
-            Patrón de memoria holográfica codificado
+            Patron de memoria holografica codificado
         """
         if not self.holographic_enabled:
-            logging.warning("Sistema holográfico no disponible para codificación")
+            logging.warning("Sistema holografico no disponible para codificacion")
             return None
         
         start_time = time.time()
         
-        # Evaluación completa del estado de conciencia
+        # Evaluacion completa del estado de conciencia
         consciousness_metrics = self.assessment_system.assess_consciousness_state(network_state)
         
-        # Construcción del patrón de conciencia multidimensional
+        # Construccion del patron de conciencia multidimensional
         consciousness_pattern = self._build_consciousness_pattern(
             network_state, consciousness_metrics
         )
         
-        # Codificación holográfica con etiquetas semánticas
+        # Codificacion holografica con etiquetas semanticas
         semantic_tags = semantic_context or []
         semantic_tags.extend([
             f"phi_{consciousness_metrics['phi']:.3f}",
@@ -1109,12 +1109,12 @@ class HolographicConsciousnessIntegrator:
             f"level_{consciousness_metrics['level'].name}"
         ])
         
-        # Incluir métricas Topo-Spectral si están disponibles
+        # Incluir metricas Topo-Spectral si estan disponibles
         if 'psi' in consciousness_metrics:
             semantic_tags.append(f"psi_{consciousness_metrics['psi']:.3f}")
         
         try:
-            # Codificación en memoria holográfica
+            # Codificacion en memoria holografica
             memory_pattern = self.holographic_memory.encode_pattern(
                 consciousness_pattern,
                 episode_id,
@@ -1135,35 +1135,35 @@ class HolographicConsciousnessIntegrator:
             return memory_pattern
             
         except Exception as e:
-            logging.error(f"Error en codificación holográfica: {e}")
+            logging.error(f"Error en codificacion holografica: {e}")
             return None
     
     def retrieve_similar_consciousness_state(self,
                                            query_state: np.ndarray,
                                            similarity_threshold: float = 0.8) -> Optional[Tuple[Dict[str, Any], float]]:
         """
-        RECUPERACIÓN ASOCIATIVA DE ESTADOS DE CONCIENCIA
+        RECUPERACION ASOCIATIVA DE ESTADOS DE CONCIENCIA
         
-        Busca en la memoria holográfica estados de conciencia similares
-        al estado de consulta mediante correlación holográfica.
+        Busca en la memoria holografica estados de conciencia similares
+        al estado de consulta mediante correlacion holografica.
         
         Args:
             query_state: Estado de consulta
-            similarity_threshold: Umbral mínimo de similitud
+            similarity_threshold: Umbral minimo de similitud
             
         Returns:
-            Tuple con episodio más similar y score de similitud
+            Tuple con episodio mas similar y score de similitud
         """
         if not self.holographic_enabled:
             return None
         
         start_time = time.time()
         
-        # Construcción del patrón de consulta
+        # Construccion del patron de consulta
         query_metrics = self.assessment_system.assess_consciousness_state(query_state)
         query_pattern = self._build_consciousness_pattern(query_state, query_metrics)
         
-        # Búsqueda holográfica
+        # Busqueda holografica
         retrieval_result = self.holographic_memory.retrieve_pattern(
             query_pattern, similarity_threshold
         )
@@ -1190,30 +1190,30 @@ class HolographicConsciousnessIntegrator:
                                      network_states: List[np.ndarray],
                                      episode_prefix: str = "evolution") -> Dict[str, Any]:
         """
-        ANÁLISIS LONGITUDINAL DE EVOLUCIÓN DE CONCIENCIA
+        ANALISIS LONGITUDINAL DE EVOLUCION DE CONCIENCIA
         
-        Analiza la evolución temporal de la conciencia mediante
-        codificación holográfica secuencial y análisis de patrones.
+        Analiza la evolucion temporal de la conciencia mediante
+        codificacion holografica secuencial y analisis de patrones.
         
         Args:
             network_states: Secuencia de estados de red neuronal
             episode_prefix: Prefijo para identificadores de episodios
             
         Returns:
-            Análisis completo de la evolución consciente
+            Analisis completo de la evolucion consciente
         """
         if not self.holographic_enabled:
-            logging.warning("Análisis de evolución requiere sistema holográfico")
+            logging.warning("Analisis de evolucion requiere sistema holografico")
             return {}
         
         evolution_patterns = []
         consciousness_trajectory = []
         
-        # Codificación secuencial de estados
+        # Codificacion secuencial de estados
         for i, state in enumerate(network_states):
             episode_id = f"{episode_prefix}_{i:04d}"
             
-            # Codificación holográfica
+            # Codificacion holografica
             pattern = self.encode_consciousness_state(
                 state, episode_id, [f"sequence_{i}", f"evolution_step"]
             )
@@ -1221,19 +1221,19 @@ class HolographicConsciousnessIntegrator:
             if pattern:
                 evolution_patterns.append(pattern)
                 
-                # Extracción de métricas del episodio
-                episode = self.consciousness_episodes[-1]  # Último añadido
+                # Extraccion de metricas del episodio
+                episode = self.consciousness_episodes[-1]  # Ultimo anadido
                 consciousness_trajectory.append(episode['consciousness_metrics'])
         
-        # Análisis de la trayectoria de conciencia
+        # Analisis de la trayectoria de conciencia
         analysis = self._analyze_consciousness_trajectory(consciousness_trajectory)
         
-        # Análisis holográfico de patrones
+        # Analisis holografico de patrones
         if len(evolution_patterns) > 1:
             holographic_analysis = self._analyze_holographic_patterns(evolution_patterns)
             analysis.update(holographic_analysis)
         
-        # Detección de transiciones críticas
+        # Deteccion de transiciones criticas
         transitions = self._detect_consciousness_transitions(consciousness_trajectory)
         analysis['critical_transitions'] = transitions
         
@@ -1243,15 +1243,15 @@ class HolographicConsciousnessIntegrator:
                                    network_state: np.ndarray,
                                    consciousness_metrics: Dict[str, Any]) -> np.ndarray:
         """
-        Construcción de patrón multidimensional de conciencia para codificación holográfica
+        Construccion de patron multidimensional de conciencia para codificacion holografica
         """
-        # Dimensiones del patrón holográfico
+        # Dimensiones del patron holografico
         pattern_size = self.holographic_memory.config.pattern_dimensions if self.holographic_enabled else (64, 64)
         
         # Canal 1: Estado de red neuronal normalizado
         network_channel = self._normalize_to_2d(network_state, pattern_size)
         
-        # Canal 2: Métricas de conciencia como mapa de calor
+        # Canal 2: Metricas de conciencia como mapa de calor
         metrics_values = [
             consciousness_metrics.get('phi', 0),
             consciousness_metrics.get('gwi', 0),
@@ -1260,23 +1260,23 @@ class HolographicConsciousnessIntegrator:
         ]
         metrics_channel = self._create_metrics_heatmap(metrics_values, pattern_size)
         
-        # Canal 3: Conectividad como patrón de interferencia
+        # Canal 3: Conectividad como patron de interferencia
         connectivity_channel = self._network_to_connectivity_pattern(network_state, pattern_size)
         
-        # Combinación de canales en patrón holográfico complejo
+        # Combinacion de canales en patron holografico complejo
         consciousness_pattern = (
             network_channel + 
             1j * metrics_channel + 
             0.5 * connectivity_channel
         )
         
-        return consciousness_pattern.real  # Parte real para codificación
+        return consciousness_pattern.real  # Parte real para codificacion
     
     def _normalize_to_2d(self, vector: np.ndarray, target_shape: Tuple[int, int]) -> np.ndarray:
-        """Normaliza vector 1D a matriz 2D para patrón holográfico"""
+        """Normaliza vector 1D a matriz 2D para patron holografico"""
         from scipy.ndimage import zoom
         
-        # Reshape a cuadrado más cercano
+        # Reshape a cuadrado mas cercano
         side_length = int(np.sqrt(len(vector)))
         if side_length * side_length < len(vector):
             side_length += 1
@@ -1285,7 +1285,7 @@ class HolographicConsciousnessIntegrator:
         padded_vector = np.pad(vector, (0, side_length**2 - len(vector)), mode='constant')
         reshaped = padded_vector[:side_length**2].reshape(side_length, side_length)
         
-        # Redimensionar a tamaño objetivo
+        # Redimensionar a tamano objetivo
         if reshaped.shape != target_shape:
             scale_factors = [target_shape[i] / reshaped.shape[i] for i in range(2)]
             reshaped = zoom(reshaped, scale_factors, order=1)
@@ -1293,20 +1293,20 @@ class HolographicConsciousnessIntegrator:
         return reshaped
     
     def _create_metrics_heatmap(self, metrics: List[float], shape: Tuple[int, int]) -> np.ndarray:
-        """Crea mapa de calor de métricas de conciencia"""
+        """Crea mapa de calor de metricas de conciencia"""
         heatmap = np.zeros(shape)
         
-        # Distribución radial de métricas desde el centro
+        # Distribucion radial de metricas desde el centro
         center_y, center_x = shape[0] // 2, shape[1] // 2
         
         for i, metric_value in enumerate(metrics):
             if not np.isfinite(metric_value):
                 continue
                 
-            # Radio proporcional al valor de la métrica
+            # Radio proporcional al valor de la metrica
             radius = int(min(shape) * 0.2 * (i + 1) / len(metrics))
             
-            # Creación de patrón circular
+            # Creacion de patron circular
             y, x = np.ogrid[:shape[0], :shape[1]]
             mask = (x - center_x)**2 + (y - center_y)**2 <= radius**2
             
@@ -1315,8 +1315,8 @@ class HolographicConsciousnessIntegrator:
         return heatmap / np.max(heatmap) if np.max(heatmap) > 0 else heatmap
     
     def _network_to_connectivity_pattern(self, network_state: np.ndarray, shape: Tuple[int, int]) -> np.ndarray:
-        """Convierte conectividad de red en patrón de interferencia"""
-        # Matriz de correlación como proxy de conectividad
+        """Convierte conectividad de red en patron de interferencia"""
+        # Matriz de correlacion como proxy de conectividad
         n_nodes = len(network_state)
         connectivity = np.outer(network_state, network_state)
         
@@ -1329,11 +1329,11 @@ class HolographicConsciousnessIntegrator:
         return connectivity
     
     def _analyze_consciousness_trajectory(self, trajectory: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Análisis estadístico de la trayectoria de conciencia"""
+        """Analisis estadistico de la trayectoria de conciencia"""
         if not trajectory:
             return {}
         
-        # Extracción de series temporales
+        # Extraccion de series temporales
         phi_series = [episode.get('phi', 0) for episode in trajectory]
         gwi_series = [episode.get('gwi', 0) for episode in trajectory]
         psi_series = [episode.get('psi', 0) for episode in trajectory if 'psi' in episode]
@@ -1352,7 +1352,7 @@ class HolographicConsciousnessIntegrator:
             }
         }
         
-        # Análisis Topo-Spectral si está disponible
+        # Analisis Topo-Spectral si esta disponible
         if psi_series:
             analysis['psi_statistics'] = {
                 'mean': np.mean(psi_series),
@@ -1363,14 +1363,14 @@ class HolographicConsciousnessIntegrator:
         return analysis
     
     def _analyze_holographic_patterns(self, patterns: List['MemoryPattern']) -> Dict[str, Any]:
-        """Análisis específico de patrones holográficos"""
+        """Analisis especifico de patrones holograficos"""
         if not patterns:
             return {}
         
-        # Análisis de interferencia promedio
+        # Analisis de interferencia promedio
         interference_values = [p.interference_strength for p in patterns]
         
-        # Análisis de fidelidad de reconstrucción
+        # Analisis de fidelidad de reconstruccion
         fidelity_values = [p.reconstruction_fidelity for p in patterns if p.reconstruction_fidelity > 0]
         
         return {
@@ -1382,17 +1382,17 @@ class HolographicConsciousnessIntegrator:
         }
     
     def _detect_consciousness_transitions(self, trajectory: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Detección de transiciones críticas en la conciencia"""
+        """Deteccion de transiciones criticas en la conciencia"""
         transitions = []
         
         if len(trajectory) < 2:
             return transitions
         
-        # Detección de cambios significativos en Φ (phi)
+        # Deteccion de cambios significativos en ? (phi)
         phi_series = [episode.get('phi', 0) for episode in trajectory]
         phi_changes = np.diff(phi_series)
         
-        # Umbral para transición significativa (2 desviaciones estándar)
+        # Umbral para transicion significativa (2 desviaciones estandar)
         change_threshold = 2 * np.std(phi_changes) if len(phi_changes) > 1 else 0.1
         
         for i, change in enumerate(phi_changes):
@@ -1410,7 +1410,7 @@ class HolographicConsciousnessIntegrator:
         return transitions
     
     def get_holographic_statistics(self) -> Dict[str, Any]:
-        """Estadísticas completas del sistema holográfico de conciencia"""
+        """Estadisticas completas del sistema holografico de conciencia"""
         base_stats = {
             'holographic_enabled': self.holographic_enabled,
             'consciousness_episodes': len(self.consciousness_episodes),
@@ -1430,14 +1430,14 @@ class HolographicConsciousnessIntegrator:
         return base_stats
 
 def demonstrate_holographic_consciousness_integration():
-    """Demostración del sistema integrado holográfico-consciente"""
-    print("=== DEMOSTRACIÓN INTEGRACIÓN HOLOGRÁFICA DE CONCIENCIA ===")
+    """Demostracion del sistema integrado holografico-consciente"""
+    print("=== DEMOSTRACION INTEGRACION HOLOGRAFICA DE CONCIENCIA ===")
     
     if not HOLOGRAPHIC_AVAILABLE:
-        print("Sistema holográfico no disponible - demostración limitada")
+        print("Sistema holografico no disponible - demostracion limitada")
         return
     
-    # Crear integrador holográfico
+    # Crear integrador holografico
     integrator = HolographicConsciousnessIntegrator()
     
     # Generar secuencia de estados conscientes simulados
@@ -1445,10 +1445,10 @@ def demonstrate_holographic_consciousness_integration():
     consciousness_sequence = []
     
     for i in range(10):
-        # Estado base con modulación consciente
+        # Estado base con modulacion consciente
         base_state = np.random.randn(20) * 0.3
         
-        # Modulación según "experiencia consciente"
+        # Modulacion segun "experiencia consciente"
         if i < 3:
             # Fase inconsciente
             base_state *= 0.5
@@ -1461,33 +1461,33 @@ def demonstrate_holographic_consciousness_integration():
         
         consciousness_sequence.append(base_state)
     
-    # Análisis de evolución de conciencia
-    print("\n2. Codificando evolución consciente en memoria holográfica...")
+    # Analisis de evolucion de conciencia
+    print("\n2. Codificando evolucion consciente en memoria holografica...")
     evolution_analysis = integrator.analyze_consciousness_evolution(
         consciousness_sequence, "demo_consciousness"
     )
     
-    # Resultados del análisis
-    print("\n3. Resultados del análisis holográfico de conciencia:")
+    # Resultados del analisis
+    print("\n3. Resultados del analisis holografico de conciencia:")
     if 'phi_statistics' in evolution_analysis:
         phi_stats = evolution_analysis['phi_statistics']
-        print(f"   Φ promedio: {phi_stats['mean']:.4f} ± {phi_stats['std']:.4f}")
-        print(f"   Tendencia Φ: {phi_stats['trend']:.6f}")
+        print(f"   ? promedio: {phi_stats['mean']:.4f} +/- {phi_stats['std']:.4f}")
+        print(f"   Tendencia ?: {phi_stats['trend']:.6f}")
     
     if 'holographic_patterns' in evolution_analysis:
-        print(f"   Patrones holográficos: {evolution_analysis['holographic_patterns']}")
+        print(f"   Patrones holograficos: {evolution_analysis['holographic_patterns']}")
         print(f"   Interferencia promedio: {evolution_analysis['average_interference']:.4f}")
         print(f"   Complejidad de patrones: {evolution_analysis['pattern_complexity']:.4f}")
     
     if 'critical_transitions' in evolution_analysis:
         transitions = evolution_analysis['critical_transitions']
-        print(f"   Transiciones críticas detectadas: {len(transitions)}")
+        print(f"   Transiciones criticas detectadas: {len(transitions)}")
         for i, trans in enumerate(transitions[:3]):  # Mostrar las primeras 3
-            print(f"     Transición {i+1}: punto {trans['transition_point']}, "
-                  f"cambio Φ = {trans['phi_change']:.4f}")
+            print(f"     Transicion {i+1}: punto {trans['transition_point']}, "
+                  f"cambio ? = {trans['phi_change']:.4f}")
     
-    # Prueba de recuperación asociativa
-    print("\n4. Prueba de recuperación asociativa...")
+    # Prueba de recuperacion asociativa
+    print("\n4. Prueba de recuperacion asociativa...")
     test_state = consciousness_sequence[5]  # Estado de la mitad de la secuencia
     
     similar_state = integrator.retrieve_similar_consciousness_state(
@@ -1498,18 +1498,18 @@ def demonstrate_holographic_consciousness_integration():
         episode, similarity = similar_state
         print(f"   Estado similar encontrado: {episode['episode_id']}")
         print(f"   Similitud: {similarity:.4f}")
-        print(f"   Φ original: {episode['consciousness_metrics']['phi']:.4f}")
+        print(f"   ? original: {episode['consciousness_metrics']['phi']:.4f}")
     else:
         print("   No se encontraron estados similares")
     
-    # Estadísticas finales
-    print("\n5. Estadísticas del sistema holográfico:")
+    # Estadisticas finales
+    print("\n5. Estadisticas del sistema holografico:")
     stats = integrator.get_holographic_statistics()
     print(f"   Episodios de conciencia: {stats['consciousness_episodes']}")
-    print(f"   Utilización holográfica: {stats.get('holographic_utilization', 0):.1%}")
-    print(f"   Tiempo promedio de recuperación: {stats['average_retrieval_time']:.4f}s")
+    print(f"   Utilizacion holografica: {stats.get('holographic_utilization', 0):.1%}")
+    print(f"   Tiempo promedio de recuperacion: {stats['average_retrieval_time']:.4f}s")
     
-    print("\nDemostración holográfica completada.")
+    print("\nDemostracion holografica completada.")
 
 if __name__ == "__main__":
     # Run all demonstrations

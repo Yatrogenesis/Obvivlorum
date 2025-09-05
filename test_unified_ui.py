@@ -61,9 +61,9 @@ try:
     print("[OK] Unified System is ready for UI integration")
     
 except ImportError as e:
-    print(f"❌ Import Error: {e}")
+    print(f" Import Error: {e}")
     print("Make sure all Fase 6 components are properly implemented")
     sys.exit(1)
 except Exception as e:
-    print(f"❌ Unexpected Error: {e}")
+    print(f" Unexpected Error: {e}")
     sys.exit(1)

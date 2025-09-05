@@ -32,7 +32,7 @@ exit
         f.write(batch_content)
     print(f"[OK] Batch corregido: {batch_file}")
     
-    # VBS corregido para ejecución silenciosa
+    # VBS corregido para ejecucion silenciosa
     vbs_content = f"""Set WshShell = CreateObject("WScript.Shell")
 WshShell.Run chr(34) & "{batch_file}" & Chr(34), 0
 Set WshShell = Nothing
@@ -63,7 +63,7 @@ Set WshShell = Nothing
         f.write(batch_content)
     print(f"[OK] Startup folder: {startup_batch}")
     
-    # Crear script de verificación
+    # Crear script de verificacion
     verify_script = appdata_folder / "verify_system.bat"
     verify_content = """@echo off
 title AI Symbiote - Verificacion

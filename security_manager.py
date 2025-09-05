@@ -5,7 +5,7 @@
 Security Manager with Escalated Privileges System
 =================================================
 
-Sistema de gestión de seguridad con privilegios escalonados para AI Symbiote.
+Sistema de gestion de seguridad con privilegios escalonados para AI Symbiote.
 Implementa control granular de permisos basado en niveles de confianza.
 
 Author: Francisco Molina
@@ -36,15 +36,15 @@ class ThreatLevel(Enum):
 
 class PrivilegeLevel(Enum):
     """Niveles de privilegios escalonados"""
-    GUEST = 0        # Solo lectura, sin ejecución
-    USER = 1         # Operaciones básicas
+    GUEST = 0        # Solo lectura, sin ejecucion
+    USER = 1         # Operaciones basicas
     OPERATOR = 2     # Operaciones avanzadas con restricciones
-    ADMIN = 3        # Control total con auditoría
+    ADMIN = 3        # Control total con auditoria
     SYSTEM = 4       # Modo kernel sin restricciones
 
 class Permission(Enum):
     """Permisos granulares del sistema"""
-    # Permisos básicos
+    # Permisos basicos
     GUI_ACCESS = "gui_access"
     WEB_ACCESS = "web_access"
     READ_FILES = "read_files"
@@ -62,7 +62,7 @@ class Permission(Enum):
     PERSISTENCE = "persistence"
     MODIFY_CONFIG = "modify_config"
     
-    # Permisos críticos
+    # Permisos criticos
     UNRESTRICTED_COMMANDS = "unrestricted_commands"
     KERNEL_ACCESS = "kernel_access"
     SECURITY_OVERRIDE = "security_override"
@@ -84,15 +84,15 @@ class SecurityManager:
         self.active_permissions: Set[Permission] = set()
         self.session_token = None
         
-        # Auditoría
+        # Auditoria
         self.audit_log = []
         self.permission_requests = []
         self.escalation_attempts = []
         
-        # Criptografía para tokens
+        # Criptografia para tokens
         self.cipher_suite = Fernet(self._get_or_create_key())
         
-        # Definir jerarquía de permisos
+        # Definir jerarquia de permisos
         self._init_permission_hierarchy()
         
         # Cargar estado inicial
@@ -102,7 +102,7 @@ class SecurityManager:
                    self.current_privilege_level.name)
     
     def _load_config(self) -> Dict[str, Any]:
-        """Cargar configuración de seguridad"""
+        """Cargar configuracion de seguridad"""
         default_config = {
             "default_privilege_level": "GUEST",
             "auto_escalation": False,
@@ -145,7 +145,7 @@ class SecurityManager:
             return key
     
     def _init_permission_hierarchy(self):
-        """Inicializar jerarquía de permisos por nivel"""
+        """Inicializar jerarquia de permisos por nivel"""
         self.permission_hierarchy = {
             PrivilegeLevel.GUEST: {
                 Permission.GUI_ACCESS,
@@ -208,7 +208,7 @@ class SecurityManager:
         }
     
     def _initialize_permissions(self):
-        """Inicializar permisos según el nivel actual"""
+        """Inicializar permisos segun el nivel actual"""
         default_level_str = self.config.get("default_privilege_level", "GUEST")
         try:
             self.current_privilege_level = PrivilegeLevel[default_level_str]
@@ -222,10 +222,10 @@ class SecurityManager:
         logger.info(f"Initialized with {len(self.active_permissions)} permissions")
     
     def has_permission(self, permission: Permission) -> bool:
-        """Verificar si se tiene un permiso específico"""
+        """Verificar si se tiene un permiso especifico"""
         has_perm = permission in self.active_permissions
         
-        # Auditar verificación de permisos
+        # Auditar verificacion de permisos
         if self.config.get("audit_all_actions", True):
             self._audit_action("permission_check", {
                 "permission": permission.value,
@@ -239,15 +239,15 @@ class SecurityManager:
                                     reason: str, 
                                     authentication: Dict[str, str] = None) -> bool:
         """
-        Solicitar escalación de privilegios
+        Solicitar escalacion de privilegios
         
         Args:
             target_level: Nivel de privilegio deseado
-            reason: Razón para la escalación
-            authentication: Credenciales de autenticación
+            reason: Razon para la escalacion
+            authentication: Credenciales de autenticacion
         
         Returns:
-            bool: True si la escalación fue exitosa
+            bool: True si la escalacion fue exitosa
         """
         # Registrar intento
         self.escalation_attempts.append({
@@ -292,7 +292,7 @@ class SecurityManager:
             except KeyError:
                 pass
         
-        # Verificar autenticación para niveles altos
+        # Verificar autenticacion para niveles altos
         if target_level.value >= PrivilegeLevel.ADMIN.value:
             if not self._verify_authentication(authentication, target_level):
                 logger.warning("Authentication failed for privilege escalation")
@@ -302,15 +302,15 @@ class SecurityManager:
                 })
                 return False
         
-        # Aplicar escalación
+        # Aplicar escalacion
         old_level = self.current_privilege_level
         self.current_privilege_level = target_level
         self.active_permissions = self.permission_hierarchy.get(target_level, set())
         
-        # Generar nuevo token de sesión
+        # Generar nuevo token de sesion
         self.session_token = self._generate_session_token(target_level)
         
-        # Auditar escalación exitosa
+        # Auditar escalacion exitosa
         self._audit_action("privilege_escalated", {
             "from_level": old_level.name,
             "to_level": target_level.name,
@@ -323,20 +323,20 @@ class SecurityManager:
     
     def _verify_authentication(self, auth: Dict[str, str], 
                               target_level: PrivilegeLevel) -> bool:
-        """Verificar autenticación para escalación"""
+        """Verificar autenticacion para escalacion"""
         if not auth:
             return False
         
-        # Para ADMIN, requerir 2FA si está configurado
+        # Para ADMIN, requerir 2FA si esta configurado
         if target_level == PrivilegeLevel.ADMIN and \
            self.config.get("require_2fa_for_admin", True):
             if "2fa_code" not in auth:
                 return False
-            # Aquí se verificaría el código 2FA real
+            # Aqui se verificaria el codigo 2FA real
             # Por ahora, solo verificamos que existe
         
         # Verificar credenciales (simplificado para demo)
-        # En producción, esto debería verificar contra un sistema real
+        # En produccion, esto deberia verificar contra un sistema real
         if auth.get("username") == "admin" and \
            hashlib.sha256(auth.get("password", "").encode()).hexdigest() == \
            "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918":  # "admin"
@@ -345,7 +345,7 @@ class SecurityManager:
         return False
     
     def _generate_session_token(self, privilege_level: PrivilegeLevel) -> str:
-        """Generar token JWT de sesión"""
+        """Generar token JWT de sesion"""
         payload = {
             "privilege_level": privilege_level.name,
             "permissions": [p.value for p in self.active_permissions],
@@ -362,13 +362,13 @@ class SecurityManager:
         return encrypted_token.decode()
     
     def verify_session_token(self, token: str) -> bool:
-        """Verificar validez del token de sesión"""
+        """Verificar validez del token de sesion"""
         try:
             # Descifrar token
             decrypted = self.cipher_suite.decrypt(token.encode())
             payload = json.loads(decrypted.decode())
             
-            # Verificar expiración
+            # Verificar expiracion
             expires_at = datetime.fromisoformat(payload["expires_at"])
             if datetime.now() > expires_at:
                 logger.warning("Session token expired")
@@ -390,7 +390,7 @@ class SecurityManager:
         old_level = self.current_threat_level
         self.current_threat_level = new_level
         
-        # Aplicar restricciones según el nivel de amenaza
+        # Aplicar restricciones segun el nivel de amenaza
         threat_config = self.config["threat_response"].get(new_level.name, {})
         
         # Verificar si hay lockdown
@@ -403,7 +403,7 @@ class SecurityManager:
             logger.critical(f"SHUTDOWN triggered due to threat level: {new_level.name}")
             self._initiate_shutdown()
         
-        # Ajustar privilegios máximos
+        # Ajustar privilegios maximos
         max_privilege_str = threat_config.get("max_privilege", "SYSTEM")
         if max_privilege_str != "SYSTEM":
             try:
@@ -425,7 +425,7 @@ class SecurityManager:
         })
     
     def _enter_lockdown_mode(self):
-        """Entrar en modo lockdown - solo permisos mínimos"""
+        """Entrar en modo lockdown - solo permisos minimos"""
         self.current_privilege_level = PrivilegeLevel.GUEST
         self.active_permissions = {
             Permission.READ_LOGS  # Solo permitir lectura de logs
@@ -445,11 +445,11 @@ class SecurityManager:
         
         logger.critical("System SHUTDOWN initiated")
         
-        # En un sistema real, aquí se iniciaría el proceso de shutdown
+        # En un sistema real, aqui se iniciaria el proceso de shutdown
         # Por seguridad, no implementamos el shutdown real en este demo
     
     def _audit_action(self, action: str, details: Dict[str, Any]):
-        """Registrar acción en log de auditoría"""
+        """Registrar accion en log de auditoria"""
         audit_entry = {
             "timestamp": datetime.now().isoformat(),
             "action": action,
@@ -460,7 +460,7 @@ class SecurityManager:
         
         self.audit_log.append(audit_entry)
         
-        # Guardar en archivo si está configurado
+        # Guardar en archivo si esta configurado
         if self.config.get("audit_all_actions", True):
             audit_file = Path("security_audit.jsonl")
             with open(audit_file, "a", encoding="utf-8") as f:
@@ -514,12 +514,12 @@ if __name__ == "__main__":
     print(json.dumps(security.get_security_status(), indent=2))
     print()
     
-    # Intentar operación sin permisos
+    # Intentar operacion sin permisos
     print("Checking UNRESTRICTED_COMMANDS permission:")
     print(f"Has permission: {security.has_permission(Permission.UNRESTRICTED_COMMANDS)}")
     print()
     
-    # Solicitar escalación a OPERATOR
+    # Solicitar escalacion a OPERATOR
     print("Requesting escalation to OPERATOR...")
     success = security.request_privilege_escalation(
         PrivilegeLevel.OPERATOR,

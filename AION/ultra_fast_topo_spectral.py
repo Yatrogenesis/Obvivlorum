@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 """
-TOPO-SPECTRAL ULTRA-RÁPIDO - OPTIMIZACIÓN CRÍTICA FASE 3
+TOPO-SPECTRAL ULTRA-RAPIDO - OPTIMIZACION CRITICA FASE 3
 ========================================================
 
-IMPLEMENTACIÓN ULTRA-OPTIMIZADA PARA <5ms TARGET
-Combina todas las técnicas de optimización posibles manteniendo precisión científica
+IMPLEMENTACION ULTRA-OPTIMIZADA PARA <5ms TARGET
+Combina todas las tecnicas de optimizacion posibles manteniendo precision cientifica
 
 OPTIMIZACIONES EXTREMAS APLICADAS:
-1. Pre-compilación Numba con tipos específicos
-2. Aproximaciones controladas solo donde es matemáticamente válido
-3. Cache agresivo con hash rápido
-4. Eigendecomposición sparse siempre que sea posible
-5. Paralelización máxima con prange
-6. Eliminación de allocaciones innecesarias
+1. Pre-compilacion Numba con tipos especificos
+2. Aproximaciones controladas solo donde es matematicamente valido
+3. Cache agresivo con hash rapido
+4. Eigendecomposicion sparse siempre que sea posible
+5. Paralelizacion maxima con prange
+6. Eliminacion de allocaciones innecesarias
 7. BLAS optimizado para operaciones matriciales
 8. Early termination en loops computacionales
 
-GARANTÍA CIENTÍFICA MANTENIDA:
-- Fórmula exacta: Ψ(St) = ³√(Φ̂spec(St) · T̂(St) · Sync(St))
-- Eigenvalores con precisión completa
-- Homología persistente exacta para matrices pequeñas
-- Aproximaciones solo en cálculos auxiliares no críticos
+GARANTIA CIENTIFICA MANTENIDA:
+- Formula exacta: ?(St) = 0(?spec(St)  T(St)  Sync(St))
+- Eigenvalores con precision completa
+- Homologia persistente exacta para matrices pequenas
+- Aproximaciones solo en calculos auxiliares no criticos
 
 Autor: Francisco Molina
 ORCID: https://orcid.org/0009-0008-6093-8267
@@ -51,7 +51,7 @@ except ImportError as e:
 
 @njit(fastmath=True, cache=True)
 def ultra_fast_laplacian(adjacency):
-    """Laplaciano normalizado ultra-rápido con Numba"""
+    """Laplaciano normalizado ultra-rapido con Numba"""
     n = adjacency.shape[0]
     degrees = np.zeros(n)
     
@@ -73,14 +73,14 @@ def ultra_fast_laplacian(adjacency):
 
 @njit(fastmath=True, cache=True)
 def ultra_fast_conductance(adjacency, subset1, subset2):
-    """Cálculo ultra-rápido de conductancia"""
+    """Calculo ultra-rapido de conductancia"""
     cut_value = 0.0
     vol1 = 0.0
     vol2 = 0.0
     
     n = adjacency.shape[0]
     
-    # Cut value y volúmenes en un solo loop
+    # Cut value y volumenes en un solo loop
     for i in range(len(subset1)):
         for j in range(len(subset2)):
             cut_value += adjacency[subset1[i], subset2[j]]
@@ -99,13 +99,13 @@ def ultra_fast_conductance(adjacency, subset1, subset2):
 
 @njit(fastmath=True, cache=True)
 def ultra_fast_mutual_info(x_states, y_states, n_bins=8):
-    """Información mutua ultra-rápida"""
+    """Informacion mutua ultra-rapida"""
     n_x, n_y = len(x_states), len(y_states)
     
     if n_x == 0 or n_y == 0:
         return 0.0
     
-    # Discretización rápida
+    # Discretizacion rapida
     x_min, x_max = x_states.min(), x_states.max()
     y_min, y_max = y_states.min(), y_states.max()
     
@@ -146,7 +146,7 @@ def ultra_fast_mutual_info(x_states, y_states, n_bins=8):
 
 @njit(fastmath=True, cache=True)
 def ultra_fast_persistence_stats(births, deaths, noise_threshold=0.01):
-    """Estadísticas de persistencia ultra-rápidas"""
+    """Estadisticas de persistencia ultra-rapidas"""
     total_persistence = 0.0
     significant_features = 0
     
@@ -161,7 +161,7 @@ def ultra_fast_persistence_stats(births, deaths, noise_threshold=0.01):
 
 class UltraFastTopoSpectral:
     """
-    IMPLEMENTACIÓN ULTRA-RÁPIDA DEL ÍNDICE TOPO-SPECTRAL
+    IMPLEMENTACION ULTRA-RAPIDA DEL INDICE TOPO-SPECTRAL
     
     Objetivo: <5ms garantizado para matrices 100x100
     """
@@ -179,8 +179,8 @@ class UltraFastTopoSpectral:
         print("Ultra-fast Topo-Spectral engine ready")
     
     def _warmup_numba(self):
-        """Pre-compilación de funciones Numba para eliminar overhead inicial"""
-        # Matrices pequeñas para compilación
+        """Pre-compilacion de funciones Numba para eliminar overhead inicial"""
+        # Matrices pequenas para compilacion
         dummy_adj = np.random.rand(5, 5)
         dummy_subset1 = np.array([0, 1])
         dummy_subset2 = np.array([2, 3])
@@ -199,7 +199,7 @@ class UltraFastTopoSpectral:
     def calculate_psi_index(self, connectivity_matrix: np.ndarray,
                            node_states: Optional[np.ndarray] = None) -> Dict[str, Any]:
         """
-        CÁLCULO ULTRA-RÁPIDO DEL ÍNDICE PSI
+        CALCULO ULTRA-RAPIDO DEL INDICE PSI
         
         Target: <5ms total computation time
         """
@@ -219,7 +219,7 @@ class UltraFastTopoSpectral:
         n_nodes = connectivity_matrix.shape[0]
         results = {}
         
-        # 2. COMPONENTE ESPECTRAL (más crítico)
+        # 2. COMPONENTE ESPECTRAL (mas critico)
         spectral_start = time.perf_counter()
         phi_spectral = self._ultra_fast_spectral_phi(connectivity_matrix, node_states)
         spectral_time = (time.perf_counter() - spectral_start) * 1000
@@ -227,7 +227,7 @@ class UltraFastTopoSpectral:
         results['phi_spectral'] = phi_spectral
         results['spectral_time_ms'] = spectral_time
         
-        # 3. COMPONENTE TOPOLÓGICO (aproximado para velocidad)
+        # 3. COMPONENTE TOPOLOGICO (aproximado para velocidad)
         topo_start = time.perf_counter()
         topological_resilience = self._ultra_fast_topological_resilience(connectivity_matrix)
         topo_time = (time.perf_counter() - topo_start) * 1000
@@ -235,7 +235,7 @@ class UltraFastTopoSpectral:
         results['topological_resilience'] = topological_resilience
         results['topological_time_ms'] = topo_time
         
-        # 4. FACTOR DE SINCRONIZACIÓN (simplificado)
+        # 4. FACTOR DE SINCRONIZACION (simplificado)
         sync_start = time.perf_counter()
         sync_factor = self._ultra_fast_sync_factor(connectivity_matrix)
         sync_time = (time.perf_counter() - sync_start) * 1000
@@ -243,7 +243,7 @@ class UltraFastTopoSpectral:
         results['sync_factor'] = sync_factor
         results['sync_time_ms'] = sync_time
         
-        # 5. ÍNDICE PSI FINAL
+        # 5. INDICE PSI FINAL
         final_start = time.perf_counter()
         psi_product = phi_spectral * topological_resilience * sync_factor
         psi_index = np.cbrt(max(0.0, psi_product))
@@ -258,29 +258,29 @@ class UltraFastTopoSpectral:
         results['total_time_ms'] = total_time
         
         # Cache resultado si es exitoso
-        if total_time < 20:  # Solo cache resultados rápidos
+        if total_time < 20:  # Solo cache resultados rapidos
             self.cache[cache_key] = results.copy()
         
         return results
     
     def _fast_hash(self, matrix: np.ndarray) -> int:
-        """Hash rápido para cache"""
-        # Usar sample de la matriz para hash rápido
+        """Hash rapido para cache"""
+        # Usar sample de la matriz para hash rapido
         n = matrix.shape[0]
         if n <= 10:
             return hash(matrix.data.tobytes())
         
-        # Sample estratégico para matrices grandes
+        # Sample estrategico para matrices grandes
         indices = [0, n//4, n//2, 3*n//4, n-1]
         sample = matrix[np.ix_(indices, indices)]
         return hash(sample.data.tobytes())
     
     def _ultra_fast_spectral_phi(self, connectivity_matrix: np.ndarray,
                                 node_states: Optional[np.ndarray]) -> float:
-        """Cálculo espectral ultra-optimizado"""
+        """Calculo espectral ultra-optimizado"""
         n = connectivity_matrix.shape[0]
         
-        # Optimización: eigendecomposición sparse para matrices grandes
+        # Optimizacion: eigendecomposicion sparse para matrices grandes
         if n > 50:
             return self._sparse_spectral_phi(connectivity_matrix, node_states)
         else:
@@ -288,19 +288,19 @@ class UltraFastTopoSpectral:
     
     def _sparse_spectral_phi(self, connectivity_matrix: np.ndarray,
                            node_states: Optional[np.ndarray]) -> float:
-        """Phi espectral con eigendecomposición sparse"""
+        """Phi espectral con eigendecomposicion sparse"""
         try:
             # Laplaciano optimizado
             laplacian = ultra_fast_laplacian(connectivity_matrix)
             
-            # Solo los 5 eigenvalores más grandes
+            # Solo los 5 eigenvalores mas grandes
             k = min(5, connectivity_matrix.shape[0] - 1)
             sparse_lap = csr_matrix(laplacian)
             eigenvals, eigenvecs = eigsh(sparse_lap, k=k, which='LA')
             
-            # Usar solo el primer eigenvector (más significativo)
+            # Usar solo el primer eigenvector (mas significativo)
             if len(eigenvals) > 1:
-                eigenvec = eigenvecs[:, -1]  # Eigenvalue más grande
+                eigenvec = eigenvecs[:, -1]  # Eigenvalue mas grande
                 phi_spectral = self._fast_spectral_cut_analysis(
                     connectivity_matrix, eigenvec, node_states
                 )
@@ -310,17 +310,17 @@ class UltraFastTopoSpectral:
             return phi_spectral
             
         except Exception:
-            # Fallback rápido
+            # Fallback rapido
             return self._dense_spectral_phi(connectivity_matrix, node_states)
     
     def _dense_spectral_phi(self, connectivity_matrix: np.ndarray,
                           node_states: Optional[np.ndarray]) -> float:
-        """Phi espectral denso para matrices pequeñas"""
+        """Phi espectral denso para matrices pequenas"""
         try:
             laplacian = ultra_fast_laplacian(connectivity_matrix)
             eigenvals, eigenvecs = la.eigh(laplacian)
             
-            # Usar Fiedler vector (segundo eigenvalue más pequeño)
+            # Usar Fiedler vector (segundo eigenvalue mas pequeno)
             if len(eigenvals) >= 2:
                 fiedler_idx = np.argsort(eigenvals)[1]
                 fiedler_vec = eigenvecs[:, fiedler_idx]
@@ -339,8 +339,8 @@ class UltraFastTopoSpectral:
     def _fast_spectral_cut_analysis(self, connectivity_matrix: np.ndarray,
                                   eigenvector: np.ndarray,
                                   node_states: Optional[np.ndarray]) -> float:
-        """Análisis rápido de corte espectral"""
-        # Partición basada en mediana del eigenvector
+        """Analisis rapido de corte espectral"""
+        # Particion basada en mediana del eigenvector
         threshold = np.median(eigenvector)
         subset1 = np.where(eigenvector >= threshold)[0]
         subset2 = np.where(eigenvector < threshold)[0]
@@ -348,33 +348,33 @@ class UltraFastTopoSpectral:
         if len(subset1) == 0 or len(subset2) == 0:
             return 0.0
         
-        # Cálculo ultra-rápido de conductancia
+        # Calculo ultra-rapido de conductancia
         conductance = ultra_fast_conductance(connectivity_matrix, subset1, subset2)
         
-        # Información mutua rápida
+        # Informacion mutua rapida
         if node_states is not None and len(node_states) == len(eigenvector):
             mutual_info = ultra_fast_mutual_info(node_states[subset1], node_states[subset2])
         else:
             # Usar valores del eigenvector como estados
             mutual_info = ultra_fast_mutual_info(eigenvector[subset1], eigenvector[subset2])
         
-        # Phi espectral como combinación
+        # Phi espectral como combinacion
         phi_spectral = mutual_info * (1.0 - min(conductance, 1.0))
         
         return max(0.0, phi_spectral)
     
     def _ultra_fast_topological_resilience(self, connectivity_matrix: np.ndarray) -> float:
-        """Resiliencia topológica ultra-rápida"""
+        """Resiliencia topologica ultra-rapida"""
         n = connectivity_matrix.shape[0]
         
-        # Aproximación ultra-rápida para matrices grandes
+        # Aproximacion ultra-rapida para matrices grandes
         if n > 100:
             return self._approximate_topological_resilience(connectivity_matrix)
         else:
             return self._exact_topological_resilience(connectivity_matrix)
     
     def _approximate_topological_resilience(self, connectivity_matrix: np.ndarray) -> float:
-        """Aproximación topológica para velocidad"""
+        """Aproximacion topologica para velocidad"""
         # Usar clustering coefficient y path length como proxies
         
         # Clustering coefficient promedio
@@ -386,7 +386,7 @@ class UltraFastTopoSpectral:
             if len(neighbors) < 2:
                 continue
             
-            # Contar triángulos
+            # Contar triangulos
             triangles = 0
             possible_triangles = len(neighbors) * (len(neighbors) - 1) // 2
             
@@ -400,11 +400,11 @@ class UltraFastTopoSpectral:
         
         avg_clustering = clustering_sum / n if n > 0 else 0.0
         
-        # Usar clustering como proxy de resiliencia topológica
+        # Usar clustering como proxy de resiliencia topologica
         return avg_clustering
     
     def _exact_topological_resilience(self, connectivity_matrix: np.ndarray) -> float:
-        """Cálculo exacto de resiliencia topológica"""
+        """Calculo exacto de resiliencia topologica"""
         try:
             if not DEPENDENCIES_AVAILABLE:
                 return self._approximate_topological_resilience(connectivity_matrix)
@@ -419,7 +419,7 @@ class UltraFastTopoSpectral:
             max_distance = np.percentile(distance_matrix[distance_matrix < np.inf], 90)
             distance_matrix = np.minimum(distance_matrix, max_distance)
             
-            # Ripser con parámetros optimizados para velocidad
+            # Ripser con parametros optimizados para velocidad
             result = ripser.ripser(distance_matrix, maxdim=1, thresh=max_distance, 
                                  distance_matrix=True)
             
@@ -436,7 +436,7 @@ class UltraFastTopoSpectral:
                         births, deaths, noise_threshold=0.01
                     )
                     
-                    # Peso por dimensión
+                    # Peso por dimension
                     weight = 0.3 if dim == 0 else 0.7
                     total_resilience += weight * total_persistence
             
@@ -446,17 +446,17 @@ class UltraFastTopoSpectral:
             return self._approximate_topological_resilience(connectivity_matrix)
     
     def _ultra_fast_sync_factor(self, connectivity_matrix: np.ndarray) -> float:
-        """Factor de sincronización ultra-rápido"""
-        # Usar eigenvalue gap como proxy de sincronización
+        """Factor de sincronizacion ultra-rapido"""
+        # Usar eigenvalue gap como proxy de sincronizacion
         try:
             # Eigenvalues del laplaciano (solo los que necesitamos)
             n = connectivity_matrix.shape[0]
             if n > 20:
-                # Aproximación basada en degrees
+                # Aproximacion basada en degrees
                 degrees = np.sum(connectivity_matrix, axis=1)
                 sync_factor = 1.0 - (np.std(degrees) / (np.mean(degrees) + 1e-12))
             else:
-                # Cálculo exacto para matrices pequeñas
+                # Calculo exacto para matrices pequenas
                 laplacian = ultra_fast_laplacian(connectivity_matrix)
                 eigenvals = la.eigvals(laplacian).real
                 eigenvals = np.sort(eigenvals)
@@ -475,9 +475,9 @@ class UltraFastTopoSpectral:
             return 0.5  # Valor por defecto seguro
     
     def benchmark_performance(self, test_sizes: list = [50, 100, 200]) -> Dict[str, Any]:
-        """Benchmark específico para verificar objetivo <5ms"""
-        print("=== BENCHMARK ULTRA-RÁPIDO TOPO-SPECTRAL ===")
-        print("Objetivo crítico: <5ms por cálculo")
+        """Benchmark especifico para verificar objetivo <5ms"""
+        print("=== BENCHMARK ULTRA-RAPIDO TOPO-SPECTRAL ===")
+        print("Objetivo critico: <5ms por calculo")
         
         results = {}
         
@@ -493,7 +493,7 @@ class UltraFastTopoSpectral:
             # Estados nodales opcionales
             node_states = np.random.randn(n) * 0.3
             
-            # Múltiples corridas (excluyendo primera para JIT)
+            # Multiples corridas (excluyendo primera para JIT)
             times = []
             psi_values = []
             
@@ -506,7 +506,7 @@ class UltraFastTopoSpectral:
                 times.append(result['total_time_ms'])
                 psi_values.append(result['psi_index'])
             
-            # Estadísticas
+            # Estadisticas
             mean_time = np.mean(times)
             min_time = np.min(times)
             max_time = np.max(times)
@@ -527,7 +527,7 @@ class UltraFastTopoSpectral:
             }
             
             # Reporte
-            status = "✅ SUCCESS" if target_achieved else "❌ FAILED"
+            status = " SUCCESS" if target_achieved else " FAILED"
             print(f"   Mean time: {mean_time:.2f}ms {status}")
             print(f"   Min time: {min_time:.2f}ms")
             print(f"   Success rate: {success_rate:.1%}")
@@ -536,7 +536,7 @@ class UltraFastTopoSpectral:
         return results
     
     def get_cache_stats(self) -> Dict[str, Any]:
-        """Estadísticas del cache"""
+        """Estadisticas del cache"""
         total_requests = self.cache_hits + self.cache_misses
         hit_rate = self.cache_hits / total_requests if total_requests > 0 else 0
         
@@ -549,30 +549,30 @@ class UltraFastTopoSpectral:
         }
 
 def demonstrate_ultra_fast_performance():
-    """Demostración final del rendimiento ultra-optimizado"""
-    print("🚀 ULTRA-FAST TOPO-SPECTRAL - FASE 3 FINAL TEST")
+    """Demostracion final del rendimiento ultra-optimizado"""
+    print(" ULTRA-FAST TOPO-SPECTRAL - FASE 3 FINAL TEST")
     print("=" * 60)
-    print("OBJETIVO CRÍTICO: <5ms per computation")
-    print("TÉCNICAS: Numba JIT + Sparse + Cache + Approximations")
+    print("OBJETIVO CRITICO: <5ms per computation")
+    print("TECNICAS: Numba JIT + Sparse + Cache + Approximations")
     
     if not DEPENDENCIES_AVAILABLE:
-        print("❌ CRITICAL: Missing dependencies for ultra-fast optimization")
+        print(" CRITICAL: Missing dependencies for ultra-fast optimization")
         return False, 0.0
     
-    # Crear optimizador ultra-rápido
+    # Crear optimizador ultra-rapido
     engine = UltraFastTopoSpectral()
     
     # Benchmark completo
     benchmark_results = engine.benchmark_performance([50, 100, 150, 200])
     
-    print(f"\n📊 RESULTADOS FINALES:")
+    print(f"\n RESULTADOS FINALES:")
     print("=" * 40)
     
     overall_success = True
     times_summary = []
     
     for size_key, results in benchmark_results.items():
-        n = int(size_key[1:])  # Extraer número
+        n = int(size_key[1:])  # Extraer numero
         mean_time = results['mean_time_ms']
         success_rate = results['success_rate']
         
@@ -581,28 +581,28 @@ def demonstrate_ultra_fast_performance():
         if mean_time > 5.0:
             overall_success = False
         
-        status = "✅" if results['target_achieved'] else "❌"
+        status = "" if results['target_achieved'] else ""
         print(f"{size_key}: {mean_time:.2f}ms ({success_rate:.0%} success) {status}")
     
-    # Análisis final
+    # Analisis final
     overall_mean = np.mean(times_summary)
-    print(f"\n🎯 EVALUACIÓN FASE 3:")
+    print(f"\n EVALUACION FASE 3:")
     print(f"Tiempo promedio global: {overall_mean:.2f}ms")
     
     if overall_success and overall_mean <= 5.0:
         improvement = 53.0 / overall_mean  # vs baseline 53ms
-        print(f"🎉 OBJETIVO ALCANZADO!")
-        print(f"🚀 Mejora conseguida: {improvement:.1f}x más rápido")
-        print(f"✅ FASE 3 EXITOSA: {overall_mean:.2f}ms < 5.0ms target")
+        print(f" OBJETIVO ALCANZADO!")
+        print(f" Mejora conseguida: {improvement:.1f}x mas rapido")
+        print(f" FASE 3 EXITOSA: {overall_mean:.2f}ms < 5.0ms target")
     else:
         speedup_needed = overall_mean / 5.0
-        print(f"⚠️ OBJETIVO PARCIAL")
-        print(f"📈 Speedup adicional requerido: {speedup_needed:.2f}x")
-        print(f"❌ FASE 3 INCOMPLETA: {overall_mean:.2f}ms > 5.0ms target")
+        print(f" OBJETIVO PARCIAL")
+        print(f" Speedup adicional requerido: {speedup_needed:.2f}x")
+        print(f" FASE 3 INCOMPLETA: {overall_mean:.2f}ms > 5.0ms target")
     
     # Cache statistics
     cache_stats = engine.get_cache_stats()
-    print(f"\n📈 ESTADÍSTICAS DE OPTIMIZACIÓN:")
+    print(f"\n ESTADISTICAS DE OPTIMIZACION:")
     print(f"Cache hit rate: {cache_stats['hit_rate']:.1%}")
     print(f"Total computations: {cache_stats['total_requests']}")
     
@@ -613,11 +613,11 @@ if __name__ == "__main__":
     
     print(f"\n{'='*60}")
     if success:
-        print(f"🏆 FASE 3 COMPLETADA CON ÉXITO")
-        print(f"⚡ Tiempo conseguido: {mean_time:.2f}ms < 5ms target")
-        print(f"🎯 Objetivo 53ms → <5ms ALCANZADO")
+        print(f" FASE 3 COMPLETADA CON EXITO")
+        print(f" Tiempo conseguido: {mean_time:.2f}ms < 5ms target")
+        print(f" Objetivo 53ms -> <5ms ALCANZADO")
     else:
-        print(f"🔄 FASE 3 REQUIERE MÁS OPTIMIZACIÓN")
-        print(f"⏱️ Tiempo actual: {mean_time:.2f}ms")
-        print(f"📊 Progreso: {53.0/mean_time:.1f}x improvement achieved")
+        print(f" FASE 3 REQUIERE MAS OPTIMIZACION")
+        print(f" Tiempo actual: {mean_time:.2f}ms")
+        print(f" Progreso: {53.0/mean_time:.1f}x improvement achieved")
     print(f"{'='*60}")

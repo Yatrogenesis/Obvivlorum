@@ -1,4 +1,4 @@
-"""Debug específico para TaskFacilitator"""
+"""Debug especifico para TaskFacilitator"""
 
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ def test_methods():
     facilitator = AdaptiveTaskFacilitator("debug_user")
     facilitator.start()
     
-    # Test que los métodos existen
+    # Test que los metodos existen
     methods_to_test = [
         '_reevaluate_suggestions',
         '_learn_from_completion', 

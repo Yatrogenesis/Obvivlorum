@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 """
-OPTIMIZADOR DE RENDIMIENTO - FASE 3 CRÍTICA
+OPTIMIZADOR DE RENDIMIENTO - FASE 3 CRITICA
 ===========================================
 
 OBJETIVO: Reducir tiempo de respuesta de 53ms a <5ms (mejora 10x)
 
 CUELLOS DE BOTELLA IDENTIFICADOS:
-1. Descomposición espectral: la.eigh() - O(n³) 
-2. Homología persistente: Rips filtration - O(n³)
-3. Operaciones matriciales: np.outer, matrix multiplication - O(n²)
-4. Mutual information: discretización y cálculo - O(n²)
-5. Laplaciano normalizado: división por grados - O(n²)
+1. Descomposicion espectral: la.eigh() - O(n0) 
+2. Homologia persistente: Rips filtration - O(n0)
+3. Operaciones matriciales: np.outer, matrix multiplication - O(n0)
+4. Mutual information: discretizacion y calculo - O(n0)
+5. Laplaciano normalizado: division por grados - O(n0)
 
-TÉCNICAS DE OPTIMIZACIÓN IMPLEMENTADAS:
-- Numba JIT compilation para loops críticos
-- Optimización de memoria con views y pre-allocation
-- Paralelización con numba.prange
-- Algoritmos aproximados para operaciones no críticas
+TECNICAS DE OPTIMIZACION IMPLEMENTADAS:
+- Numba JIT compilation para loops criticos
+- Optimizacion de memoria con views y pre-allocation
+- Paralelizacion con numba.prange
+- Algoritmos aproximados para operaciones no criticas
 - Cache de resultados para computaciones repetidas
 - GPU acceleration para operaciones matriciales grandes
 
-REFERENCIAS CIENTÍFICAS:
+REFERENCIAS CIENTIFICAS:
 - Numba: A LLVM-based Python JIT compiler
 - BLAS optimizations for matrix operations
 - Approximate algorithms for topological data analysis
@@ -39,7 +39,7 @@ from functools import wraps, lru_cache
 import warnings
 from pathlib import Path
 
-# Importaciones para optimización
+# Importaciones para optimizacion
 try:
     import numba
     from numba import jit, njit, prange, cuda
@@ -56,13 +56,13 @@ try:
 except ImportError:
     GPU_AVAILABLE = False
 
-# Configuración de logging
+# Configuracion de logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 @dataclass
 class PerformanceMetrics:
-    """Métricas de rendimiento del sistema"""
+    """Metricas de rendimiento del sistema"""
     operation_name: str
     execution_time_ms: float
     memory_usage_mb: float
@@ -72,13 +72,13 @@ class PerformanceMetrics:
 
 @dataclass
 class OptimizationConfig:
-    """Configuración para optimización"""
+    """Configuracion para optimizacion"""
     use_numba: bool = NUMBA_AVAILABLE
     use_gpu: bool = GPU_AVAILABLE
-    use_approximations: bool = False  # Solo para operaciones no críticas
+    use_approximations: bool = False  # Solo para operaciones no criticas
     max_matrix_size: int = 1000  # Para decidir GPU vs CPU
     cache_size: int = 128  # LRU cache size
-    parallel_threshold: int = 100  # Tamaño mínimo para paralelización
+    parallel_threshold: int = 100  # Tamano minimo para paralelizacion
     
 class PerformanceProfiler:
     """Perfilador de rendimiento para identificar cuellos de botella"""
@@ -94,7 +94,7 @@ class PerformanceProfiler:
             def wrapper(*args, **kwargs):
                 start_time = time.perf_counter()
                 
-                # Medición de memoria antes
+                # Medicion de memoria antes
                 try:
                     import psutil
                     process = psutil.Process()
@@ -102,10 +102,10 @@ class PerformanceProfiler:
                 except ImportError:
                     mem_before = 0
                 
-                # Ejecutar función
+                # Ejecutar funcion
                 result = func(*args, **kwargs)
                 
-                # Medición de tiempo y memoria después
+                # Medicion de tiempo y memoria despues
                 end_time = time.perf_counter()
                 execution_time = (end_time - start_time) * 1000  # ms
                 
@@ -115,7 +115,7 @@ class PerformanceProfiler:
                 except:
                     memory_usage = 0
                 
-                # Crear métrica de rendimiento
+                # Crear metrica de rendimiento
                 metric = PerformanceMetrics(
                     operation_name=name,
                     execution_time_ms=execution_time,
@@ -124,7 +124,7 @@ class PerformanceProfiler:
                 
                 self.metrics.append(metric)
                 
-                # Log si es operación lenta (>10ms)
+                # Log si es operacion lenta (>10ms)
                 if execution_time > 10:
                     logger.warning(f"Slow operation {name}: {execution_time:.2f}ms")
                 
@@ -137,7 +137,7 @@ class PerformanceProfiler:
         if not self.metrics:
             return {"error": "No metrics collected"}
         
-        # Agrupar métricas por operación
+        # Agrupar metricas por operacion
         operation_stats = {}
         for metric in self.metrics:
             op_name = metric.operation_name
@@ -152,7 +152,7 @@ class PerformanceProfiler:
             operation_stats[op_name]['memory_usage'].append(metric.memory_usage_mb)
             operation_stats[op_name]['call_count'] += 1
         
-        # Calcular estadísticas
+        # Calcular estadisticas
         report = {}
         for op_name, stats in operation_stats.items():
             times = np.array(stats['times'])
@@ -167,7 +167,7 @@ class PerformanceProfiler:
                 'max_memory_mb': np.max(memory)
             }
         
-        # Identificar operaciones más costosas
+        # Identificar operaciones mas costosas
         sorted_ops = sorted(report.items(), 
                           key=lambda x: x[1]['total_time_ms'], 
                           reverse=True)
@@ -179,11 +179,11 @@ class PerformanceProfiler:
             'total_calls': sum(r['call_count'] for r in report.values())
         }
 
-# Funciones optimizadas para operaciones críticas
+# Funciones optimizadas para operaciones criticas
 if NUMBA_AVAILABLE:
     @njit(parallel=True, fastmath=True)
     def optimized_matrix_multiplication(A: np.ndarray, B: np.ndarray) -> np.ndarray:
-        """Multiplicación matricial optimizada con Numba"""
+        """Multiplicacion matricial optimizada con Numba"""
         n, k = A.shape
         k2, m = B.shape
         
@@ -201,7 +201,7 @@ if NUMBA_AVAILABLE:
     
     @njit(parallel=True, fastmath=True)
     def optimized_laplacian_computation(adjacency: np.ndarray) -> np.ndarray:
-        """Cálculo optimizado del laplaciano normalizado"""
+        """Calculo optimizado del laplaciano normalizado"""
         n = adjacency.shape[0]
         degrees = np.zeros(n)
         
@@ -227,7 +227,7 @@ if NUMBA_AVAILABLE:
     def optimized_conductance_calculation(adjacency: np.ndarray, 
                                         subset_1: np.ndarray, 
                                         subset_2: np.ndarray) -> float:
-        """Cálculo optimizado de conductancia"""
+        """Calculo optimizado de conductancia"""
         # Cut value: edges between subsets
         cut_value = 0.0
         for i in range(len(subset_1)):
@@ -257,7 +257,7 @@ if NUMBA_AVAILABLE:
     def optimized_mutual_information_discrete(x_discrete: np.ndarray, 
                                             y_discrete: np.ndarray, 
                                             n_bins: int = 10) -> float:
-        """Cálculo optimizado de información mutua para variables discretas"""
+        """Calculo optimizado de informacion mutua para variables discretas"""
         n_samples = len(x_discrete)
         
         # Crear histogramas conjuntos
@@ -271,7 +271,7 @@ if NUMBA_AVAILABLE:
             x_counts[xi] += 1
             y_counts[yi] += 1
         
-        # Calcular información mutua
+        # Calcular informacion mutua
         mi = 0.0
         for i in range(n_bins):
             for j in range(n_bins):
@@ -322,40 +322,40 @@ class SpectralOptimizer:
     @lru_cache(maxsize=128)
     def compute_eigendecomposition_cached(self, matrix_hash: int, 
                                         matrix_shape: Tuple[int, int]) -> Tuple[np.ndarray, np.ndarray]:
-        """Cálculo de eigendecomposición con cache"""
-        # Esta función debe ser llamada con hash de la matriz
-        # La implementación real se hace en compute_eigendecomposition
+        """Calculo de eigendecomposicion con cache"""
+        # Esta funcion debe ser llamada con hash de la matriz
+        # La implementacion real se hace en compute_eigendecomposition
         pass
     
     def compute_eigendecomposition(self, matrix: np.ndarray, 
                                  k: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Cálculo optimizado de eigendecomposición
+        Calculo optimizado de eigendecomposicion
         
         Args:
-            matrix: Matriz simétrica para descomposición
-            k: Número de eigenvalores a calcular (None = todos)
+            matrix: Matriz simetrica para descomposicion
+            k: Numero de eigenvalores a calcular (None = todos)
             
         Returns:
             Tuple de (eigenvalues, eigenvectors)
         """
         n = matrix.shape[0]
         
-        # Usar GPU si está disponible y la matriz es grande
+        # Usar GPU si esta disponible y la matriz es grande
         if self.config.use_gpu and GPU_AVAILABLE and n > self.config.max_matrix_size:
             return self._gpu_eigendecomposition(matrix, k)
         
-        # Para matrices pequeñas, usar CPU optimizado
+        # Para matrices pequenas, usar CPU optimizado
         if k is not None and k < n // 2:
             # Usar sparse solver para pocos eigenvalores
             return self._sparse_eigendecomposition(matrix, k)
         else:
-            # Eigendecomposición completa optimizada
+            # Eigendecomposicion completa optimizada
             return self._optimized_full_eigendecomposition(matrix)
     
     def _gpu_eigendecomposition(self, matrix: np.ndarray, 
                               k: Optional[int]) -> Tuple[np.ndarray, np.ndarray]:
-        """Eigendecomposición en GPU usando CuPy"""
+        """Eigendecomposicion en GPU usando CuPy"""
         if not GPU_AVAILABLE:
             raise RuntimeError("GPU not available")
         
@@ -366,9 +366,9 @@ class SpectralOptimizer:
         
         # Calcular eigenvalores y eigenvectores
         if k is not None:
-            # Para pocos eigenvalues, usar método iterativo
+            # Para pocos eigenvalues, usar metodo iterativo
             eigenvals, eigenvecs = cp.linalg.eigh(gpu_matrix)
-            # Tomar los k más grandes
+            # Tomar los k mas grandes
             idx = cp.argsort(eigenvals)[-k:]
             eigenvals = eigenvals[idx]
             eigenvecs = eigenvecs[:, idx]
@@ -386,7 +386,7 @@ class SpectralOptimizer:
     
     def _sparse_eigendecomposition(self, matrix: np.ndarray, 
                                  k: int) -> Tuple[np.ndarray, np.ndarray]:
-        """Eigendecomposición sparse para pocos eigenvalores"""
+        """Eigendecomposicion sparse para pocos eigenvalores"""
         from scipy.sparse.linalg import eigsh
         import scipy.sparse as sp
         
@@ -395,7 +395,7 @@ class SpectralOptimizer:
         # Convertir a sparse si es necesario
         sparse_matrix = sp.csr_matrix(matrix)
         
-        # Calcular k eigenvalores más grandes
+        # Calcular k eigenvalores mas grandes
         eigenvals, eigenvecs = eigsh(sparse_matrix, k=k, which='LA')
         
         end_time = time.perf_counter()
@@ -404,12 +404,12 @@ class SpectralOptimizer:
         return eigenvals, eigenvecs
     
     def _optimized_full_eigendecomposition(self, matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        """Eigendecomposición completa optimizada"""
+        """Eigendecomposicion completa optimizada"""
         start_time = time.perf_counter()
         
         # Usar BLAS optimizado de scipy
         import scipy.linalg as la
-        eigenvals, eigenvecs = la.eigh(matrix, driver='evd')  # evd es más rápido
+        eigenvals, eigenvecs = la.eigh(matrix, driver='evd')  # evd es mas rapido
         
         end_time = time.perf_counter()
         logger.info(f"Full eigendecomposition: {(end_time - start_time) * 1000:.2f}ms")
@@ -417,7 +417,7 @@ class SpectralOptimizer:
         return eigenvals, eigenvecs
 
 class TopologicalOptimizer:
-    """Optimizador para cálculos de homología persistente"""
+    """Optimizador para calculos de homologia persistente"""
     
     def __init__(self, config: OptimizationConfig):
         self.config = config
@@ -427,31 +427,31 @@ class TopologicalOptimizer:
                                 max_dimension: int = 2, 
                                 max_edge_length: float = None) -> List[Any]:
         """
-        Cálculo optimizado de filtración de Rips
+        Calculo optimizado de filtracion de Rips
         
         Optimizaciones aplicadas:
         1. Early termination basado en max_edge_length
         2. Sparse representation de la matriz de distancias
-        3. Algoritmo incremental para construcción de complejos
+        3. Algoritmo incremental para construccion de complejos
         """
         start_time = time.perf_counter()
         
         n_points = distance_matrix.shape[0]
         
-        # Optimización 1: Determinar max_edge_length automáticamente si no se especifica
+        # Optimizacion 1: Determinar max_edge_length automaticamente si no se especifica
         if max_edge_length is None:
             # Usar percentil 90 para evitar outliers
             max_edge_length = np.percentile(distance_matrix[distance_matrix > 0], 90)
         
-        # Optimización 2: Filtrar distancias grandes temprano
+        # Optimizacion 2: Filtrar distancias grandes temprano
         filtered_distances = np.where(distance_matrix <= max_edge_length, 
                                     distance_matrix, np.inf)
         
-        # Optimización 3: Usar aproximación para conjuntos grandes de datos
+        # Optimizacion 3: Usar aproximacion para conjuntos grandes de datos
         if self.config.use_approximations and n_points > 500:
             return self._approximate_rips_filtration(filtered_distances, max_dimension)
         
-        # Usar Ripser estándar para casos pequeños y precisos
+        # Usar Ripser estandar para casos pequenos y precisos
         try:
             import ripser
             result = ripser.ripser(filtered_distances, maxdim=max_dimension, 
@@ -467,26 +467,26 @@ class TopologicalOptimizer:
     
     def _approximate_rips_filtration(self, distance_matrix: np.ndarray, 
                                    max_dimension: int) -> List[Any]:
-        """Aproximación rápida para filtración de Rips en datasets grandes"""
-        # Implementación simplificada para aproximación rápida
-        # En una implementación completa, usaríamos landmark selection o sparse Rips
+        """Aproximacion rapida para filtracion de Rips en datasets grandes"""
+        # Implementacion simplificada para aproximacion rapida
+        # En una implementacion completa, usariamos landmark selection o sparse Rips
         
         n_points = distance_matrix.shape[0]
         
         # Seleccionar landmarks (submuestra estratificada)
-        n_landmarks = min(200, n_points)  # Límite para mantener velocidad
+        n_landmarks = min(200, n_points)  # Limite para mantener velocidad
         landmark_indices = np.random.choice(n_points, n_landmarks, replace=False)
         
         # Computar en subconjunto
         sub_distances = distance_matrix[np.ix_(landmark_indices, landmark_indices)]
         
-        # Placeholder: en implementación real usaríamos witness complex
+        # Placeholder: en implementacion real usariamos witness complex
         return [np.array([[0, np.inf]])]  # Dummy result
     
     def _simplified_rips_computation(self, distance_matrix: np.ndarray,
                                    max_dimension: int) -> List[Any]:
-        """Cálculo simplificado cuando Ripser no está disponible"""
-        # Implementación básica para casos sin ripser
+        """Calculo simplificado cuando Ripser no esta disponible"""
+        # Implementacion basica para casos sin ripser
         # Solo calcula H0 (componentes conectadas)
         
         from scipy.sparse.csgraph import connected_components
@@ -507,7 +507,7 @@ class TopologicalOptimizer:
             # Contar componentes conectadas
             n_components, _ = connected_components(csr_matrix(adj_matrix), directed=False)
             
-            # Si cambió el número de componentes, registrar muerte
+            # Si cambio el numero de componentes, registrar muerte
             if n_components < n_components_prev:
                 n_deaths = n_components_prev - n_components
                 for _ in range(n_deaths):
@@ -521,7 +521,7 @@ class TopologicalOptimizer:
         return [np.array(birth_death_pairs)]
 
 class CacheManager:
-    """Gestión de cache para resultados computacionales costosos"""
+    """Gestion de cache para resultados computacionales costosos"""
     
     def __init__(self, max_size: int = 128):
         self.max_size = max_size
@@ -544,7 +544,7 @@ class CacheManager:
     
     def set(self, key: str, value: Any):
         """Almacena valor en cache"""
-        # Limpieza LRU si está lleno
+        # Limpieza LRU si esta lleno
         if len(self.cache) >= self.max_size:
             self._evict_lru()
         
@@ -560,12 +560,12 @@ class CacheManager:
         del self.cache[lru_key]
         del self.access_times[lru_key]
 
-# Clase principal de optimización
+# Clase principal de optimizacion
 class CriticalPerformanceOptimizer:
     """
-    OPTIMIZADOR CRÍTICO DE RENDIMIENTO - FASE 3
+    OPTIMIZADOR CRITICO DE RENDIMIENTO - FASE 3
     
-    Coordina todas las optimizaciones para lograr el objetivo 53ms → <5ms
+    Coordina todas las optimizaciones para lograr el objetivo 53ms -> <5ms
     """
     
     def __init__(self, config: Optional[OptimizationConfig] = None):
@@ -575,7 +575,7 @@ class CriticalPerformanceOptimizer:
         self.cache_manager = CacheManager(self.config.cache_size)
         self.profiler = PerformanceProfiler()
         
-        # Métricas de rendimiento
+        # Metricas de rendimiento
         self.baseline_time_ms = 53.0  # Tiempo base medido
         self.target_time_ms = 5.0     # Objetivo
         
@@ -588,9 +588,9 @@ class CriticalPerformanceOptimizer:
     def optimize_topo_spectral_computation(self, connectivity_matrix: np.ndarray,
                                          node_states: Optional[np.ndarray] = None) -> Dict[str, Any]:
         """
-        OPTIMIZACIÓN COMPLETA DE CÁLCULO TOPO-SPECTRAL
+        OPTIMIZACION COMPLETA DE CALCULO TOPO-SPECTRAL
         
-        Esta es la función crítica que debe pasar de 53ms a <5ms
+        Esta es la funcion critica que debe pasar de 53ms a <5ms
         """
         total_start_time = time.perf_counter()
         
@@ -604,15 +604,15 @@ class CriticalPerformanceOptimizer:
         
         results = {}
         
-        # 1. Optimizar cálculo espectral (mayor cuello de botella)
+        # 1. Optimizar calculo espectral (mayor cuello de botella)
         spectral_start = time.perf_counter()
         
         # Usar laplaciano optimizado
         laplacian = optimized_laplacian_computation(connectivity_matrix)
         
-        # Eigendecomposición optimizada (solo eigenvalores necesarios)
+        # Eigendecomposicion optimizada (solo eigenvalores necesarios)
         n_nodes = connectivity_matrix.shape[0]
-        k_eigenvals = min(10, n_nodes - 1)  # Solo los más relevantes
+        k_eigenvals = min(10, n_nodes - 1)  # Solo los mas relevantes
         
         eigenvals, eigenvecs = self.spectral_optimizer.compute_eigendecomposition(
             laplacian, k=k_eigenvals
@@ -623,7 +623,7 @@ class CriticalPerformanceOptimizer:
         results['eigenvalues'] = eigenvals
         results['eigenvectors'] = eigenvecs
         
-        # 2. Optimizar cálculo topológico
+        # 2. Optimizar calculo topologico
         topo_start = time.perf_counter()
         
         # Usar matriz de distancias aproximada para acelerar
@@ -637,7 +637,7 @@ class CriticalPerformanceOptimizer:
                                      np.inf)
             np.fill_diagonal(distance_matrix, 0)
         
-        # Homología persistente optimizada
+        # Homologia persistente optimizada
         persistent_diagrams = self.topological_optimizer.optimized_rips_filtration(
             distance_matrix, max_dimension=2
         )
@@ -646,7 +646,7 @@ class CriticalPerformanceOptimizer:
         results['topological_time_ms'] = topo_time
         results['persistent_diagrams'] = persistent_diagrams
         
-        # 3. Cálculos finales optimizados
+        # 3. Calculos finales optimizados
         final_start = time.perf_counter()
         
         # Spectral Information Integration (optimizado)
@@ -686,19 +686,19 @@ class CriticalPerformanceOptimizer:
         
         # Log performance
         if total_time <= self.target_time_ms:
-            logger.info(f"✅ TARGET ACHIEVED: {total_time:.2f}ms (speedup: {speedup:.1f}x)")
+            logger.info(f" TARGET ACHIEVED: {total_time:.2f}ms (speedup: {speedup:.1f}x)")
         else:
-            logger.warning(f"⚠️  Target missed: {total_time:.2f}ms (speedup: {speedup:.1f}x)")
+            logger.warning(f"  Target missed: {total_time:.2f}ms (speedup: {speedup:.1f}x)")
         
         return results
     
     def _approximate_distance_matrix(self, connectivity_matrix: np.ndarray) -> np.ndarray:
-        """Aproximación rápida de matriz de distancias"""
+        """Aproximacion rapida de matriz de distancias"""
         # Usar shortest path approximation o embedding
         from scipy.sparse.csgraph import shortest_path
         from scipy.sparse import csr_matrix
         
-        # Convertir a sparse y calcular distancias geodésicas
+        # Convertir a sparse y calcular distancias geodesicas
         sparse_conn = csr_matrix(connectivity_matrix)
         try:
             distances = shortest_path(sparse_conn, method='D', directed=False)
@@ -712,8 +712,8 @@ class CriticalPerformanceOptimizer:
             return self._embedding_distance_approximation(connectivity_matrix)
     
     def _embedding_distance_approximation(self, connectivity_matrix: np.ndarray) -> np.ndarray:
-        """Aproximación usando embedding espectral"""
-        # Usar eigendecomposición para embedding
+        """Aproximacion usando embedding espectral"""
+        # Usar eigendecomposicion para embedding
         eigenvals, eigenvecs = self.spectral_optimizer.compute_eigendecomposition(
             connectivity_matrix, k=min(10, connectivity_matrix.shape[0]//2)
         )
@@ -731,14 +731,14 @@ class CriticalPerformanceOptimizer:
         return distances
     
     def _optimized_spectral_phi(self, eigenvals: np.ndarray, eigenvecs: np.ndarray) -> float:
-        """Cálculo optimizado de Φ spectral"""
-        # Usar aproximación basada en eigenvalues gap
+        """Calculo optimizado de ? spectral"""
+        # Usar aproximacion basada en eigenvalues gap
         if len(eigenvals) < 2:
             return 0.0
         
-        # Spectral gap como medida de integración
+        # Spectral gap como medida de integracion
         eigenvals_sorted = np.sort(eigenvals)
-        spectral_gap = eigenvals_sorted[1] - eigenvals_sorted[0]  # Gap después del 0
+        spectral_gap = eigenvals_sorted[1] - eigenvals_sorted[0]  # Gap despues del 0
         
         # Normalizar por rango de eigenvalues
         eigenval_range = np.max(eigenvals) - np.min(eigenvals)
@@ -750,7 +750,7 @@ class CriticalPerformanceOptimizer:
         return max(0.0, phi_spectral)
     
     def _optimized_topological_resilience(self, persistent_diagrams: List[np.ndarray]) -> float:
-        """Cálculo optimizado de resiliencia topológica"""
+        """Calculo optimizado de resiliencia topologica"""
         if not persistent_diagrams or len(persistent_diagrams) == 0:
             return 0.0
         
@@ -764,17 +764,17 @@ class CriticalPerformanceOptimizer:
             births = diagram[:, 0]
             deaths = diagram[:, 1]
             
-            # Filtrar infinitos para cálculo
+            # Filtrar infinitos para calculo
             finite_mask = ~np.isinf(deaths)
             if np.any(finite_mask):
                 finite_deaths = deaths[finite_mask]
                 finite_births = births[finite_mask]
                 persistences = finite_deaths - finite_births
                 
-                # Contribución basada en persistencia total
+                # Contribucion basada en persistencia total
                 dimension_resilience = np.sum(persistences)
                 
-                # Peso por dimensión (H0 menos importante que H1, H2)
+                # Peso por dimension (H0 menos importante que H1, H2)
                 weight = 1.0 if dim == 0 else 2.0 * dim
                 total_resilience += weight * dimension_resilience
         
@@ -794,14 +794,14 @@ class CriticalPerformanceOptimizer:
         }
 
 def demonstrate_performance_optimization():
-    """Demostración de las optimizaciones de rendimiento"""
-    print("=== DEMOSTRACIÓN OPTIMIZACIÓN CRÍTICA DE RENDIMIENTO ===")
-    print("Objetivo: Reducir 53ms → <5ms (mejora 10x)")
+    """Demostracion de las optimizaciones de rendimiento"""
+    print("=== DEMOSTRACION OPTIMIZACION CRITICA DE RENDIMIENTO ===")
+    print("Objetivo: Reducir 53ms -> <5ms (mejora 10x)")
     
     # Crear optimizador
     config = OptimizationConfig(
         use_numba=True,
-        use_gpu=False,  # Configurar según disponibilidad
+        use_gpu=False,  # Configurar segun disponibilidad
         use_approximations=True,
         max_matrix_size=200
     )
@@ -826,7 +826,7 @@ def demonstrate_performance_optimization():
     for _ in range(n_nodes // 4):
         i, j = np.random.choice(n_nodes, 2, replace=False)
         connectivity[i, j] = np.random.exponential(0.3)
-        connectivity[j, i] = connectivity[i, j]  # Simetría
+        connectivity[j, i] = connectivity[i, j]  # Simetria
     
     print(f"   Matriz generada: {n_nodes}x{n_nodes}, densidad: {np.count_nonzero(connectivity)/(n_nodes**2):.3f}")
     
@@ -839,7 +839,7 @@ def demonstrate_performance_optimization():
     )
     baseline_optimizer = CriticalPerformanceOptimizer(config_baseline)
     
-    # Múltiples corridas para benchmark
+    # Multiples corridas para benchmark
     baseline_times = []
     for i in range(5):
         result = baseline_optimizer.optimize_topo_spectral_computation(connectivity)
@@ -849,7 +849,7 @@ def demonstrate_performance_optimization():
     print(f"   Tiempo baseline promedio: {baseline_mean:.2f}ms")
     
     # Benchmark con optimizaciones
-    print("\n3. Benchmark con optimizaciones críticas...")
+    print("\n3. Benchmark con optimizaciones criticas...")
     optimized_times = []
     for i in range(5):
         result = optimizer.optimize_topo_spectral_computation(connectivity)
@@ -861,31 +861,31 @@ def demonstrate_performance_optimization():
     print(f"   Tiempo optimizado promedio: {optimized_mean:.2f}ms")
     print(f"   Speedup conseguido: {speedup:.2f}x")
     
-    # Verificar si se alcanzó el objetivo
+    # Verificar si se alcanzo el objetivo
     target_achieved = optimized_mean <= 5.0
-    print(f"\n4. Evaluación de objetivo:")
-    print(f"   Tiempo objetivo: ≤5.0ms")
+    print(f"\n4. Evaluacion de objetivo:")
+    print(f"   Tiempo objetivo: <=5.0ms")
     print(f"   Tiempo conseguido: {optimized_mean:.2f}ms")
-    print(f"   ✅ OBJETIVO ALCANZADO" if target_achieved else "   ❌ Objetivo no alcanzado")
+    print(f"    OBJETIVO ALCANZADO" if target_achieved else "    Objetivo no alcanzado")
     
     # Detalles de optimizaciones
-    print(f"\n5. Detalles de optimización:")
+    print(f"\n5. Detalles de optimizacion:")
     optimization_report = optimizer.get_optimization_report()
-    print(f"   Numba JIT: {'✅' if optimization_report['numba_enabled'] else '❌'}")
-    print(f"   GPU Accel: {'✅' if optimization_report['gpu_enabled'] else '❌'}")
-    print(f"   Aproximaciones: {'✅' if config.use_approximations else '❌'}")
+    print(f"   Numba JIT: {'' if optimization_report['numba_enabled'] else ''}")
+    print(f"   GPU Accel: {'' if optimization_report['gpu_enabled'] else ''}")
+    print(f"   Aproximaciones: {'' if config.use_approximations else ''}")
     print(f"   Cache hits: {optimization_report['cache_hits']}")
     
-    # Análisis de componentes
+    # Analisis de componentes
     if len(optimized_times) > 0:
-        last_result = result  # Último resultado detallado
-        print(f"\n6. Análisis de componentes (última corrida):")
-        print(f"   Cálculo espectral: {last_result.get('spectral_time_ms', 0):.2f}ms")
-        print(f"   Cálculo topológico: {last_result.get('topological_time_ms', 0):.2f}ms")
-        print(f"   Cálculos finales: {last_result.get('final_computation_time_ms', 0):.2f}ms")
+        last_result = result  # Ultimo resultado detallado
+        print(f"\n6. Analisis de componentes (ultima corrida):")
+        print(f"   Calculo espectral: {last_result.get('spectral_time_ms', 0):.2f}ms")
+        print(f"   Calculo topologico: {last_result.get('topological_time_ms', 0):.2f}ms")
+        print(f"   Calculos finales: {last_result.get('final_computation_time_ms', 0):.2f}ms")
     
-    print(f"\nDemostración de optimización completada.")
-    print(f"RESULTADO FINAL: {'🎉 FASE 3 EXITOSA' if target_achieved else '⚠️ Requiere más optimización'}")
+    print(f"\nDemostracion de optimizacion completada.")
+    print(f"RESULTADO FINAL: {' FASE 3 EXITOSA' if target_achieved else ' Requiere mas optimizacion'}")
 
 if __name__ == "__main__":
     demonstrate_performance_optimization()

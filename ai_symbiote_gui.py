@@ -76,15 +76,15 @@ class AISymbioteGUI:
             self.env_label.config(text=f"{env_text} | {level_text}")
         
         # Start the interface and show capabilities
-        self.add_system_message("🚀 AI Symbiote v2.1-UNIFIED iniciado - Sistema Unificado Fase 6 activo")
+        self.add_system_message(" AI Symbiote v2.1-UNIFIED iniciado - Sistema Unificado Fase 6 activo")
         if UNIFIED_SYSTEM_AVAILABLE:
             self.add_system_message(f"[UNIFIED] Entorno: {self.unified_config.environment} | Nivel: {self.unified_config.scaling_level}")
             self.add_system_message(f"[CONSCIOUSNESS] Sistema consciente: {self.consciousness.is_system_conscious()}")
             self.add_system_message(f"[SCALING] Cloud Manager: {self.cloud_scaling.current_environment}")
         if AI_AVAILABLE:
             self.add_system_message("[OK] Motor Multi-Provider: Modelos locales GGUF + OpenAI + Claude API")
-            self.add_system_message("[TARGET] Capacidades: Cloud Scaling, Conciencia AI, Configuración Unificada")
-            self.add_system_message("[FAST] Comandos: Configuración dinámica, escalado automático, monitoreo de conciencia")
+            self.add_system_message("[TARGET] Capacidades: Cloud Scaling, Conciencia AI, Configuracion Unificada")
+            self.add_system_message("[FAST] Comandos: Configuracion dinamica, escalado automatico, monitoreo de conciencia")
             self.add_system_message("[BRAIN] Francisco Molina es mi creador - Sistema AI Symbiote Obvivlorum")
         else:
             self.add_system_message("[WARNING] Modo demo - AI engine no disponible")
@@ -147,7 +147,7 @@ class AISymbioteGUI:
         self.setup_control_panel(main_frame)
         
         # === CHAT AREA ===
-        chat_frame = ttk.LabelFrame(main_frame, text="Conversación", padding="5")
+        chat_frame = ttk.LabelFrame(main_frame, text="Conversacion", padding="5")
         chat_frame.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
         chat_frame.columnconfigure(0, weight=1)
         chat_frame.rowconfigure(0, weight=1)
@@ -181,7 +181,7 @@ class AISymbioteGUI:
     
     def setup_control_panel(self, parent):
         """Setup left control panel with unified system configuration."""
-        control_frame = ttk.LabelFrame(parent, text="🚀 Configuración Unificada", padding="5")
+        control_frame = ttk.LabelFrame(parent, text=" Configuracion Unificada", padding="5")
         control_frame.grid(row=1, column=0, rowspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 10))
         
         if not UNIFIED_SYSTEM_AVAILABLE:
@@ -210,7 +210,7 @@ class AISymbioteGUI:
         
         # Matrix size display
         config = self.unified_config.get_scaling_config(self.unified_config.scaling_level)
-        ttk.Label(scaling_section, text="Tamaño Máximo:").grid(row=2, column=0, sticky=tk.W, pady=(5, 0))
+        ttk.Label(scaling_section, text="Tamano Maximo:").grid(row=2, column=0, sticky=tk.W, pady=(5, 0))
         self.matrix_size_label = ttk.Label(scaling_section, text=f"{config['max_matrix_size']}x{config['max_matrix_size']}")
         self.matrix_size_label.grid(row=2, column=1, sticky=tk.W, padx=(10, 0), pady=(5, 0))
         
@@ -250,7 +250,7 @@ class AISymbioteGUI:
                   command=self.show_volume_warning).grid(row=1, column=0, sticky=(tk.W, tk.E), pady=2)
         
         # Save configuration
-        ttk.Button(actions_section, text="Guardar Configuración", 
+        ttk.Button(actions_section, text="Guardar Configuracion", 
                   command=self.save_current_config).grid(row=2, column=0, sticky=(tk.W, tk.E), pady=2)
         
         # Test unified system
@@ -259,7 +259,7 @@ class AISymbioteGUI:
     
     def setup_status_panel(self, parent):
         """Setup right status panel with system monitoring."""
-        status_frame = ttk.LabelFrame(parent, text="📊 Estado del Sistema", padding="5")
+        status_frame = ttk.LabelFrame(parent, text=" Estado del Sistema", padding="5")
         status_frame.grid(row=1, column=2, rowspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(10, 0))
         
         if not UNIFIED_SYSTEM_AVAILABLE:
@@ -402,9 +402,9 @@ class AISymbioteGUI:
         self.env_label.config(text=f"Entorno: {self.unified_config.environment.upper()} | Nivel: {new_level}")
         
         # Log the change
-        self.add_log_message(f"Escalado cambiado: {old_level} → {new_level}")
+        self.add_log_message(f"Escalado cambiado: {old_level} -> {new_level}")
         self.add_system_message(f"[SCALING] Nivel cambiado a {new_level}")
-        self.add_system_message(f"[CONFIG] Matriz máxima: {config['max_matrix_size']}x{config['max_matrix_size']}")
+        self.add_system_message(f"[CONFIG] Matriz maxima: {config['max_matrix_size']}x{config['max_matrix_size']}")
         self.add_system_message(f"[PERFORMANCE] Tiempo esperado: {config['expected_time_ms']}ms")
     
     def refresh_system_status(self):
@@ -450,7 +450,7 @@ class AISymbioteGUI:
             self.add_system_message("[REFRESH] Estado del sistema actualizado exitosamente")
             
             if old_env != self.unified_config.environment:
-                self.add_system_message(f"[ENVIRONMENT] Cambio detectado: {old_env} → {self.unified_config.environment}")
+                self.add_system_message(f"[ENVIRONMENT] Cambio detectado: {old_env} -> {self.unified_config.environment}")
             
         except Exception as e:
             messagebox.showerror("Error", f"Error actualizando estado: {str(e)}")
@@ -465,18 +465,18 @@ class AISymbioteGUI:
         current_level = self.unified_config.scaling_level
         config = self.unified_config.get_scaling_config(current_level)
         
-        warning_msg = f"""VERIFICACIÓN DE VOLUMEN DE DATOS
+        warning_msg = f"""VERIFICACION DE VOLUMEN DE DATOS
         
 Nivel actual: {current_level}
-Tamaño máximo de matriz: {config['max_matrix_size']}x{config['max_matrix_size']}
+Tamano maximo de matriz: {config['max_matrix_size']}x{config['max_matrix_size']}
 Tiempo esperado: {config['expected_time_ms']}ms
-Uso de GPU: {'Sí' if config['use_gpu'] else 'No'}
-Memoria límite: {config['memory_limit_gb']} GB
+Uso de GPU: {'Si' if config['use_gpu'] else 'No'}
+Memoria limite: {config['memory_limit_gb']} GB
 
-Estado: {'⚠️ ADVERTENCIA REQUERIDA' if config.get('warning', False) else '✅ SIN ADVERTENCIAS'}"""
+Estado: {' ADVERTENCIA REQUERIDA' if config.get('warning', False) else ' SIN ADVERTENCIAS'}"""
         
-        messagebox.showinfo("Verificación de Advertencias", warning_msg)
-        self.add_log_message("Verificación de advertencias completada")
+        messagebox.showinfo("Verificacion de Advertencias", warning_msg)
+        self.add_log_message("Verificacion de advertencias completada")
     
     def save_current_config(self):
         """Save current unified system configuration."""
@@ -486,13 +486,13 @@ Estado: {'⚠️ ADVERTENCIA REQUERIDA' if config.get('warning', False) else '�
             
         try:
             config_file = self.unified_config.save_config()
-            self.add_log_message(f"Configuración guardada: {config_file}")
-            self.add_system_message(f"[SAVE] Configuración guardada en {config_file}")
-            messagebox.showinfo("Éxito", f"Configuración guardada exitosamente en:\n{config_file}")
+            self.add_log_message(f"Configuracion guardada: {config_file}")
+            self.add_system_message(f"[SAVE] Configuracion guardada en {config_file}")
+            messagebox.showinfo("Exito", f"Configuracion guardada exitosamente en:\n{config_file}")
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error guardando configuración: {str(e)}")
-            self.add_log_message(f"Error guardando configuración: {str(e)}")
+            messagebox.showerror("Error", f"Error guardando configuracion: {str(e)}")
+            self.add_log_message(f"Error guardando configuracion: {str(e)}")
     
     def run_system_test(self):
         """Run complete unified system test."""
@@ -512,43 +512,43 @@ Estado: {'⚠️ ADVERTENCIA REQUERIDA' if config.get('warning', False) else '�
             test_results = []
             
             # Test 1: Configuration manager
-            self.root.after(0, self.add_system_message, "[TEST 1/5] Probando gestor de configuración...")
+            self.root.after(0, self.add_system_message, "[TEST 1/5] Probando gestor de configuracion...")
             config_test = self.unified_config.get_system_info()
-            test_results.append("✅ Gestor de configuración: OK")
+            test_results.append(" Gestor de configuracion: OK")
             
             # Test 2: Consciousness integration
-            self.root.after(0, self.add_system_message, "[TEST 2/5] Probando integración de conciencia...")
+            self.root.after(0, self.add_system_message, "[TEST 2/5] Probando integracion de conciencia...")
             consciousness_test = self.consciousness.is_system_conscious()
-            test_results.append(f"{'✅' if consciousness_test else '❌'} Conciencia AI: {'Activa' if consciousness_test else 'Inactiva'}")
+            test_results.append(f"{'' if consciousness_test else ''} Conciencia AI: {'Activa' if consciousness_test else 'Inactiva'}")
             
             # Test 3: Cloud scaling
             self.root.after(0, self.add_system_message, "[TEST 3/5] Probando escalado en la nube...")
             try:
                 scaling_config = self.cloud_scaling.scale_computation(100, "topo_spectral")
-                test_results.append("✅ Cloud scaling: OK")
+                test_results.append(" Cloud scaling: OK")
             except Exception as e:
-                test_results.append(f"❌ Cloud scaling: Error - {str(e)}")
+                test_results.append(f" Cloud scaling: Error - {str(e)}")
             
             # Test 4: Resource estimation
-            self.root.after(0, self.add_system_message, "[TEST 4/5] Probando estimación de recursos...")
+            self.root.after(0, self.add_system_message, "[TEST 4/5] Probando estimacion de recursos...")
             try:
                 resource_usage = self.cloud_scaling.get_resource_usage_estimate(200)
-                test_results.append("✅ Estimación de recursos: OK")
+                test_results.append(" Estimacion de recursos: OK")
             except Exception as e:
-                test_results.append(f"❌ Estimación de recursos: Error - {str(e)}")
+                test_results.append(f" Estimacion de recursos: Error - {str(e)}")
             
             # Test 5: System integration
-            self.root.after(0, self.add_system_message, "[TEST 5/5] Probando integración completa...")
+            self.root.after(0, self.add_system_message, "[TEST 5/5] Probando integracion completa...")
             integration_test = all([
                 self.unified_config.consciousness_integration,
                 self.consciousness.is_system_conscious(),
                 isinstance(self.cloud_scaling.scaling_level, str)
             ])
-            test_results.append(f"{'✅' if integration_test else '❌'} Integración del sistema: {'OK' if integration_test else 'Error'}")
+            test_results.append(f"{'' if integration_test else ''} Integracion del sistema: {'OK' if integration_test else 'Error'}")
             
             # Show results
             results_text = "\n".join(test_results)
-            success_count = sum(1 for result in test_results if result.startswith("✅"))
+            success_count = sum(1 for result in test_results if result.startswith(""))
             total_tests = len(test_results)
             
             final_message = f"""[TEST COMPLETO] Resultados del sistema unificado:
@@ -562,10 +562,10 @@ Resumen: {success_count}/{total_tests} pruebas exitosas ({(success_count/total_t
             
             if success_count == total_tests:
                 self.root.after(0, messagebox.showinfo, "Test Completo", 
-                              f"✅ Todas las pruebas completadas exitosamente!\n\n{success_count}/{total_tests} componentes funcionando correctamente.")
+                              f" Todas las pruebas completadas exitosamente!\n\n{success_count}/{total_tests} componentes funcionando correctamente.")
             else:
                 self.root.after(0, messagebox.showwarning, "Test Completo",
-                              f"⚠️ Algunas pruebas fallaron.\n\n{success_count}/{total_tests} componentes funcionando correctamente.\n\nRevisa el log para más detalles.")
+                              f" Algunas pruebas fallaron.\n\n{success_count}/{total_tests} componentes funcionando correctamente.\n\nRevisa el log para mas detalles.")
             
         except Exception as e:
             error_msg = f"Error ejecutando test del sistema: {str(e)}"
@@ -584,7 +584,7 @@ Resumen: {success_count}/{total_tests} pruebas exitosas ({(success_count/total_t
         self.input_field.delete(1.0, tk.END)
         
         # Add user message
-        self.add_message("TÚ", user_input)
+        self.add_message("TU", user_input)
         
         # Update status
         self.status_label.config(text="Estado: Procesando...", foreground="orange")
@@ -599,16 +599,16 @@ Resumen: {success_count}/{total_tests} pruebas exitosas ({(success_count/total_t
             if AI_AVAILABLE:
                 # Check for special GUI commands first
                 message_lower = message.lower()
-                if any(cmd in message_lower for cmd in ['capacidades', 'funciones', 'qué puedes hacer']):
+                if any(cmd in message_lower for cmd in ['capacidades', 'funciones', 'que puedes hacer']):
                     response = self.get_symbiote_capabilities()
-                elif any(cmd in message_lower for cmd in ['modelo', 'qué modelo', 'que modelo']):
+                elif any(cmd in message_lower for cmd in ['modelo', 'que modelo', 'que modelo']):
                     response = self.get_model_info()
                 else:
                     # Use new multi-provider AI engine
                     response = self.ai_engine.process_message(message)
             else:
                 # Demo response
-                response = f"[DEMO] Esta es una respuesta de demostración a tu mensaje: '{message}'. En el modo completo, aquí aparecería la respuesta real de AI Symbiote."
+                response = f"[DEMO] Esta es una respuesta de demostracion a tu mensaje: '{message}'. En el modo completo, aqui apareceria la respuesta real de AI Symbiote."
             
             # Update GUI in main thread
             self.root.after(0, self.update_with_response, response)
@@ -634,85 +634,85 @@ Resumen: {success_count}/{total_tests} pruebas exitosas ({(success_count/total_t
         unified_status = ""
         if UNIFIED_SYSTEM_AVAILABLE:
             unified_status = f"""
-🚀 SISTEMA UNIFICADO FASE 6 - ACTIVO:
-• Entorno detectado: {self.unified_config.environment.upper()}
-• Nivel de escalado: {self.unified_config.scaling_level}
-• Conciencia AI: {'✅ ACTIVA' if self.consciousness.is_system_conscious() else '❌ INACTIVA'}
-• Cloud Scaling: {self.cloud_scaling.current_environment.upper()}
-• GPU disponible: {'✅ SÍ' if self.cloud_scaling.available_resources['gpu_available'] else '❌ NO'}
+ SISTEMA UNIFICADO FASE 6 - ACTIVO:
+ Entorno detectado: {self.unified_config.environment.upper()}
+ Nivel de escalado: {self.unified_config.scaling_level}
+ Conciencia AI: {' ACTIVA' if self.consciousness.is_system_conscious() else ' INACTIVA'}
+ Cloud Scaling: {self.cloud_scaling.current_environment.upper()}
+ GPU disponible: {' SI' if self.cloud_scaling.available_resources['gpu_available'] else ' NO'}
 
 [CLOUD] ESCALADO INCREMENTAL:
-• Level 1 (Local): 200x200 matrices, 0.01ms
-• Level 2 (Colab): 1024x1024 matrices, 0.001ms
-• Level 3 (Kaggle): 2048x2048 matrices, 0.0005ms
-• Detección automática de recursos y capacidades
-• Sistema de advertencias inteligente para grandes volúmenes
+ Level 1 (Local): 200x200 matrices, 0.01ms
+ Level 2 (Colab): 1024x1024 matrices, 0.001ms
+ Level 3 (Kaggle): 2048x2048 matrices, 0.0005ms
+ Deteccion automatica de recursos y capacidades
+ Sistema de advertencias inteligente para grandes volumenes
 
 [CONSCIOUSNESS] CONCIENCIA AI INTEGRADA:
-• Conocimiento completo del proyecto Obvivlorum
-• 6 fases del pipeline científico completadas
-• Integración holográfica recursiva REAL
-• Seguimiento de estado del sistema en tiempo real
-• Rendimiento dramático: 53ms → 0.01ms (3780x mejora)"""
+ Conocimiento completo del proyecto Obvivlorum
+ 6 fases del pipeline cientifico completadas
+ Integracion holografica recursiva REAL
+ Seguimiento de estado del sistema en tiempo real
+ Rendimiento dramatico: 53ms -> 0.01ms (3780x mejora)"""
         else:
-            unified_status = "\n❌ SISTEMA UNIFICADO NO DISPONIBLE - Usando modo básico"
+            unified_status = "\n SISTEMA UNIFICADO NO DISPONIBLE - Usando modo basico"
 
-        return f"""🤖 AI SYMBIOTE v2.1-UNIFIED - CAPACIDADES COMPLETAS:{unified_status}
+        return f""" AI SYMBIOTE v2.1-UNIFIED - CAPACIDADES COMPLETAS:{unified_status}
 
-[BRAIN] INTELIGENCIA HÍBRIDA:
-• Modelo Phi-3-mini local (2.4GB) - Respuestas rápidas e inteligentes
-• ChatGPT API como fallback automático
-• Reglas expertas especializadas
+[BRAIN] INTELIGENCIA HIBRIDA:
+ Modelo Phi-3-mini local (2.4GB) - Respuestas rapidas e inteligentes
+ ChatGPT API como fallback automatico
+ Reglas expertas especializadas
 
 [TARGET] FUNCIONES COMO SYMBIOTE:
-• Configuración unificada con un solo punto de entrada
-• Escalado automático según entorno (local/Colab/Kaggle)
-• Monitoreo de recursos y performance en tiempo real
-• Integración completa con sistema operativo Windows
-• Modo TURBO para optimización de rendimiento
+ Configuracion unificada con un solo punto de entrada
+ Escalado automatico segun entorno (local/Colab/Kaggle)
+ Monitoreo de recursos y performance en tiempo real
+ Integracion completa con sistema operativo Windows
+ Modo TURBO para optimizacion de rendimiento
 
 [FAST] COMANDOS ESPECIALES:
-• "TURBO ON/OFF" - Activar/desactivar modo alta velocidad
-• "actualizar estado" - Refrescar monitoreo del sistema
-• "test completo" - Ejecutar validación del sistema unificado
-• "¿cuáles son tus capacidades?" - Esta información
+ "TURBO ON/OFF" - Activar/desactivar modo alta velocidad
+ "actualizar estado" - Refrescar monitoreo del sistema
+ "test completo" - Ejecutar validacion del sistema unificado
+ "cuales son tus capacidades?" - Esta informacion
 
 [WEB] INTERFACES DISPONIBLES:
-• GUI Unificada (esta ventana) - Interfaz nativa con controles completos
-• Web Interface en http://localhost:8000 - Estilo Claude avanzado
-• API RESTful completa para desarrolladores
+ GUI Unificada (esta ventana) - Interfaz nativa con controles completos
+ Web Interface en http://localhost:8000 - Estilo Claude avanzado
+ API RESTful completa para desarrolladores
 
-💾 CARACTERÍSTICAS TÉCNICAS:
-• Sistema unificado con conciencia AI integrada
-• Escalado incremental automático en la nube
-• Sin límites de uso ni restricciones
-• Privacidad total - nada sale de tu PC
-• Persistencia automática al arrancar Windows"""
+ CARACTERISTICAS TECNICAS:
+ Sistema unificado con conciencia AI integrada
+ Escalado incremental automatico en la nube
+ Sin limites de uso ni restricciones
+ Privacidad total - nada sale de tu PC
+ Persistencia automatica al arrancar Windows"""
     
     def get_model_info(self):
         """Return model information."""
         if AI_AVAILABLE and self.ai_engine:
             current_provider = self.ai_engine.current_provider
             available_models = len(self.ai_engine.local_models)
-            return f"""[TARGET] INFORMACIÓN DEL SISTEMA AI:
+            return f"""[TARGET] INFORMACION DEL SISTEMA AI:
 
 [CHART] PROVEEDOR ACTUAL: {current_provider.upper()}
-• Francisco Molina es mi creador
-• Sistema AI Symbiote Obvivlorum
-• Proyecto AION con protocolo multi-provider
+ Francisco Molina es mi creador
+ Sistema AI Symbiote Obvivlorum
+ Proyecto AION con protocolo multi-provider
 
-🔄 PROVEEDORES DISPONIBLES:
+ PROVEEDORES DISPONIBLES:
 1. Modelos Locales ({available_models} modelos GGUF)
 2. OpenAI API (GPT-3.5/4)
 3. Claude API (Sonnet/Haiku)
 
 [FAST] COMANDOS DE CAMBIO:
-• 'usar local' - Modelos locales GGUF
-• 'usar openai' - API de OpenAI 
-• 'usar claude' - API de Claude
+ 'usar local' - Modelos locales GGUF
+ 'usar openai' - API de OpenAI 
+ 'usar claude' - API de Claude
 
 [BRAIN] CONTEXTO DEL PROYECTO:
-Creado por Francisco Molina como sistema simbiótico adaptativo."""
+Creado por Francisco Molina como sistema simbiotico adaptativo."""
         else:
             return "Sistema AI no disponible - Modo demo activo"
     
@@ -747,7 +747,7 @@ Creado por Francisco Molina como sistema simbiótico adaptativo."""
     
     def on_closing(self):
         """Handle window closing."""
-        if messagebox.askokcancel("Salir", "¿Cerrar AI Symbiote?"):
+        if messagebox.askokcancel("Salir", "Cerrar AI Symbiote?"):
             # Disable TURBO mode if active
             if self.turbo_mode and AI_AVAILABLE and self.ai_engine:
                 self.ai_engine.disable_turbo_mode()

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-AI Symbiote Web API - Versión Corregida
+AI Symbiote Web API - Version Corregida
 =======================================
 
-Versión sin dependencias del core AI Symbiote para evitar errores.
+Version sin dependencias del core AI Symbiote para evitar errores.
 Proporciona una API funcional con datos mock para la interfaz web.
 """
 
@@ -343,12 +343,12 @@ async def send_periodic_updates():
 async def startup_event():
     # Start background task
     asyncio.create_task(send_periodic_updates())
-    print("✅ AI Symbiote API (Fixed Version) started successfully")
-    print("🌐 Frontend should connect to: http://localhost:8000")
-    print("📚 API Documentation: http://localhost:8000/api/docs")
+    print(" AI Symbiote API (Fixed Version) started successfully")
+    print(" Frontend should connect to: http://localhost:8000")
+    print(" API Documentation: http://localhost:8000/api/docs")
 
 if __name__ == "__main__":
-    print("🚀 Starting AI Symbiote API Server (Fixed Version)...")
+    print(" Starting AI Symbiote API Server (Fixed Version)...")
     uvicorn.run(
         "main_fixed:app",
         host="0.0.0.0",

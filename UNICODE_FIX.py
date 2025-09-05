@@ -9,7 +9,7 @@ import re
 import sys
 
 def fix_unicode_in_file(filepath):
-    """Reemplaza caracteres Unicode problemáticos con equivalentes ASCII"""
+    """Reemplaza caracteres Unicode problematicos con equivalentes ASCII"""
     
     # Mapa de reemplazos
     replacements = {
@@ -64,7 +64,7 @@ def main():
     base_dir = r"D:\Obvivlorum"
     fixed_count = 0
     
-    print("Buscando archivos Python con caracteres Unicode problemáticos...")
+    print("Buscando archivos Python con caracteres Unicode problematicos...")
     print(f"Directorio base: {base_dir}")
     print("-" * 50)
     
@@ -77,7 +77,7 @@ def main():
     
     print("-" * 50)
     print(f"Archivos corregidos: {fixed_count}")
-    print("Corrección de Unicode completada.")
+    print("Correccion de Unicode completada.")
 
 if __name__ == "__main__":
     main()

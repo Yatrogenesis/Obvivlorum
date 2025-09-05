@@ -342,7 +342,7 @@ if __name__ == "__main__":
         validation = mode_manager.validate_mode_requirements(target_mode)
         print(f"Validation results for {target_mode.value} mode:")
         for component, status in validation.items():
-            print(f"  {component}: {'✓' if status else '✗'}")
+            print(f"  {component}: {'[OK]' if status else '[FAIL]'}")
         
         if all(validation.values()):
             print("All requirements met!")

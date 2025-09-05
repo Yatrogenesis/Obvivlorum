@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AI Simple Working - No más fallos
+AI Simple Working - No mas fallos
 =================================
 
 Sistema de IA simple pero que FUNCIONA sin errores.
@@ -36,7 +36,7 @@ class SimpleWorkingAI:
         self.face_cascade = None
         self.conversation_history = []
         self.voice_enabled = True
-        self.language = "es"  # Español como idioma principal
+        self.language = "es"  # Espanol como idioma principal
         self.default_language = "es"
         
         logger.info("Initializing Simple Working AI...")
@@ -81,12 +81,12 @@ class SimpleWorkingAI:
         try:
             message_lower = message.lower()
             
-            # Detect language - Español por defecto, inglés solo si es claramente inglés
+            # Detect language - Espanol por defecto, ingles solo si es claramente ingles
             english_words = ['what', 'how', 'when', 'where', 'why', 'who', 'which', 'would', 'should', 'could', 'the', 'and', 'that']
             english_indicators = sum(1 for word in english_words if word in message_lower)
             spanish_indicators = len([w for w in ['que', 'como', 'donde', 'cuando', 'por', 'para', 'con', 'muy', 'pero', 'esta', 'eres', 'tienes', 'es', 'la', 'el', 'de', 'en', 'un', 'una'] if w in message_lower])
             
-            # Español por defecto, inglés solo si hay más indicadores en inglés
+            # Espanol por defecto, ingles solo si hay mas indicadores en ingles
             self.language = "en" if english_indicators > spanish_indicators and english_indicators >= 3 else "es"
             
             # Add to history
@@ -107,118 +107,118 @@ class SimpleWorkingAI:
             
         except Exception as e:
             logger.error(f"Message processing error: {e}")
-            return "Disculpa, tuve un problema. ¿Puedes intentar de nuevo?"
+            return "Disculpa, tuve un problema. Puedes intentar de nuevo?"
     
     def _get_intelligent_response(self, message_lower: str) -> str:
         """Get intelligent response based on comprehensive pattern matching."""
         
-        # === PREGUNTAS TÉCNICAS Y COMPLEJAS EN ESPAÑOL ===
+        # === PREGUNTAS TECNICAS Y COMPLEJAS EN ESPANOL ===
         
         # Blockchain y Criptomonedas
         if any(word in message_lower for word in ['blockchain', 'bitcoin', 'criptomoneda', 'cryptocurrency', 'cripto']):
             if self.language == "es":
-                return """Blockchain es una tecnología revolucionaria de registro distribuido:
+                return """Blockchain es una tecnologia revolucionaria de registro distribuido:
 
-**¿Qué es blockchain?**
-• Base de datos descentralizada y inmutable
-• Cada bloque contiene transacciones verificadas
-• Conectados criptográficamente formando una cadena
-• No requiere autoridad central para validar
+**Que es blockchain?**
+ Base de datos descentralizada y inmutable
+ Cada bloque contiene transacciones verificadas
+ Conectados criptograficamente formando una cadena
+ No requiere autoridad central para validar
 
-**Características principales:**
-• Transparencia: Todas las transacciones son públicas
-• Inmutabilidad: Los datos no pueden alterarse
-• Descentralización: No hay punto único de falla
-• Consenso: La red valida cada transacción
+**Caracteristicas principales:**
+ Transparencia: Todas las transacciones son publicas
+ Inmutabilidad: Los datos no pueden alterarse
+ Descentralizacion: No hay punto unico de falla
+ Consenso: La red valida cada transaccion
 
 **Aplicaciones:**
-• Criptomonedas como Bitcoin y Ethereum
-• Contratos inteligentes automatizados
-• Cadenas de suministro transparentes
-• Identidad digital segura
+ Criptomonedas como Bitcoin y Ethereum
+ Contratos inteligentes automatizados
+ Cadenas de suministro transparentes
+ Identidad digital segura
 
 **Ventajas:** Elimina intermediarios, reduce costos, aumenta seguridad
-**Desafíos:** Consumo energético, escalabilidad, regulación"""
+**Desafios:** Consumo energetico, escalabilidad, regulacion"""
             else:
                 return """Blockchain is a revolutionary distributed ledger technology that creates tamper-proof digital records through cryptographic linking and decentralized consensus mechanisms."""
 
         # Bases de Datos
         if any(word in message_lower for word in ['base de datos', 'database', 'sql', 'nosql', 'mysql']):
             if self.language == "es":
-                return """Las bases de datos son sistemas para almacenar y gestionar información:
+                return """Las bases de datos son sistemas para almacenar y gestionar informacion:
 
 **Tipos principales:**
-• **Relacionales (SQL)**: MySQL, PostgreSQL, SQL Server
+ **Relacionales (SQL)**: MySQL, PostgreSQL, SQL Server
   - Datos estructurados en tablas con relaciones
   - ACID compliance para transacciones seguras
   - Consultas complejas con JOIN operations
 
-• **No relacionales (NoSQL)**: MongoDB, Redis, Cassandra  
+ **No relacionales (NoSQL)**: MongoDB, Redis, Cassandra  
   - Datos flexibles: documentos, clave-valor, grafos
   - Escalabilidad horizontal
   - Mejor para big data y aplicaciones distribuidas
 
 **Conceptos fundamentales:**
-• Normalización: Eliminar redundancia de datos
-• Índices: Acelerar búsquedas y consultas
-• Transacciones: Operaciones atómicas y consistentes
-• Respaldos: Copias de seguridad automáticas
+ Normalizacion: Eliminar redundancia de datos
+ Indices: Acelerar busquedas y consultas
+ Transacciones: Operaciones atomicas y consistentes
+ Respaldos: Copias de seguridad automaticas
 
 **Casos de uso:**
-• Relacionales: Sistemas bancarios, ERP, CRM
-• NoSQL: Redes sociales, IoT, análisis en tiempo real"""
+ Relacionales: Sistemas bancarios, ERP, CRM
+ NoSQL: Redes sociales, IoT, analisis en tiempo real"""
             else:
                 return """Databases are organized systems for storing, managing, and retrieving data efficiently using various models like relational (SQL) or document-based (NoSQL) approaches."""
 
         # Cloud Computing
         if any(word in message_lower for word in ['nube', 'cloud computing', 'aws', 'azure', 'google cloud']):
             if self.language == "es":
-                return """La computación en la nube revoluciona cómo usamos recursos IT:
+                return """La computacion en la nube revoluciona como usamos recursos IT:
 
 **Modelos de servicio:**
-• **IaaS** (Infrastructure): Servidores virtuales, almacenamiento
-• **PaaS** (Platform): Entorno de desarrollo y despliegue  
-• **SaaS** (Software): Aplicaciones listas para usar
+ **IaaS** (Infrastructure): Servidores virtuales, almacenamiento
+ **PaaS** (Platform): Entorno de desarrollo y despliegue  
+ **SaaS** (Software): Aplicaciones listas para usar
 
 **Principales proveedores:**
-• AWS (Amazon): Líder del mercado, más servicios
-• Microsoft Azure: Integración con Windows/Office
-• Google Cloud: Especializado en ML y analytics
-• IBM Cloud, Oracle Cloud: Enfoque empresarial
+ AWS (Amazon): Lider del mercado, mas servicios
+ Microsoft Azure: Integracion con Windows/Office
+ Google Cloud: Especializado en ML y analytics
+ IBM Cloud, Oracle Cloud: Enfoque empresarial
 
 **Ventajas clave:**
-• Escalabilidad instantánea según demanda
-• Pago por uso real de recursos
-• Disponibilidad global 24/7
-• Actualizaciones automáticas
-• Reducción de infraestructura física
+ Escalabilidad instantanea segun demanda
+ Pago por uso real de recursos
+ Disponibilidad global 24/7
+ Actualizaciones automaticas
+ Reduccion de infraestructura fisica
 
-**Desafíos:**
-• Dependencia de internet
-• Preocupaciones de seguridad y privacidad  
-• Posible vendor lock-in
-• Costos pueden crecer inesperadamente"""
+**Desafios:**
+ Dependencia de internet
+ Preocupaciones de seguridad y privacidad  
+ Posible vendor lock-in
+ Costos pueden crecer inesperadamente"""
             else:
                 return """Cloud computing delivers IT services over the internet, offering scalable resources, cost efficiency, and global accessibility through IaaS, PaaS, and SaaS models."""
 
         # Inteligencia Artificial
         if any(word in message_lower for word in ['inteligencia artificial', 'machine learning', 'ia', 'ai', 'algoritmo']):
             if self.language == "es":
-                return """La inteligencia artificial (IA) es la capacidad de las máquinas para realizar tareas que normalmente requieren inteligencia humana, como:
+                return """La inteligencia artificial (IA) es la capacidad de las maquinas para realizar tareas que normalmente requieren inteligencia humana, como:
 
-• **Aprendizaje**: Mejorar el rendimiento basándose en la experiencia
-• **Razonamiento**: Resolver problemas usando lógica  
-• **Percepción**: Interpretar datos sensoriales
-• **Procesamiento de lenguaje**: Entender y generar texto humano
+ **Aprendizaje**: Mejorar el rendimiento basandose en la experiencia
+ **Razonamiento**: Resolver problemas usando logica  
+ **Percepcion**: Interpretar datos sensoriales
+ **Procesamiento de lenguaje**: Entender y generar texto humano
 
-El machine learning es una rama de la IA que permite a las computadoras aprender sin ser programadas explícitamente para cada tarea."""
+El machine learning es una rama de la IA que permite a las computadoras aprender sin ser programadas explicitamente para cada tarea."""
             else:
                 return """Artificial Intelligence (AI) is the capability of machines to perform tasks that normally require human intelligence, such as:
 
-• **Learning**: Improving performance based on experience
-• **Reasoning**: Solving problems using logic
-• **Perception**: Interpreting sensory data  
-• **Language processing**: Understanding and generating human text
+ **Learning**: Improving performance based on experience
+ **Reasoning**: Solving problems using logic
+ **Perception**: Interpreting sensory data  
+ **Language processing**: Understanding and generating human text
 
 Machine learning is a branch of AI that enables computers to learn without being explicitly programmed for each task."""
         
@@ -227,25 +227,25 @@ Machine learning is a branch of AI that enables computers to learn without being
             if self.language == "es":
                 return """Una red neuronal es un modelo computacional inspirado en el cerebro humano:
 
-**Componentes básicos:**
-• **Neuronas artificiales**: Procesan y transmiten información
-• **Conexiones (sinapsis)**: Tienen pesos que se ajustan durante el aprendizaje
-• **Capas**: Entrada, ocultas y salida
+**Componentes basicos:**
+ **Neuronas artificiales**: Procesan y transmiten informacion
+ **Conexiones (sinapsis)**: Tienen pesos que se ajustan durante el aprendizaje
+ **Capas**: Entrada, ocultas y salida
 
 **Funcionamiento:**
 1. Recibe datos en la capa de entrada
-2. Los procesa a través de capas ocultas
+2. Los procesa a traves de capas ocultas
 3. Produce resultados en la capa de salida
-4. Ajusta pesos basándose en errores (backpropagation)
+4. Ajusta pesos basandose en errores (backpropagation)
 
-Se usa en reconocimiento de imágenes, procesamiento de lenguaje natural y muchas otras aplicaciones."""
+Se usa en reconocimiento de imagenes, procesamiento de lenguaje natural y muchas otras aplicaciones."""
             else:
                 return """A neural network is a computational model inspired by the human brain:
 
 **Basic components:**
-• **Artificial neurons**: Process and transmit information
-• **Connections (synapses)**: Have weights adjusted during learning
-• **Layers**: Input, hidden, and output
+ **Artificial neurons**: Process and transmit information
+ **Connections (synapses)**: Have weights adjusted during learning
+ **Layers**: Input, hidden, and output
 
 **How it works:**
 1. Receives data in input layer
@@ -255,38 +255,38 @@ Se usa en reconocimiento de imágenes, procesamiento de lenguaje natural y mucha
 
 Used in image recognition, natural language processing, and many other applications."""
         
-        # Programación
+        # Programacion
         if any(word in message_lower for word in ['programacion', 'programming', 'codigo', 'code', 'python', 'javascript']):
             if self.language == "es":
-                return """La programación es el proceso de crear software mediante código:
+                return """La programacion es el proceso de crear software mediante codigo:
 
 **Conceptos fundamentales:**
-• **Algoritmos**: Secuencia de instrucciones para resolver problemas
-• **Estructuras de datos**: Formas de organizar información
-• **Lógica**: Condicionales, bucles y funciones
-• **Debugging**: Encontrar y corregir errores
+ **Algoritmos**: Secuencia de instrucciones para resolver problemas
+ **Estructuras de datos**: Formas de organizar informacion
+ **Logica**: Condicionales, bucles y funciones
+ **Debugging**: Encontrar y corregir errores
 
 **Lenguajes populares:**
-• Python: Fácil de aprender, versátil
-• JavaScript: Para web y aplicaciones
-• Java: Robusto para empresas
-• C++: Alto rendimiento
+ Python: Facil de aprender, versatil
+ JavaScript: Para web y aplicaciones
+ Java: Robusto para empresas
+ C++: Alto rendimiento
 
-¿Hay algún aspecto específico de programación que te interese?"""
+Hay algun aspecto especifico de programacion que te interese?"""
             else:
                 return """Programming is the process of creating software through code:
 
 **Fundamental concepts:**
-• **Algorithms**: Sequence of instructions to solve problems
-• **Data structures**: Ways to organize information
-• **Logic**: Conditionals, loops, and functions
-• **Debugging**: Finding and fixing errors
+ **Algorithms**: Sequence of instructions to solve problems
+ **Data structures**: Ways to organize information
+ **Logic**: Conditionals, loops, and functions
+ **Debugging**: Finding and fixing errors
 
 **Popular languages:**
-• Python: Easy to learn, versatile
-• JavaScript: For web and applications  
-• Java: Robust for enterprise
-• C++: High performance
+ Python: Easy to learn, versatile
+ JavaScript: For web and applications  
+ Java: Robust for enterprise
+ C++: High performance
 
 Is there a specific programming aspect you're interested in?"""
         
@@ -295,43 +295,43 @@ Is there a specific programming aspect you're interested in?"""
             if self.language == "es":
                 return """La ciberseguridad protege sistemas digitales de amenazas:
 
-**Por qué es importante:**
-• Protege información personal y empresarial
-• Evita pérdidas económicas por ataques
-• Mantiene la confianza en sistemas digitales
-• Cumple regulaciones legales
+**Por que es importante:**
+ Protege informacion personal y empresarial
+ Evita perdidas economicas por ataques
+ Mantiene la confianza en sistemas digitales
+ Cumple regulaciones legales
 
 **Amenazas comunes:**
-• Malware, virus y ransomware
-• Phishing y ingeniería social
-• Ataques de fuerza bruta
-• Vulnerabilidades de software
+ Malware, virus y ransomware
+ Phishing y ingenieria social
+ Ataques de fuerza bruta
+ Vulnerabilidades de software
 
-**Buenas prácticas:**
-• Contraseñas fuertes y únicas
-• Actualizaciones regulares
-• Backups seguros
-• Autenticación de dos factores"""
+**Buenas practicas:**
+ Contrasenas fuertes y unicas
+ Actualizaciones regulares
+ Backups seguros
+ Autenticacion de dos factores"""
             else:
                 return """Cybersecurity protects digital systems from threats:
 
 **Why it's important:**
-• Protects personal and business information
-• Prevents economic losses from attacks
-• Maintains trust in digital systems
-• Complies with legal regulations
+ Protects personal and business information
+ Prevents economic losses from attacks
+ Maintains trust in digital systems
+ Complies with legal regulations
 
 **Common threats:**
-• Malware, viruses, and ransomware
-• Phishing and social engineering
-• Brute force attacks
-• Software vulnerabilities  
+ Malware, viruses, and ransomware
+ Phishing and social engineering
+ Brute force attacks
+ Software vulnerabilities  
 
 **Best practices:**
-• Strong, unique passwords
-• Regular updates
-• Secure backups
-• Two-factor authentication"""
+ Strong, unique passwords
+ Regular updates
+ Secure backups
+ Two-factor authentication"""
         
         # === PREGUNTAS GENERALES ===
         
@@ -339,15 +339,15 @@ Is there a specific programming aspect you're interested in?"""
         greetings = ['hola', 'hello', 'hi', 'buenos dias', 'good morning', 'buenas tardes', 'buenas noches', 'hey', 'saludos']
         if any(greeting in message_lower for greeting in greetings):
             if self.language == "es":
-                return """¡Hola! Soy AI Symbiote, tu asistente inteligente avanzado.
+                return """Hola! Soy AI Symbiote, tu asistente inteligente avanzado.
 
 **Especialidades:**
-• Tecnología: IA, blockchain, programación, ciberseguridad
-• Ciencia: Explicaciones detalladas y precisas  
-• Análisis: Comparaciones técnicas profundas
-• Resolución: Guías paso a paso para problemas complejos
+ Tecnologia: IA, blockchain, programacion, ciberseguridad
+ Ciencia: Explicaciones detalladas y precisas  
+ Analisis: Comparaciones tecnicas profundas
+ Resolucion: Guias paso a paso para problemas complejos
 
-Estoy configurado para operar principalmente en español y dar respuestas técnicamente precisas. ¿Qué tema complejo te interesa explorar?"""
+Estoy configurado para operar principalmente en espanol y dar respuestas tecnicamente precisas. Que tema complejo te interesa explorar?"""
             else:
                 return "Hello! I'm AI Symbiote, your intelligent assistant. I can explain complex concepts about technology, science, programming and more. What would you like to learn today?"
         
@@ -357,14 +357,14 @@ Estoy configurado para operar principalmente en español y dar respuestas técni
             if self.language == "es":
                 return """Mis capacidades inteligentes incluyen:
 
-* Explicaciones técnicas: IA, programación, ciencia
-* Análisis conceptual: Comparaciones y diferencias  
-* Resolución de problemas: Guías paso a paso
-* Conversación natural: En español e inglés
-* Visión por computadora: Reconocimiento facial
-* Procesamiento de voz: Síntesis y reconocimiento
+* Explicaciones tecnicas: IA, programacion, ciencia
+* Analisis conceptual: Comparaciones y diferencias  
+* Resolucion de problemas: Guias paso a paso
+* Conversacion natural: En espanol e ingles
+* Vision por computadora: Reconocimiento facial
+* Procesamiento de voz: Sintesis y reconocimiento
 
-Pregúntame sobre cualquier tema complejo y te daré una explicación clara!"""
+Preguntame sobre cualquier tema complejo y te dare una explicacion clara!"""
             else:
                 return """My intelligent capabilities include:
 
@@ -381,41 +381,41 @@ Ask me about any complex topic and I'll give you a clear explanation!"""
         help_words = ['ayuda', 'help', 'asistencia', 'assistance']
         if any(word in message_lower for word in help_words):
             if self.language == "es":
-                return """¡Perfecto! Puedo ayudarte con:
+                return """Perfecto! Puedo ayudarte con:
 
-**Preguntas técnicas:**
-• "¿Qué es machine learning?"
-• "¿Cómo funciona blockchain?"  
-• "Diferencias entre frontend y backend"
+**Preguntas tecnicas:**
+ "Que es machine learning?"
+ "Como funciona blockchain?"  
+ "Diferencias entre frontend y backend"
 
 **Conceptos complejos:**
-• "¿Por qué es importante la ciberseguridad?"
-• "¿Cómo funcionan las bases de datos?"
-• "¿Qué es la computación en la nube?"
+ "Por que es importante la ciberseguridad?"
+ "Como funcionan las bases de datos?"
+ "Que es la computacion en la nube?"
 
-**Resolución de problemas:**
-• Guías paso a paso
-• Comparaciones detalladas
-• Explicaciones con ejemplos
+**Resolucion de problemas:**
+ Guias paso a paso
+ Comparaciones detalladas
+ Explicaciones con ejemplos
 
-¿Sobre qué tema específico te gustaría que te ayude?"""
+Sobre que tema especifico te gustaria que te ayude?"""
             else:
                 return """Perfect! I can help you with:
 
 **Technical questions:**
-• "What is machine learning?"
-• "How does blockchain work?"
-• "Differences between frontend and backend"
+ "What is machine learning?"
+ "How does blockchain work?"
+ "Differences between frontend and backend"
 
 **Complex concepts:**  
-• "Why is cybersecurity important?"
-• "How do databases work?"
-• "What is cloud computing?"
+ "Why is cybersecurity important?"
+ "How do databases work?"
+ "What is cloud computing?"
 
 **Problem solving:**
-• Step-by-step guides
-• Detailed comparisons
-• Explanations with examples
+ Step-by-step guides
+ Detailed comparisons
+ Explanations with examples
 
 What specific topic would you like me to help you with?"""
         
@@ -424,41 +424,41 @@ What specific topic would you like me to help you with?"""
         # Si contiene signos de pregunta
         if '?' in message_lower:
             if self.language == "es":
-                return f"""Esa es una excelente pregunta. Para darte la mejor respuesta sobre "{message_lower.replace('?', '')}", necesitaría un poco más de contexto.
+                return f"""Esa es una excelente pregunta. Para darte la mejor respuesta sobre "{message_lower.replace('?', '')}", necesitaria un poco mas de contexto.
 
-¿Podrías especificar:
-• ¿Te interesa el aspecto técnico, práctico o teórico?
-• ¿Es para un proyecto específico o curiosidad general?
-• ¿Qué nivel de detalle prefieres?
+Podrias especificar:
+ Te interesa el aspecto tecnico, practico o teorico?
+ Es para un proyecto especifico o curiosidad general?
+ Que nivel de detalle prefieres?
 
-Mientras tanto, puedo adelantarte que es un tema fascinante con múltiples dimensiones. ¡Pregúntame con más detalles!"""
+Mientras tanto, puedo adelantarte que es un tema fascinante con multiples dimensiones. Preguntame con mas detalles!"""
             else:
                 return f"""That's an excellent question. To give you the best answer about "{message_lower.replace('?', '')}", I'd need a bit more context.
 
 Could you specify:
-• Are you interested in technical, practical, or theoretical aspects?  
-• Is it for a specific project or general curiosity?
-• What level of detail do you prefer?
+ Are you interested in technical, practical, or theoretical aspects?  
+ Is it for a specific project or general curiosity?
+ What level of detail do you prefer?
 
 In the meantime, I can tell you it's a fascinating topic with multiple dimensions. Ask me with more details!"""
         
         # Respuesta inteligente por defecto
         if self.language == "es":
-            return f"""Entiendo que estás preguntando sobre "{message_lower}". Es un tema que puede abordarse desde diferentes ángulos.
+            return f"""Entiendo que estas preguntando sobre "{message_lower}". Es un tema que puede abordarse desde diferentes angulos.
 
-Para darte una respuesta más precisa y útil, ¿podrías:
-• Ser más específico sobre qué aspecto te interesa
-• Darme más contexto sobre tu consulta  
-• Decirme si buscas una explicación técnica o general
+Para darte una respuesta mas precisa y util, podrias:
+ Ser mas especifico sobre que aspecto te interesa
+ Darme mas contexto sobre tu consulta  
+ Decirme si buscas una explicacion tecnica o general
 
-¡Estoy aquí para ayudarte con explicaciones claras y detalladas!"""
+Estoy aqui para ayudarte con explicaciones claras y detalladas!"""
         else:
             return f"""I understand you're asking about "{message_lower}". It's a topic that can be approached from different angles.
 
 To give you a more precise and useful answer, could you:
-• Be more specific about which aspect interests you
-• Give me more context about your query
-• Tell me if you're looking for a technical or general explanation
+ Be more specific about which aspect interests you
+ Give me more context about your query
+ Tell me if you're looking for a technical or general explanation
 
 I'm here to help with clear and detailed explanations!"""
     
@@ -549,11 +549,11 @@ if __name__ == "__main__":
         engine = SimpleWorkingAI()
         
         test_messages = [
-            "¿Qué es la inteligencia artificial?",
-            "¿Cómo funciona una red neuronal?",
-            "¿Por qué es importante la ciberseguridad?",
-            "Hola, ¿cuáles son tus capacidades?",
-            "Ayúdame con programación"
+            "Que es la inteligencia artificial?",
+            "Como funciona una red neuronal?",
+            "Por que es importante la ciberseguridad?",
+            "Hola, cuales son tus capacidades?",
+            "Ayudame con programacion"
         ]
         
         for msg in test_messages:
@@ -561,6 +561,6 @@ if __name__ == "__main__":
             response = await engine.process_message(msg)
             print(f"AI: {response}")
         
-        print("\n✓ Simple Working AI test completed!")
+        print("\nOK Simple Working AI test completed!")
     
     asyncio.run(test())

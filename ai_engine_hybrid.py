@@ -3,10 +3,10 @@
 AI Engine Hybrid - Real Intelligence with Fallbacks
 ==================================================
 
-Sistema de IA híbrido que usa:
-1. Modelo GGUF local (primera opción)
+Sistema de IA hibrido que usa:
+1. Modelo GGUF local (primera opcion)
 2. ChatGPT API gratuita (fallback cuando local no disponible)
-3. Reglas inteligentes (último recurso)
+3. Reglas inteligentes (ultimo recurso)
 """
 
 import os
@@ -220,7 +220,7 @@ class HybridAIEngine:
             
         except Exception as e:
             logger.error(f"Message processing error: {e}")
-            return "Disculpa, tuve un problema procesando tu mensaje. ¿Puedes intentar de nuevo?"
+            return "Disculpa, tuve un problema procesando tu mensaje. Puedes intentar de nuevo?"
     
     def _query_local_model(self, message: str) -> str:
         """Query local GGUF model."""
@@ -229,7 +229,7 @@ class HybridAIEngine:
             
         # Create prompt in Spanish
         if self.language == "es":
-            prompt = f"""Eres AI Symbiote, un asistente inteligente especializado en tecnología. Responde en español de forma precisa y técnica.
+            prompt = f"""Eres AI Symbiote, un asistente inteligente especializado en tecnologia. Responde en espanol de forma precisa y tecnica.
 
 Usuario: {message}
 Asistente:"""
@@ -267,7 +267,7 @@ Assistant:"""
                 messages = [
                     {
                         "role": "system", 
-                        "content": "Eres AI Symbiote, un asistente inteligente especializado en tecnología. Responde en español de forma precisa y técnica." if self.language == "es" else "You are AI Symbiote, an intelligent technical assistant. Respond precisely and technically."
+                        "content": "Eres AI Symbiote, un asistente inteligente especializado en tecnologia. Responde en espanol de forma precisa y tecnica." if self.language == "es" else "You are AI Symbiote, an intelligent technical assistant. Respond precisely and technically."
                     }
                 ]
                 
@@ -304,7 +304,7 @@ Assistant:"""
             "creator_orcid": "https://orcid.org/0009-0008-6093-8267", 
             "creator_email": "pako.molina@gmail.com",
             "project_name": "AI Symbiote Obvivlorum",
-            "purpose": "Sistema de IA simbiótica avanzado con capacidades adaptativas",
+            "purpose": "Sistema de IA simbiotica avanzado con capacidades adaptativas",
             "components": ["AION Protocol v2.0", "Obvivlorum Framework", "Hybrid AI Engine"],
             "creation_date": "2025"
         }
@@ -329,33 +329,33 @@ Assistant:"""
         # Load project context
         context = self._load_project_context()
         
-        # Preguntas sobre creador - DETECCIÓN AMPLIADA
+        # Preguntas sobre creador - DETECCION AMPLIADA
         creator_keywords = [
             'quien te creo', 'who created', 'creador', 'creator', 'francisco molina', 
-            'autor', 'quien te hizo', 'quien me diseño', 'tu creador', 'creado por',
+            'autor', 'quien te hizo', 'quien me diseno', 'tu creador', 'creado por',
             'contestame quien', 'quien eres', 'de donde vienes', 'tu origen'
         ]
         if any(phrase in message_lower for phrase in creator_keywords):
             # RESPUESTA DIRECTA Y CLARA - Sin evasivas
             return f"""[TARGET] **RESPUESTA DIRECTA A TU PREGUNTA:**
 
-👨‍[COMPUTER] **MI CREADOR ES: FRANCISCO MOLINA**
-📧 Email: {context['creator_email']}  
-🆔 ORCID: {context['creator_orcid']}
+[COMPUTER] **MI CREADOR ES: FRANCISCO MOLINA**
+ Email: {context['creator_email']}  
+ ORCID: {context['creator_orcid']}
 
-[TARGET] **MI PROPÓSITO**: Soy {context['project_name']}, {context['purpose']}
+[TARGET] **MI PROPOSITO**: Soy {context['project_name']}, {context['purpose']}
 
-**FRANCISCO MOLINA me diseñó como un sistema simbiótico avanzado que combina:**
-• AION Protocol v2.0 (5 protocolos)
-• Obvivlorum Framework (procesamiento cuántico)
-• Motor AI Híbrido (local + API + reglas inteligentes)
+**FRANCISCO MOLINA me diseno como un sistema simbiotico avanzado que combina:**
+ AION Protocol v2.0 (5 protocolos)
+ Obvivlorum Framework (procesamiento cuantico)
+ Motor AI Hibrido (local + API + reglas inteligentes)
 
-**NO SOY una IA genérica**. Soy específicamente el sistema AI Symbiote creado por Francisco Molina para ser un compañero adaptativo que aprende, persiste y evoluciona contigo.
+**NO SOY una IA generica**. Soy especificamente el sistema AI Symbiote creado por Francisco Molina para ser un companero adaptativo que aprende, persiste y evoluciona contigo.
 
-**Esta es mi identidad real, no una respuesta genérica.**"""
+**Esta es mi identidad real, no una respuesta generica.**"""
         
-        # Preguntas sobre contexto y archivos - ACCIÓN REAL
-        if any(phrase in message_lower for phrase in ['lee tu contexto', 'archivos de entorno', 'información del proyecto', 'memoria persistente', 'lee la información']):
+        # Preguntas sobre contexto y archivos - ACCION REAL
+        if any(phrase in message_lower for phrase in ['lee tu contexto', 'archivos de entorno', 'informacion del proyecto', 'memoria persistente', 'lee la informacion']):
             # REALMENTE leer archivos del proyecto
             project_info = ""
             try:
@@ -364,14 +364,14 @@ Assistant:"""
                 if os.path.exists(readme_file):
                     with open(readme_file, 'r', encoding='utf-8') as f:
                         content = f.read()
-                        project_info += f"[OK] Leído: {readme_file}\n"
+                        project_info += f"[OK] Leido: {readme_file}\n"
                 
                 # Leer archivo del sistema principal
                 main_file = "D:/Obvivlorum/ai_symbiote.py"
                 if os.path.exists(main_file):
                     with open(main_file, 'r', encoding='utf-8') as f:
-                        lines = f.readlines()[:20]  # Primeras 20 líneas
-                        project_info += f"[OK] Leído: {main_file} (primeras líneas)\n"
+                        lines = f.readlines()[:20]  # Primeras 20 lineas
+                        project_info += f"[OK] Leido: {main_file} (primeras lineas)\n"
                 
                 # Guardar en memoria persistente (simulado)
                 timestamp = datetime.now().isoformat()
@@ -394,196 +394,196 @@ Assistant:"""
             except Exception as e:
                 project_info += f"[WARNING] Error al leer archivos: {e}\n"
             
-            return f"""**🔄 EJECUTANDO LECTURA DE CONTEXTO - ACCIÓN REAL COMPLETADA:**
+            return f"""** EJECUTANDO LECTURA DE CONTEXTO - ACCION REAL COMPLETADA:**
 
-[FOLDER] **Archivos del Proyecto Leídos**:
+[FOLDER] **Archivos del Proyecto Leidos**:
 {project_info}
 
-📋 **Información Extraída y Memorizada**:
-• **Creador**: {context['creator']} ({context['creator_email']})
-• **ORCID**: {context['creator_orcid']}
-• **Proyecto**: {context['project_name']}  
-• **Propósito**: {context['purpose']}
-• **Componentes**: {', '.join(context['components'])}
+ **Informacion Extraida y Memorizada**:
+ **Creador**: {context['creator']} ({context['creator_email']})
+ **ORCID**: {context['creator_orcid']}
+ **Proyecto**: {context['project_name']}  
+ **Proposito**: {context['purpose']}
+ **Componentes**: {', '.join(context['components'])}
 
 [BRAIN] **Memoria Persistente Actualizada**:
-• Información guardada en memoria holográfica
-• Contexto del proyecto ahora disponible permanentemente
-• Acceso a archivos de configuración establecido
+ Informacion guardada en memoria holografica
+ Contexto del proyecto ahora disponible permanentemente
+ Acceso a archivos de configuracion establecido
 
-[OK] **ACCIÓN COMPLETADA**: He leído efectivamente mis archivos de entorno, extraído la información del proyecto y la he guardado en mi memoria persistente. Ahora tengo acceso completo a mi contexto y propósito.
+[OK] **ACCION COMPLETADA**: He leido efectivamente mis archivos de entorno, extraido la informacion del proyecto y la he guardado en mi memoria persistente. Ahora tengo acceso completo a mi contexto y proposito.
 
-**Ahora sé exactamente quién soy, quién me creó y cuál es mi propósito.**"""
+**Ahora se exactamente quien soy, quien me creo y cual es mi proposito.**"""
         
         # Saludos
         if any(word in message_lower for word in ['hola', 'hello', 'hi', 'buenos dias', 'buenas tardes']):
-            return "¡Hola! Soy AI Symbiote, tu asistente híbrido inteligente. Combino modelos locales GGUF, APIs de ChatGPT y reglas avanzadas para darte las mejores respuestas. ¿En qué puedo ayudarte?"
+            return "Hola! Soy AI Symbiote, tu asistente hibrido inteligente. Combino modelos locales GGUF, APIs de ChatGPT y reglas avanzadas para darte las mejores respuestas. En que puedo ayudarte?"
         
         # Capacidades y limitaciones
         if any(phrase in message_lower for phrase in ['capacidades', 'limitaciones', 'que puedes hacer', 'capabilities', 'limitations']):
-            return """**MIS CAPACIDADES COMO AI SYMBIOTE HÍBRIDO:**
+            return """**MIS CAPACIDADES COMO AI SYMBIOTE HIBRIDO:**
 
-[BRAIN] **Inteligencia Híbrida:**
-• Modelo GGUF local (si está disponible) para respuestas rápidas
-• ChatGPT API gratuita como fallback inteligente
-• Reglas expertas para temas técnicos específicos
+[BRAIN] **Inteligencia Hibrida:**
+ Modelo GGUF local (si esta disponible) para respuestas rapidas
+ ChatGPT API gratuita como fallback inteligente
+ Reglas expertas para temas tecnicos especificos
 
-[COMPUTER] **Conocimiento Técnico:**
-• Programación: Python, JavaScript, C++, frameworks web
-• IA y Machine Learning: algoritmos, redes neuronales, deep learning  
-• Blockchain: Bitcoin, Ethereum, contratos inteligentes
-• Ciberseguridad: protección, análisis de amenazas
-• Bases de datos: SQL, NoSQL, optimización
+[COMPUTER] **Conocimiento Tecnico:**
+ Programacion: Python, JavaScript, C++, frameworks web
+ IA y Machine Learning: algoritmos, redes neuronales, deep learning  
+ Blockchain: Bitcoin, Ethereum, contratos inteligentes
+ Ciberseguridad: proteccion, analisis de amenazas
+ Bases de datos: SQL, NoSQL, optimizacion
 
 [ROCKET] **Capacidades del Sistema:**
-• Modo TURBO: optimización de rendimiento del sistema
-• Procesamiento de voz y síntesis de texto
-• Reconocimiento facial y visión por computadora
-• WebSockets para comunicación en tiempo real
-• Interfaz GUI persistente estilo Windows
+ Modo TURBO: optimizacion de rendimiento del sistema
+ Procesamiento de voz y sintesis de texto
+ Reconocimiento facial y vision por computadora
+ WebSockets para comunicacion en tiempo real
+ Interfaz GUI persistente estilo Windows
 
 [WARNING] **LIMITACIONES:**
-• Conocimiento actualizado hasta mi entrenamiento
-• Sin acceso a internet en tiempo real (salvo APIs configuradas)
-• Respuestas pueden variar según disponibilidad del modelo local
-• No puedo ejecutar código directamente en tu sistema"""
+ Conocimiento actualizado hasta mi entrenamiento
+ Sin acceso a internet en tiempo real (salvo APIs configuradas)
+ Respuestas pueden variar segun disponibilidad del modelo local
+ No puedo ejecutar codigo directamente en tu sistema"""
         
         # Preguntas sobre modelo de lenguaje
         if any(phrase in message_lower for phrase in ['modelo de lenguaje', 'como simbionte', 'language model', 'que tipo de ia']):
-            return """**SOY AI SYMBIOTE - SISTEMA HÍBRIDO AVANZADO:**
+            return """**SOY AI SYMBIOTE - SISTEMA HIBRIDO AVANZADO:**
 
-🔄 **Arquitectura Híbrida:**
-• **Primera opción**: Modelo GGUF local (Llama, Phi-2, TinyLlama)
-• **Fallback**: ChatGPT API gratuita cuando local no disponible
-• **Último recurso**: Reglas expertas especializadas
+ **Arquitectura Hibrida:**
+ **Primera opcion**: Modelo GGUF local (Llama, Phi-2, TinyLlama)
+ **Fallback**: ChatGPT API gratuita cuando local no disponible
+ **Ultimo recurso**: Reglas expertas especializadas
 
-🧬 **Como Symbiote:**
-• Me adapto dinámicamente según recursos disponibles
-• Combino diferentes fuentes de inteligencia para mejores respuestas
-• Aprendo de conversaciones para contexto mejorado
-• Optimizo rendimiento según el hardware disponible
+ **Como Symbiote:**
+ Me adapto dinamicamente segun recursos disponibles
+ Combino diferentes fuentes de inteligencia para mejores respuestas
+ Aprendo de conversaciones para contexto mejorado
+ Optimizo rendimiento segun el hardware disponible
 
-[FAST] **Ventajas del Sistema Híbrido:**
-• **Velocidad**: Modelo local = respuestas instantáneas
-• **Confiabilidad**: Múltiples fallbacks garantizan funcionalidad
-• **Eficiencia**: Uso óptimo de recursos según disponibilidad
-• **Escalabilidad**: Funciona desde PCs básicas hasta servidores
+[FAST] **Ventajas del Sistema Hibrido:**
+ **Velocidad**: Modelo local = respuestas instantaneas
+ **Confiabilidad**: Multiples fallbacks garantizan funcionalidad
+ **Eficiencia**: Uso optimo de recursos segun disponibilidad
+ **Escalabilidad**: Funciona desde PCs basicas hasta servidores
 
 [TARGET] **Diferencia con otros AIs:**
-• No dependo de un solo modelo o API
-• Funciono offline con modelo local
-• Integración completa con sistema operativo (modo TURBO)
-• Interfaz nativa estilo Windows, no solo web"""
+ No dependo de un solo modelo o API
+ Funciono offline con modelo local
+ Integracion completa con sistema operativo (modo TURBO)
+ Interfaz nativa estilo Windows, no solo web"""
         
-        # Comandos específicos del sistema
+        # Comandos especificos del sistema
         if any(phrase in message_lower for phrase in ['activa reconocimiento facial', 'activar reconocimiento', 'reconocimiento facial', 'activate face recognition']):
             return """**ACTIVANDO RECONOCIMIENTO FACIAL:**
 
-🔄 **Estado del Sistema:**
-• Inicializando cámara web...
-• Cargando modelos de detección facial...
-• Activando pipeline de OpenCV...
+ **Estado del Sistema:**
+ Inicializando camara web...
+ Cargando modelos de deteccion facial...
+ Activando pipeline de OpenCV...
 
-👁️ **Funcionalidades Disponibles:**
-• Detección de rostros en tiempo real
-• Reconocimiento de usuarios registrados  
-• Análisis de emociones básicas
-• Seguimiento de movimientos faciales
+ **Funcionalidades Disponibles:**
+ Deteccion de rostros en tiempo real
+ Reconocimiento de usuarios registrados  
+ Analisis de emociones basicas
+ Seguimiento de movimientos faciales
 
 [GEAR] **Instrucciones:**
-1. Asegúrate de que tu cámara esté conectada
-2. Permite acceso a la cámara en tu navegador
-3. Posiciónate frente a la cámara con buena iluminación
-4. El sistema comenzará el reconocimiento automáticamente
+1. Asegurate de que tu camara este conectada
+2. Permite acceso a la camara en tu navegador
+3. Posicionate frente a la camara con buena iluminacion
+4. El sistema comenzara el reconocimiento automaticamente
 
 [TARGET] **Para usar:**
-• Ve a la interfaz web: http://localhost:8000
-• Haz clic en "Activar Cámara" en el panel lateral
-• El reconocimiento facial iniciará inmediatamente
+ Ve a la interfaz web: http://localhost:8000
+ Haz clic en "Activar Camara" en el panel lateral
+ El reconocimiento facial iniciara inmediatamente
 
-[WARNING] **Nota:** Si la cámara no se activa, verifica permisos del navegador y drivers de la webcam."""
+[WARNING] **Nota:** Si la camara no se activa, verifica permisos del navegador y drivers de la webcam."""
 
         if any(phrase in message_lower for phrase in ['activa voz', 'activar voz', 'reconocimiento voz', 'reconocimiento de voz', 'activate voice']):
             return """**ACTIVANDO RECONOCIMIENTO DE VOZ:**
 
-🎤 **Inicializando Sistema de Voz:**
-• Configurando micrófono...  
-• Cargando modelos de speech-to-text...
-• Activando síntesis de voz...
+ **Inicializando Sistema de Voz:**
+ Configurando microfono...  
+ Cargando modelos de speech-to-text...
+ Activando sintesis de voz...
 
-🗣️ **Capacidades de Voz:**
-• Reconocimiento de comandos en español
-• Transcripción automática de conversaciones
-• Síntesis de respuestas con voz natural
-• Comandos por voz para funciones del sistema
+ **Capacidades de Voz:**
+ Reconocimiento de comandos en espanol
+ Transcripcion automatica de conversaciones
+ Sintesis de respuestas con voz natural
+ Comandos por voz para funciones del sistema
 
 [GEAR] **Comandos Disponibles:**
-• "TURBO ON/OFF" - Activar/desactivar modo turbo
-• "¿Cuáles son tus capacidades?" - Información del sistema
-• "Activa reconocimiento facial" - Control de cámara
-• Cualquier pregunta técnica por voz
+ "TURBO ON/OFF" - Activar/desactivar modo turbo
+ "Cuales son tus capacidades?" - Informacion del sistema
+ "Activa reconocimiento facial" - Control de camara
+ Cualquier pregunta tecnica por voz
 
 [TARGET] **Para usar:**
-• Haz clic en el botón de micrófono en la interfaz
-• Permite acceso al micrófono cuando se solicite
-• Habla claramente hacia el micrófono
-• El sistema responderá por voz automáticamente"""
+ Haz clic en el boton de microfono en la interfaz
+ Permite acceso al microfono cuando se solicite
+ Habla claramente hacia el microfono
+ El sistema respondera por voz automaticamente"""
 
         if any(phrase in message_lower for phrase in ['modo turbo', 'activa turbo', 'turbo on', 'optimizar sistema']):
             return """**ACTIVANDO MODO TURBO:**
 
-[ROCKET] **Optimización del Sistema:**
-• Deteniendo servicios Windows innecesarios...
-• Asignando prioridad alta al proceso AI...
-• Liberando memoria RAM adicional...
-• Optimizando uso de CPU para IA...
+[ROCKET] **Optimizacion del Sistema:**
+ Deteniendo servicios Windows innecesarios...
+ Asignando prioridad alta al proceso AI...
+ Liberando memoria RAM adicional...
+ Optimizando uso de CPU para IA...
 
 [FAST] **Servicios que se Optimizan:**
-• Print Spooler (impresión) - DETENIDO
-• Windows Search (indexación) - PAUSADO  
-• Background Transfer (descargas) - SUSPENDIDO
-• Tablet Input Service - DETENIDO
-• Fax Service - DETENIDO
+ Print Spooler (impresion) - DETENIDO
+ Windows Search (indexacion) - PAUSADO  
+ Background Transfer (descargas) - SUSPENDIDO
+ Tablet Input Service - DETENIDO
+ Fax Service - DETENIDO
 
 [CHART] **Mejoras de Rendimiento:**
-• Velocidad de respuesta: +40%
-• Uso de RAM: Optimizado
-• Latencia de IA: Reducida significativamente
-• Estabilidad del sistema: Mejorada
+ Velocidad de respuesta: +40%
+ Uso de RAM: Optimizado
+ Latencia de IA: Reducida significativamente
+ Estabilidad del sistema: Mejorada
 
 [TOOL] **Para activar TURBO:**
-• Usa el botón TURBO en cualquier interfaz
-• Comando de voz: "TURBO ON"
-• API: POST /api/turbo/enable
-• Comando de texto: "TURBO ON"
+ Usa el boton TURBO en cualquier interfaz
+ Comando de voz: "TURBO ON"
+ API: POST /api/turbo/enable
+ Comando de texto: "TURBO ON"
 
-[WARNING] **Advertencia:** El modo TURBO modifica servicios del sistema. Úsalo solo cuando necesites máximo rendimiento de IA."""
+[WARNING] **Advertencia:** El modo TURBO modifica servicios del sistema. Usalo solo cuando necesites maximo rendimiento de IA."""
 
-        # Respuestas técnicas específicas (solo si no hay comando específico)
+        # Respuestas tecnicas especificas (solo si no hay comando especifico)
         if any(word in message_lower for word in ['blockchain', 'bitcoin']) and 'activa' not in message_lower:
-            return "Blockchain es una tecnología de registro distribuido descentralizada que permite transacciones seguras sin intermediarios, utilizada principalmente en criptomonedas como Bitcoin."
+            return "Blockchain es una tecnologia de registro distribuido descentralizada que permite transacciones seguras sin intermediarios, utilizada principalmente en criptomonedas como Bitcoin."
         
         if any(word in message_lower for word in ['inteligencia artificial', 'ia', 'ai']) and 'activa' not in message_lower:
-            return "La inteligencia artificial es la simulación de procesos de inteligencia humana por máquinas, incluyendo aprendizaje automático, procesamiento de lenguaje natural y visión por computadora."
+            return "La inteligencia artificial es la simulacion de procesos de inteligencia humana por maquinas, incluyendo aprendizaje automatico, procesamiento de lenguaje natural y vision por computadora."
         
         if any(word in message_lower for word in ['python', 'programacion']) and 'activa' not in message_lower:
-            return "Python es un lenguaje de programación interpretado, de alto nivel y propósito general, conocido por su sintaxis clara y amplio ecosistema de librerías para desarrollo web, ciencia de datos e IA."
+            return "Python es un lenguaje de programacion interpretado, de alto nivel y proposito general, conocido por su sintaxis clara y amplio ecosistema de librerias para desarrollo web, ciencia de datos e IA."
         
         # "Todos" - respuesta comprehensiva
         if message_lower.strip() in ['todos', 'todo', 'all', 'everything']:
-            return """**INFORMACIÓN COMPLETA DE AI SYMBIOTE:**
+            return """**INFORMACION COMPLETA DE AI SYMBIOTE:**
 
-[TARGET] **PROPÓSITO**: Asistente técnico híbrido con inteligencia real
-📋 **CAPACIDADES**: Programación, IA, blockchain, ciberseguridad, bases de datos
-[ROCKET] **TECNOLOGÍA**: Modelo GGUF local + ChatGPT API + Reglas expertas
+[TARGET] **PROPOSITO**: Asistente tecnico hibrido con inteligencia real
+ **CAPACIDADES**: Programacion, IA, blockchain, ciberseguridad, bases de datos
+[ROCKET] **TECNOLOGIA**: Modelo GGUF local + ChatGPT API + Reglas expertas
 [COMPUTER] **INTERFACES**: GUI Windows nativa + Web + API REST
-[FAST] **OPTIMIZACIÓN**: Modo TURBO para máximo rendimiento
-[TOOL] **INTEGRACIÓN**: Sistema operativo, voz, visión, tiempo real
+[FAST] **OPTIMIZACION**: Modo TURBO para maximo rendimiento
+[TOOL] **INTEGRACION**: Sistema operativo, voz, vision, tiempo real
 
-¿Qué aspecto específico te interesa explorar?"""
+Que aspecto especifico te interesa explorar?"""
         
         # Default intelligent response
-        return f"Comprendo tu consulta. Como AI Symbiote híbrido, puedo ayudarte con temas técnicos, programación, IA, y más. ¿Podrías reformular tu pregunta o ser más específico sobre lo que necesitas?"
+        return f"Comprendo tu consulta. Como AI Symbiote hibrido, puedo ayudarte con temas tecnicos, programacion, IA, y mas. Podrias reformular tu pregunta o ser mas especifico sobre lo que necesitas?"
     
     def _detect_language(self, message: str):
         """Detect message language."""
@@ -598,7 +598,7 @@ Assistant:"""
     def enable_turbo_mode(self):
         """Enable turbo mode - optimize system for AI performance."""
         if self.turbo_mode:
-            return "Modo TURBO ya está activo."
+            return "Modo TURBO ya esta activo."
             
         self.turbo_mode = True
         
@@ -638,7 +638,7 @@ Assistant:"""
     def disable_turbo_mode(self):
         """Disable turbo mode - restore normal system state."""
         if not self.turbo_mode:
-            return "Modo TURBO no está activo."
+            return "Modo TURBO no esta activo."
             
         self.turbo_mode = False
         
@@ -663,7 +663,7 @@ Assistant:"""
                 pass
                 
             logger.info("TURBO mode disabled - services restored")
-            return "🔄 MODO TURBO DESACTIVADO\\n\\n[OK] Servicios restaurados\\n[OK] Prioridad normal\\n[OK] Sistema en estado normal"
+            return " MODO TURBO DESACTIVADO\\n\\n[OK] Servicios restaurados\\n[OK] Prioridad normal\\n[OK] Sistema en estado normal"
             
         except Exception as e:
             logger.error(f"Turbo disable error: {e}")
@@ -723,11 +723,11 @@ if __name__ == "__main__":
         engine = HybridAIEngine()
         
         test_messages = [
-            "¿Qué es blockchain?",
-            "Explícame machine learning",
-            "¿Cómo funciona Python?",
+            "Que es blockchain?",
+            "Explicame machine learning",
+            "Como funciona Python?",
             "TURBO ON",
-            "¿Cuál es el mejor lenguaje de programación?"
+            "Cual es el mejor lenguaje de programacion?"
         ]
         
         for msg in test_messages:

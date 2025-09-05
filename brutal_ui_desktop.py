@@ -3,8 +3,8 @@
 Brutal UI Desktop - Brutalmente Impresionante
 ==============================================
 
-Interfaz desktop con diseño UI/UX brutalmente impresionante
-Configuración completa, launcher unificado y soporte ParrotOS
+Interfaz desktop con diseno UI/UX brutalmente impresionante
+Configuracion completa, launcher unificado y soporte ParrotOS
 """
 
 import tkinter as tk
@@ -28,11 +28,11 @@ class BrutalTheme:
     
     COLORS = {
         'bg_primary': '#0a0a0a',        # Negro profundo
-        'bg_secondary': '#1a1a1a',      # Negro carbón
+        'bg_secondary': '#1a1a1a',      # Negro carbon
         'bg_accent': '#2d2d2d',         # Gris oscuro
         'text_primary': '#ffffff',       # Blanco puro
         'text_secondary': '#b0b0b0',     # Gris claro
-        'accent_primary': '#00ff88',     # Verde neón
+        'accent_primary': '#00ff88',     # Verde neon
         'accent_secondary': '#ff6b35',   # Naranja vibrante
         'accent_warning': '#ffeb3b',     # Amarillo brillante
         'accent_error': '#f44336',       # Rojo intenso
@@ -49,7 +49,7 @@ class BrutalTheme:
     }
 
 class AnimatedButton(tk.Canvas):
-    """Botón con animaciones brutales"""
+    """Boton con animaciones brutales"""
     
     def __init__(self, parent, text, command=None, **kwargs):
         super().__init__(parent, highlightthickness=0, **kwargs)
@@ -65,7 +65,7 @@ class AnimatedButton(tk.Canvas):
         self._draw_button()
     
     def _draw_button(self):
-        """Dibujar botón con efectos"""
+        """Dibujar boton con efectos"""
         self.delete('all')
         w, h = self.winfo_reqwidth() or 200, self.winfo_reqheight() or 40
         
@@ -103,16 +103,16 @@ class AnimatedButton(tk.Canvas):
             self.command()
     
     def _on_enter(self, event):
-        """Animación hover"""
+        """Animacion hover"""
         self.config(cursor='hand2')
-        # Aquí podrías agregar más efectos de hover
+        # Aqui podrias agregar mas efectos de hover
     
     def _on_leave(self, event):
         """Salir de hover"""
         self.config(cursor='')
 
 class ConfigPanel(tk.Frame):
-    """Panel de configuración avanzada"""
+    """Panel de configuracion avanzada"""
     
     def __init__(self, parent, config_system: UnifiedConfigSystem):
         super().__init__(parent, bg=BrutalTheme.COLORS["bg_primary"])
@@ -120,8 +120,8 @@ class ConfigPanel(tk.Frame):
         self._create_widgets()
     
     def _create_widgets(self):
-        """Crear widgets de configuración"""
-        # Título
+        """Crear widgets de configuracion"""
+        # Titulo
         title = tk.Label(self, text="CONFIG - CONFIGURACION BRUTAL", 
                         fg=BrutalTheme.COLORS['accent_primary'],
                         bg=BrutalTheme.COLORS['bg_primary'],
@@ -144,11 +144,11 @@ class ConfigPanel(tk.Frame):
         # ParrotOS Integration
         self._create_parrot_section(options_frame)
         
-        # Botones de acción
+        # Botones de accion
         self._create_action_buttons(options_frame)
     
     def _create_mode_section(self, parent):
-        """Sección de modo del sistema"""
+        """Seccion de modo del sistema"""
         frame = tk.LabelFrame(parent, text="Modo del Sistema", 
                              fg=BrutalTheme.COLORS['text_primary'],
                              bg=BrutalTheme.COLORS['bg_secondary'],
@@ -167,7 +167,7 @@ class ConfigPanel(tk.Frame):
             rb.pack(anchor='w', padx=10, pady=2)
     
     def _create_scaling_section(self, parent):
-        """Sección de escalamiento"""
+        """Seccion de escalamiento"""
         frame = tk.LabelFrame(parent, text="Escalamiento", 
                              fg=BrutalTheme.COLORS['text_primary'],
                              bg=BrutalTheme.COLORS['bg_secondary'],
@@ -186,7 +186,7 @@ class ConfigPanel(tk.Frame):
             rb.pack(anchor='w', padx=10, pady=2)
     
     def _create_ai_section(self, parent):
-        """Sección de IA"""
+        """Seccion de IA"""
         frame = tk.LabelFrame(parent, text="Proveedor de IA", 
                              fg=BrutalTheme.COLORS['text_primary'],
                              bg=BrutalTheme.COLORS['bg_secondary'],
@@ -199,7 +199,7 @@ class ConfigPanel(tk.Frame):
             ("Local GGUF", "local_gguf", "Modelos locales optimizados"),
             ("OpenAI GPT-4", "openai_gpt4", "API de OpenAI"),
             ("Claude Sonnet", "claude_sonnet", "API de Anthropic"),
-            ("Multi-Provider", "hybrid_multi", "Múltiples proveedores inteligentes")
+            ("Multi-Provider", "hybrid_multi", "Multiples proveedores inteligentes")
         ]
         
         for name, value, desc in ai_options:
@@ -212,8 +212,8 @@ class ConfigPanel(tk.Frame):
             rb.pack(anchor='w', padx=10, pady=2)
     
     def _create_parrot_section(self, parent):
-        """Sección ParrotOS"""
-        frame = tk.LabelFrame(parent, text="🦜 ParrotOS Integration", 
+        """Seccion ParrotOS"""
+        frame = tk.LabelFrame(parent, text=" ParrotOS Integration", 
                              fg=BrutalTheme.COLORS['accent_primary'],
                              bg=BrutalTheme.COLORS['bg_secondary'],
                              font=BrutalTheme.FONTS['subtitle'])
@@ -227,37 +227,37 @@ class ConfigPanel(tk.Frame):
                                   font=BrutalTheme.FONTS['body'])
         parrot_cb.pack(anchor='w', padx=10, pady=5)
         
-        # Botón para lanzar ParrotOS
-        parrot_btn = AnimatedButton(frame, "🚀 LANZAR PARROTOS GRÁFICO", 
+        # Boton para lanzar ParrotOS
+        parrot_btn = AnimatedButton(frame, " LANZAR PARROTOS GRAFICO", 
                                    command=self._launch_parrot_gui,
                                    width=300, height=40)
         parrot_btn.pack(pady=10)
     
     def _create_action_buttons(self, parent):
-        """Botones de acción"""
+        """Botones de accion"""
         button_frame = tk.Frame(parent, bg=BrutalTheme.COLORS['bg_primary'])
         button_frame.pack(fill='x', pady=20)
         
-        # Aplicar configuración
-        apply_btn = AnimatedButton(button_frame, "💾 APLICAR CONFIGURACIÓN", 
+        # Aplicar configuracion
+        apply_btn = AnimatedButton(button_frame, " APLICAR CONFIGURACION", 
                                   command=self._apply_config,
                                   width=250, height=50)
         apply_btn.pack(side='left', padx=10)
         
         # Modo brutal UI
-        brutal_btn = AnimatedButton(button_frame, "🔥 MODO BRUTAL UI", 
+        brutal_btn = AnimatedButton(button_frame, " MODO BRUTAL UI", 
                                    command=self._enable_brutal_mode,
                                    width=250, height=50)
         brutal_btn.pack(side='left', padx=10)
         
         # Lanzar sistema
-        launch_btn = AnimatedButton(button_frame, "🚀 LANZAR SISTEMA", 
+        launch_btn = AnimatedButton(button_frame, " LANZAR SISTEMA", 
                                    command=self._launch_system,
                                    width=250, height=50)
         launch_btn.pack(side='right', padx=10)
     
     def _apply_config(self):
-        """Aplicar configuración"""
+        """Aplicar configuracion"""
         try:
             # Update config based on selections
             self.config_system.config.mode = SystemMode(self.mode_var.get())
@@ -265,15 +265,15 @@ class ConfigPanel(tk.Frame):
             self.config_system.config.ai_provider = AIProvider(self.ai_var.get())
             
             self.config_system.save_config()
-            messagebox.showinfo("✅ Éxito", "Configuración aplicada correctamente")
+            messagebox.showinfo(" Exito", "Configuracion aplicada correctamente")
             
         except Exception as e:
-            messagebox.showerror("❌ Error", f"Error al aplicar configuración: {e}")
+            messagebox.showerror(" Error", f"Error al aplicar configuracion: {e}")
     
     def _enable_brutal_mode(self):
         """Habilitar modo brutal UI"""
         self.config_system.set_brutal_ui_mode()
-        messagebox.showinfo("🔥 Brutal Mode", "Modo Brutal UI activado. Reinicia la aplicación para ver los cambios.")
+        messagebox.showinfo(" Brutal Mode", "Modo Brutal UI activado. Reinicia la aplicacion para ver los cambios.")
     
     def _launch_system(self):
         """Lanzar sistema completo"""
@@ -286,17 +286,17 @@ class ConfigPanel(tk.Frame):
             else:
                 subprocess.Popen([sys.executable, "unified_launcher.py", f"--mode={mode}"])
             
-            messagebox.showinfo("🚀 Sistema Lanzado", f"Sistema iniciado en modo: {mode}")
+            messagebox.showinfo(" Sistema Lanzado", f"Sistema iniciado en modo: {mode}")
             
         except Exception as e:
-            messagebox.showerror("❌ Error", f"Error al lanzar sistema: {e}")
+            messagebox.showerror(" Error", f"Error al lanzar sistema: {e}")
     
     def _launch_parrot_gui(self):
-        """Lanzar ParrotOS en modo gráfico"""
+        """Lanzar ParrotOS en modo grafico"""
         try:
             # Check if running on Linux
             if os.name != 'posix':
-                messagebox.showinfo("ℹ️ Info", "ParrotOS mode is designed for Linux systems")
+                messagebox.showinfo("? Info", "ParrotOS mode is designed for Linux systems")
                 return
             
             # Launch ParrotOS tools with GUI
@@ -312,13 +312,13 @@ class ConfigPanel(tk.Frame):
                 except FileNotFoundError:
                     continue
             else:
-                messagebox.showwarning("⚠️ Warning", "ParrotOS components not found")
+                messagebox.showwarning(" Warning", "ParrotOS components not found")
             
         except Exception as e:
-            messagebox.showerror("❌ Error", f"Error launching ParrotOS: {e}")
+            messagebox.showerror(" Error", f"Error launching ParrotOS: {e}")
 
 class BrutalUIDesktop:
-    """Aplicación desktop brutalmente impresionante"""
+    """Aplicacion desktop brutalmente impresionante"""
     
     def __init__(self):
         self.config_system = UnifiedConfigSystem()
@@ -328,11 +328,11 @@ class BrutalUIDesktop:
     
     def _setup_window(self):
         """Configurar ventana principal"""
-        self.root.title("🔥 OBVIVLORUM - BRUTAL DESKTOP")
+        self.root.title(" OBVIVLORUM - BRUTAL DESKTOP")
         self.root.geometry("1600x1000")
         self.root.configure(bg=BrutalTheme.COLORS['bg_primary'])
         
-        # Configurar transparencia si está disponible
+        # Configurar transparencia si esta disponible
         try:
             self.root.attributes('-alpha', 0.95)
         except:
@@ -351,7 +351,7 @@ class BrutalUIDesktop:
         header.pack(fill='x')
         header.pack_propagate(False)
         
-        title_label = tk.Label(header, text="🧠 OBVIVLORUM AI SYSTEM", 
+        title_label = tk.Label(header, text=" OBVIVLORUM AI SYSTEM", 
                               fg=BrutalTheme.COLORS['accent_primary'],
                               bg=BrutalTheme.COLORS['bg_secondary'],
                               font=BrutalTheme.FONTS['title'])
@@ -363,7 +363,7 @@ class BrutalUIDesktop:
                                  font=BrutalTheme.FONTS['subtitle'])
         subtitle_label.pack()
         
-        # Panel de configuración
+        # Panel de configuracion
         config_panel = ConfigPanel(self.root, self.config_system)
         config_panel.pack(fill='both', expand=True)
         
@@ -372,18 +372,18 @@ class BrutalUIDesktop:
         footer.pack(fill='x')
         footer.pack_propagate(False)
         
-        footer_text = tk.Label(footer, text="POWER - Single Click Launch • Full Configuration • ParrotOS Ready", 
+        footer_text = tk.Label(footer, text="POWER - Single Click Launch  Full Configuration  ParrotOS Ready", 
                               fg=BrutalTheme.COLORS['text_secondary'],
                               bg=BrutalTheme.COLORS['bg_secondary'],
                               font=BrutalTheme.FONTS['body'])
         footer_text.pack(expand=True)
     
     def run(self):
-        """Ejecutar aplicación"""
+        """Ejecutar aplicacion"""
         self.root.mainloop()
 
 def main():
-    """Función principal"""
+    """Funcion principal"""
     app = BrutalUIDesktop()
     app.run()
 

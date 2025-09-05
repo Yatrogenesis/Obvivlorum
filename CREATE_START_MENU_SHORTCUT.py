@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Crear acceso directo en menú inicio para AI Symbiote
+Crear acceso directo en menu inicio para AI Symbiote
 """
 import os
 import winshell
@@ -9,15 +9,15 @@ from win32com.client import Dispatch
 from pathlib import Path
 
 def create_start_menu_shortcut():
-    """Crear acceso directo en menú inicio."""
-    print("[*] Creando acceso directo en menú inicio...")
+    """Crear acceso directo en menu inicio."""
+    print("[*] Creando acceso directo en menu inicio...")
     
     try:
         # Paths
         programs_folder = Path(os.environ['APPDATA']) / "Microsoft" / "Windows" / "Start Menu" / "Programs"
         symbiote_folder = programs_folder / "AI Symbiote"
         
-        # Crear carpeta específica para AI Symbiote
+        # Crear carpeta especifica para AI Symbiote
         symbiote_folder.mkdir(parents=True, exist_ok=True)
         
         shell = Dispatch('WScript.Shell')
@@ -38,7 +38,7 @@ def create_start_menu_shortcut():
         shortcut_safe.Targetpath = r"D:\Obvivlorum\START_SAFE_MODE_FIXED.bat"
         shortcut_safe.WorkingDirectory = r"D:\Obvivlorum"
         shortcut_safe.IconLocation = r"D:\Obvivlorum\START_SAFE_MODE_FIXED.bat"
-        shortcut_safe.Description = "AI Symbiote - Modo Seguro para diagnóstico"
+        shortcut_safe.Description = "AI Symbiote - Modo Seguro para diagnostico"
         shortcut_safe.save()
         print(f"[OK] Acceso directo modo seguro: {shortcut_safe_path}")
         
@@ -52,7 +52,7 @@ def create_start_menu_shortcut():
         shortcut_gui.save()
         print(f"[OK] Acceso directo GUI: {shortcut_gui_path}")
         
-        # Acceso directo - Verificación del sistema
+        # Acceso directo - Verificacion del sistema
         shortcut_verify_path = str(symbiote_folder / "AI Symbiote - Verificar Sistema.lnk")
         shortcut_verify = shell.CreateShortCut(shortcut_verify_path)
         shortcut_verify.Targetpath = r"python.exe"
@@ -60,9 +60,9 @@ def create_start_menu_shortcut():
         shortcut_verify.WorkingDirectory = r"D:\Obvivlorum"
         shortcut_verify.Description = "Verificar estado del sistema AI Symbiote"
         shortcut_verify.save()
-        print(f"[OK] Acceso directo verificación: {shortcut_verify_path}")
+        print(f"[OK] Acceso directo verificacion: {shortcut_verify_path}")
         
-        # Crear también en el escritorio
+        # Crear tambien en el escritorio
         desktop = winshell.desktop()
         desktop_shortcut = Path(desktop) / "AI Symbiote.lnk"
         shortcut_desktop = shell.CreateShortCut(str(desktop_shortcut))
@@ -73,7 +73,7 @@ def create_start_menu_shortcut():
         print(f"[OK] Acceso directo en escritorio: {desktop_shortcut}")
         
         print("\n=== ACCESOS DIRECTOS CREADOS ===")
-        print("Menú Inicio > Programas > AI Symbiote:")
+        print("Menu Inicio > Programas > AI Symbiote:")
         print("- Sistema Completo")
         print("- Modo Seguro") 
         print("- Solo GUI")
@@ -81,7 +81,7 @@ def create_start_menu_shortcut():
         print("- Escritorio: AI Symbiote.lnk")
         
     except ImportError:
-        print("[ERROR] Módulos requeridos no disponibles")
+        print("[ERROR] Modulos requeridos no disponibles")
         print("Instalando pywin32 y winshell...")
         import subprocess
         import sys
@@ -89,12 +89,12 @@ def create_start_menu_shortcut():
         print("Reinicia el script tras instalar dependencias")
     except Exception as e:
         print(f"[ERROR] No se pudieron crear accesos directos: {e}")
-        # Método alternativo con PowerShell
+        # Metodo alternativo con PowerShell
         create_shortcuts_powershell()
 
 def create_shortcuts_powershell():
-    """Método alternativo usando PowerShell."""
-    print("[*] Usando método alternativo PowerShell...")
+    """Metodo alternativo usando PowerShell."""
+    print("[*] Usando metodo alternativo PowerShell...")
     
     ps_script = '''
 $WshShell = New-Object -comObject WScript.Shell
@@ -129,7 +129,7 @@ Write-Host "Accesos directos creados correctamente"
     if result.returncode == 0:
         print("[OK] Accesos directos creados con PowerShell")
     else:
-        print(f"[ERROR] PowerShell falló: {result.stderr}")
+        print(f"[ERROR] PowerShell fallo: {result.stderr}")
 
 if __name__ == "__main__":
     create_start_menu_shortcut()

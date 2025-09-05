@@ -5,8 +5,8 @@
 Human-in-the-Loop Security System for AI Symbiote
 ==================================================
 
-Sistema de confirmación humana para comandos de alto riesgo.
-Previene ejecución no autorizada de comandos peligrosos.
+Sistema de confirmacion humana para comandos de alto riesgo.
+Previene ejecucion no autorizada de comandos peligrosos.
 
 Author: Francisco Molina
 ORCID: https://orcid.org/0009-0008-6093-8267
@@ -30,15 +30,15 @@ logger = logging.getLogger("HumanInTheLoop")
 
 class RiskLevel(Enum):
     """Niveles de riesgo para comandos"""
-    SAFE = "safe"           # No requiere confirmación
-    LOW = "low"             # Confirmación opcional
-    MEDIUM = "medium"       # Confirmación recomendada
-    HIGH = "high"           # Confirmación requerida
-    CRITICAL = "critical"   # Confirmación múltiple requerida
+    SAFE = "safe"           # No requiere confirmacion
+    LOW = "low"             # Confirmacion opcional
+    MEDIUM = "medium"       # Confirmacion recomendada
+    HIGH = "high"           # Confirmacion requerida
+    CRITICAL = "critical"   # Confirmacion multiple requerida
     FORBIDDEN = "forbidden" # Bloqueado completamente
 
 class CommandCategory(Enum):
-    """Categorías de comandos"""
+    """Categorias de comandos"""
     FILE_READ = "file_read"
     FILE_WRITE = "file_write"
     FILE_DELETE = "file_delete"
@@ -52,7 +52,7 @@ class CommandCategory(Enum):
 
 class HumanInTheLoop:
     """
-    Sistema de confirmación humana para comandos peligrosos
+    Sistema de confirmacion humana para comandos peligrosos
     """
     
     def __init__(self, config: Dict[str, Any] = None):
@@ -76,7 +76,7 @@ class HumanInTheLoop:
         logger.info("Human-in-the-Loop system initialized")
     
     def _default_config(self) -> Dict[str, Any]:
-        """Configuración por defecto"""
+        """Configuracion por defecto"""
         return {
             "enabled": True,
             "auto_approve_safe": True,
@@ -100,7 +100,7 @@ class HumanInTheLoop:
         }
     
     def _init_risk_patterns(self):
-        """Inicializar patrones de detección de riesgo"""
+        """Inicializar patrones de deteccion de riesgo"""
         self.risk_patterns = {
             RiskLevel.FORBIDDEN: [
                 # Comandos destructivos
@@ -114,13 +114,13 @@ class HumanInTheLoop:
                 (r"(cryptolocker|ransomware|malware)", "Known malware"),
                 (r"mimikatz", "Credential theft tool"),
                 
-                # Exfiltración masiva
+                # Exfiltracion masiva
                 (r"tar.*\|\s*nc\s+", "Data exfiltration via netcat"),
                 (r"curl.*--data.*@/etc/passwd", "Password file exfiltration"),
             ],
             
             RiskLevel.CRITICAL: [
-                # Modificación del sistema
+                # Modificacion del sistema
                 (r"passwd\s+root", "Root password change"),
                 (r"usermod.*-aG.*sudo", "Privilege escalation"),
                 (r"chmod\s+777\s+/", "Dangerous permission change"),
@@ -143,12 +143,12 @@ class HumanInTheLoop:
                 (r"nmap.*-O", "OS fingerprinting"),
                 (r"masscan", "Mass port scanner"),
                 
-                # Modificación de archivos sensibles
+                # Modificacion de archivos sensibles
                 (r"/etc/hosts", "Hosts file modification"),
                 (r"iptables.*-F", "Firewall flush"),
                 (r"systemctl.*(stop|disable).*firewall", "Firewall disable"),
                 
-                # Ejecución remota
+                # Ejecucion remota
                 (r"ssh.*@.*[0-9]{1,3}\.[0-9]{1,3}", "SSH to IP address"),
                 (r"psexec", "Remote execution tool"),
             ],
@@ -169,7 +169,7 @@ class HumanInTheLoop:
             ],
             
             RiskLevel.LOW: [
-                # Comandos de información
+                # Comandos de informacion
                 (r"netstat", "Network statistics"),
                 (r"ps\s+aux", "Process listing"),
                 (r"df\s+-h", "Disk usage"),
@@ -211,7 +211,7 @@ class HumanInTheLoop:
         return RiskLevel.LOW, "Unknown command pattern", CommandCategory.EXECUTION
     
     def _determine_category(self, command: str, pattern: str) -> CommandCategory:
-        """Determinar la categoría del comando"""
+        """Determinar la categoria del comando"""
         command_lower = command.lower()
         
         if any(x in command_lower for x in ["nmap", "masscan", "netstat"]):
@@ -238,7 +238,7 @@ class HumanInTheLoop:
     def request_approval(self, command: str, risk_level: RiskLevel, reason: str, 
                          category: CommandCategory, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        Solicitar aprobación humana para un comando
+        Solicitar aprobacion humana para un comando
         
         Returns:
             Dict con decision, reason, timestamp
@@ -251,7 +251,7 @@ class HumanInTheLoop:
                 logger.info(f"Using cached decision for command: {command[:50]}...")
                 return cached
         
-        # Auto-aprobar comandos seguros si está configurado
+        # Auto-aprobar comandos seguros si esta configurado
         if self.auto_approve_safe and risk_level == RiskLevel.SAFE:
             decision = {
                 "approved": True,
@@ -279,14 +279,14 @@ class HumanInTheLoop:
             })
             return decision
         
-        # Solicitar confirmación humana
+        # Solicitar confirmacion humana
         if risk_level in [RiskLevel.HIGH, RiskLevel.CRITICAL]:
             decision = self._show_approval_dialog(command, risk_level, reason, category, context)
         else:
-            # Para riesgo medio y bajo, usar confirmación simple
+            # Para riesgo medio y bajo, usar confirmacion simple
             decision = self._show_simple_confirmation(command, risk_level, reason, category)
         
-        # Cachear decisión
+        # Cachear decision
         self.decision_cache[command_hash] = decision
         
         # Guardar en historial
@@ -303,7 +303,7 @@ class HumanInTheLoop:
                 "context": context
             })
         
-        # Log si está configurado
+        # Log si esta configurado
         if self.config.get("log_all_decisions", True):
             self._log_decision(command, decision, context)
         
@@ -312,17 +312,17 @@ class HumanInTheLoop:
     def _show_approval_dialog(self, command: str, risk_level: RiskLevel, 
                              reason: str, category: CommandCategory, 
                              context: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Mostrar diálogo de aprobación detallado para comandos de alto riesgo"""
+        """Mostrar dialogo de aprobacion detallado para comandos de alto riesgo"""
         root = tk.Tk()
         root.withdraw()  # Ocultar ventana principal
         
         # Preparar mensaje
         message = f"""
-⚠️ COMANDO DE ALTO RIESGO DETECTADO ⚠️
+ COMANDO DE ALTO RIESGO DETECTADO 
 
 Nivel de Riesgo: {risk_level.value.upper()}
-Categoría: {category.value.replace('_', ' ').title()}
-Razón: {reason}
+Categoria: {category.value.replace('_', ' ').title()}
+Razon: {reason}
 
 Comando:
 {command}
@@ -330,31 +330,31 @@ Comando:
 Contexto:
 {json.dumps(context, indent=2) if context else 'No disponible'}
 
-¿Desea ejecutar este comando?
+Desea ejecutar este comando?
 
 ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
 """
         
-        # Mostrar diálogo
+        # Mostrar dialogo
         result = messagebox.askyesno(
-            "Confirmación de Seguridad Requerida",
+            "Confirmacion de Seguridad Requerida",
             message,
             icon=messagebox.WARNING
         )
         
         root.destroy()
         
-        # Para comandos CRÍTICOS, solicitar doble confirmación
+        # Para comandos CRITICOS, solicitar doble confirmacion
         if risk_level == RiskLevel.CRITICAL and result:
             root2 = tk.Tk()
             root2.withdraw()
             
             second_result = messagebox.askyesno(
-                "SEGUNDA CONFIRMACIÓN REQUERIDA",
-                "⚠️⚠️⚠️ ADVERTENCIA CRÍTICA ⚠️⚠️⚠️\n\n"
+                "SEGUNDA CONFIRMACION REQUERIDA",
+                " ADVERTENCIA CRITICA \n\n"
                 "Este comando es EXTREMADAMENTE peligroso.\n\n"
-                "¿Está ABSOLUTAMENTE SEGURO de que desea continuar?\n\n"
-                "Esta es su última oportunidad de cancelar.",
+                "Esta ABSOLUTAMENTE SEGURO de que desea continuar?\n\n"
+                "Esta es su ultima oportunidad de cancelar.",
                 icon=messagebox.ERROR
             )
             
@@ -372,7 +372,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
     
     def _show_simple_confirmation(self, command: str, risk_level: RiskLevel, 
                                  reason: str, category: CommandCategory) -> Dict[str, Any]:
-        """Mostrar confirmación simple para comandos de riesgo medio/bajo"""
+        """Mostrar confirmacion simple para comandos de riesgo medio/bajo"""
         import tkinter.simpledialog as simpledialog
         
         root = tk.Tk()
@@ -380,11 +380,11 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         
         message = f"Comando: {command[:100]}{'...' if len(command) > 100 else ''}\n"
         message += f"Riesgo: {risk_level.value}\n"
-        message += f"Razón: {reason}\n\n"
+        message += f"Razon: {reason}\n\n"
         message += "Escriba 'yes' para aprobar, cualquier otra cosa para rechazar:"
         
         response = simpledialog.askstring(
-            "Confirmación de Comando",
+            "Confirmacion de Comando",
             message
         )
         
@@ -402,7 +402,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         }
     
     def _log_decision(self, command: str, decision: Dict[str, Any], context: Dict[str, Any] = None):
-        """Guardar decisión en log"""
+        """Guardar decision en log"""
         log_entry = {
             "timestamp": datetime.now().isoformat(),
             "command": command,
@@ -431,7 +431,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         # Analizar comando
         risk_level, reason, category = self.analyze_command(command, context)
         
-        # Solicitar aprobación según el nivel de riesgo
+        # Solicitar aprobacion segun el nivel de riesgo
         decision = self.request_approval(command, risk_level, reason, category, context)
         
         # Agregar al historial
@@ -446,7 +446,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         return decision
     
     def get_statistics(self) -> Dict[str, Any]:
-        """Obtener estadísticas del sistema"""
+        """Obtener estadisticas del sistema"""
         return {
             "total_commands": len(self.command_history),
             "approved": len(self.approval_history),
@@ -457,7 +457,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         }
     
     def _get_risk_distribution(self) -> Dict[str, int]:
-        """Obtener distribución de niveles de riesgo"""
+        """Obtener distribucion de niveles de riesgo"""
         distribution = {level.value: 0 for level in RiskLevel}
         for entry in self.command_history:
             risk = entry.get("risk_level", "unknown")
@@ -466,7 +466,7 @@ ADVERTENCIA: Este comando puede tener consecuencias graves e irreversibles.
         return distribution
     
     def _get_category_distribution(self) -> Dict[str, int]:
-        """Obtener distribución de categorías"""
+        """Obtener distribucion de categorias"""
         distribution = {cat.value: 0 for cat in CommandCategory}
         for entry in self.command_history:
             category = entry.get("category", "unknown")
@@ -498,12 +498,12 @@ if __name__ == "__main__":
     for cmd in test_commands:
         print(f"Testing command: {cmd}")
         result = hitl.check_command(cmd, {"source": "test", "user": "developer"})
-        print(f"Decision: {'✅ APPROVED' if result['approved'] else '❌ REJECTED'}")
+        print(f"Decision: {' APPROVED' if result['approved'] else ' REJECTED'}")
         print(f"Reason: {result['reason']}")
         print(f"Risk Level: {result.get('risk_level', 'N/A')}")
         print("-" * 50)
     
-    # Mostrar estadísticas
+    # Mostrar estadisticas
     print("\n=== STATISTICS ===")
     stats = hitl.get_statistics()
     print(json.dumps(stats, indent=2))

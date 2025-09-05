@@ -3,7 +3,7 @@
 Brutal UI Simple - Debug Version
 ===============================
 
-Versión simplificada para debugging del blinking issue
+Version simplificada para debugging del blinking issue
 """
 
 import tkinter as tk

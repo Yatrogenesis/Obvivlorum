@@ -63,7 +63,7 @@ class TestEnhancedAION(unittest.TestCase):
         self.assertIsNotNone(self.aion.metacognitive_system)
         self.assertIsNotNone(self.aion.quantum_framework)
         
-        print("✓ AION Core initialization test passed")
+        print("[OK] AION Core initialization test passed")
     
     def test_protocol_execution_enhanced(self):
         """Test enhanced protocol execution."""
@@ -82,7 +82,7 @@ class TestEnhancedAION(unittest.TestCase):
         self.assertEqual(result["status"], "success")
         self.assertIn("research_id", result)
         
-        print("✓ Enhanced Protocol Execution test passed")
+        print("[OK] Enhanced Protocol Execution test passed")
 
 def run_simple_test():
     """Run a simple test to verify the enhanced system works."""
@@ -92,18 +92,18 @@ def run_simple_test():
     try:
         # Initialize system
         aion = AIONProtocol()
-        print("✓ AION Protocol initialized")
+        print("[OK] AION Protocol initialized")
         
         # Test vector memory
         if aion.vector_memory_manager:
             vector = aion.VectorMemory(0.5, {"test": 0.8})
             vec_id = aion.vector_memory_manager.store_vector(vector, "test")
-            print("✓ Vector memory working")
+            print("[OK] Vector memory working")
         
         # Test quantum framework
         if aion.quantum_framework:
             state_id = aion.quantum_framework.create_quantum_state("test_concept", 0.8)
-            print("✓ Quantum framework working")
+            print("[OK] Quantum framework working")
         
         # Test protocol execution
         params = {
@@ -114,15 +114,15 @@ def run_simple_test():
         
         result = aion.execute_protocol("ALPHA", params)
         if result.get("status") == "success":
-            print("✓ Protocol execution working")
+            print("[OK] Protocol execution working")
         else:
-            print(f"✗ Protocol execution failed: {result.get('message')}")
+            print(f"[FAIL] Protocol execution failed: {result.get('message')}")
         
         print("\nSimple test completed successfully!")
         return True
         
     except Exception as e:
-        print(f"✗ Test failed: {e}")
+        print(f"[FAIL] Test failed: {e}")
         return False
 
 if __name__ == "__main__":

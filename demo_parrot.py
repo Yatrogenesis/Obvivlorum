@@ -5,7 +5,7 @@
 Demo: AI Symbiote con ParrotOS
 =============================
 
-Demostración de ejecución del AI Symbiote específicamente con ParrotOS.
+Demostracion de ejecucion del AI Symbiote especificamente con ParrotOS.
 """
 
 import sys
@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from ai_symbiote import AISymbiote
 
 def demo_parrot_execution():
-    """Demostración con ParrotOS."""
+    """Demostracion con ParrotOS."""
     print("[PARROT] AI SYMBIOTE + PARROT OS DEMO")
     print("=" * 50)
     
@@ -39,7 +39,7 @@ def demo_parrot_execution():
         print(f"[WSL] Distros disponibles: {status.get('wsl_distros', [])}")
         print(f"[WSL] Distro por defecto: {status.get('default_distro', 'N/A')}")
         
-        # Comandos específicos para ParrotOS
+        # Comandos especificos para ParrotOS
         parrot_commands = [
             "echo 'Hola desde ParrotOS!'",
             "whoami",
@@ -54,7 +54,7 @@ def demo_parrot_execution():
         for i, cmd in enumerate(parrot_commands, 1):
             print(f"\n[CMD {i}] {cmd}")
             try:
-                # Ejecutar específicamente en ParrotOS
+                # Ejecutar especificamente en ParrotOS
                 result = linux_executor.execute_command(
                     cmd, 
                     distro="ParrotOS",
@@ -71,7 +71,7 @@ def demo_parrot_execution():
             except Exception as e:
                 print(f"[ERROR] {e}")
         
-        # Demostrar instalación de paquetes en ParrotOS
+        # Demostrar instalacion de paquetes en ParrotOS
         print(f"\n[DEMO] Verificando herramientas de ParrotOS...")
         print("-" * 30)
         
@@ -102,7 +102,7 @@ def demo_parrot_execution():
     print("-" * 30)
     
     if "aion" in symbiote.components or "bridge" in symbiote.components:
-        # Protocolo ALPHA para investigación de seguridad
+        # Protocolo ALPHA para investigacion de seguridad
         alpha_params = {
             "research_domain": "cybersecurity_parrot",
             "research_type": "exploratory", 
@@ -118,7 +118,7 @@ def demo_parrot_execution():
             "novelty_bias": 0.9
         }
         
-        print("[PROTOCOL] Ejecutando ALPHA para investigación de ciberseguridad...")
+        print("[PROTOCOL] Ejecutando ALPHA para investigacion de ciberseguridad...")
         result = symbiote.execute_protocol("ALPHA", alpha_params)
         
         print(f"[STATUS] {result['status']}")
@@ -128,14 +128,14 @@ def demo_parrot_execution():
         elif 'message' in result:
             print(f"[MESSAGE] {result['message']}")
     
-    # Demostrar gestión de tareas
-    print(f"\n[DEMO] Gestión de tareas con ParrotOS...")
+    # Demostrar gestion de tareas
+    print(f"\n[DEMO] Gestion de tareas con ParrotOS...")
     print("-" * 30)
     
     if "tasks" in symbiote.components:
         task_facilitator = symbiote.components["tasks"]
         
-        # Añadir tareas relacionadas con ParrotOS
+        # Anadir tareas relacionadas con ParrotOS
         parrot_tasks = [
             {
                 "name": "Configurar entorno ParrotOS",
@@ -150,7 +150,7 @@ def demo_parrot_execution():
                 "tags": ["network", "scanning", "nmap"]
             },
             {
-                "name": "Análisis de vulnerabilidades",
+                "name": "Analisis de vulnerabilidades",
                 "description": "Identificar vulnerabilidades en sistemas objetivo",
                 "priority": 9,
                 "tags": ["vulnerability", "analysis", "security"]
@@ -161,7 +161,7 @@ def demo_parrot_execution():
         
         for task_info in parrot_tasks:
             task_id = task_facilitator.add_task(**task_info)
-            print(f"[TASK] Añadida: {task_info['name']} (ID: {task_id})")
+            print(f"[TASK] Anadida: {task_info['name']} (ID: {task_id})")
         
         # Actualizar contexto para ParrotOS
         task_facilitator.update_context({
@@ -195,26 +195,26 @@ def demo_parrot_execution():
             print(f"  - {comp_name}: {status_val}")
     
     print(f"\n[SUCCESS] Demo completada exitosamente!")
-    print("🦜 ParrotOS + AI Symbiote funcionando correctamente")
+    print(" ParrotOS + AI Symbiote funcionando correctamente")
     
     return symbiote
 
 def main():
-    """Función principal."""
+    """Funcion principal."""
     try:
         symbiote = demo_parrot_execution()
         
         print(f"\n" + "=" * 50)
         print("DEMO INTERACTIVA")
         print("=" * 50)
-        print("El AI Symbiote está ahora listo para usar con ParrotOS.")
+        print("El AI Symbiote esta ahora listo para usar con ParrotOS.")
         print("Puedes ejecutar comandos adicionales o usar el sistema completo.")
         print("\nEjemplos de uso:")
         print("- symbiote.execute_linux_command('comando', distro='ParrotOS')")
         print("- symbiote.execute_protocol('ALPHA', parametros)")
         print("- symbiote.add_task('Nombre de tarea')")
         
-        # Opción interactiva
+        # Opcion interactiva
         while True:
             print(f"\nOpciones:")
             print("1. Ejecutar comando en ParrotOS")
@@ -222,7 +222,7 @@ def main():
             print("3. Ver estado del sistema")
             print("4. Salir")
             
-            choice = input("Selecciona opción [1-4]: ").strip()
+            choice = input("Selecciona opcion [1-4]: ").strip()
             
             if choice == "1":
                 cmd = input("Comando para ParrotOS: ").strip()
@@ -244,7 +244,7 @@ def main():
                 break
             
             else:
-                print("Opción no válida")
+                print("Opcion no valida")
         
         symbiote.stop()
         

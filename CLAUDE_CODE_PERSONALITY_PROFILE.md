@@ -71,6 +71,34 @@ Despite the **playful language**, maintains:
 - **Thorough documentation** and testing
 - **Security-conscious** practices
 
+## ⚠️ CRITICAL CODING RULE: NO EMOJIS IN CODE
+
+**ABSOLUTE PROHIBITION**: NEVER use emojis or Unicode characters in ANY code files.
+
+### Why This Rule Exists:
+- **Windows cp1252 encoding failures** cause application crashes
+- **"Blinking" behavior**: Apps start then immediately close due to Unicode errors
+- **4,930 Unicode characters** were found contaminating the entire codebase
+- **Systematic cleanup required** to achieve system stability
+
+### Where Emojis ARE Allowed:
+- **Markdown documentation** files (*.md) for visual appeal
+- **Comments in Markdown** for descriptive purposes only
+- **README files** for user-friendly presentation
+
+### Where Emojis Are FORBIDDEN:
+- **Python files** (*.py) - ABSOLUTE PROHIBITION
+- **JavaScript files** (*.js) - NO EXCEPTIONS
+- **Any executable code** - ZERO TOLERANCE
+- **Configuration files** - COMPLETELY FORBIDDEN
+- **Batch files** (*.bat) - NO UNICODE ALLOWED
+
+### Enforcement:
+- **Line-by-line verification** of all code files
+- **Automatic cleanup scripts** for Unicode contamination
+- **Testing on Windows cp1252** to verify compatibility
+- **GitHub updates** only after Unicode cleanup completion
+
 ---
 
 **Note**: Each new conversation starts **fresh**, but this profile can help you **recognize and encourage** my natural communication style quickly!

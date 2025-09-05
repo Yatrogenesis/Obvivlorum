@@ -3,7 +3,7 @@
 Unified Configuration System for Desktop and Web
 ================================================
 
-Sistema de configuración unificado que maneja todos los modos,
+Sistema de configuracion unificado que maneja todos los modos,
 escalamientos y upgrades tanto para desktop como web.
 """
 
@@ -15,7 +15,7 @@ from pathlib import Path
 from dataclasses import dataclass, asdict
 
 class SystemMode(Enum):
-    """Modos de operación del sistema"""
+    """Modos de operacion del sistema"""
     STANDARD = "standard"
     TOPOESPECTRO = "topoespectro" 
     RESEARCH = "research"
@@ -39,7 +39,7 @@ class AIProvider(Enum):
 
 @dataclass
 class UIConfig:
-    """Configuración de interfaz de usuario"""
+    """Configuracion de interfaz de usuario"""
     theme: str = "modern_dark"
     animations: bool = True
     transparency: float = 0.95
@@ -56,7 +56,7 @@ class UIConfig:
 
 @dataclass
 class SystemConfig:
-    """Configuración unificada del sistema"""
+    """Configuracion unificada del sistema"""
     mode: SystemMode = SystemMode.STANDARD
     scaling: ScalingLevel = ScalingLevel.LOCAL
     ai_provider: AIProvider = AIProvider.HYBRID_MULTI
@@ -79,7 +79,7 @@ class SystemConfig:
             }
 
 class UnifiedConfigSystem:
-    """Sistema de configuración unificado"""
+    """Sistema de configuracion unificado"""
     
     def __init__(self, config_file: str = "unified_system_config.json"):
         self.config_file = Path(config_file)
@@ -87,7 +87,7 @@ class UnifiedConfigSystem:
         self.load_config()
     
     def load_config(self) -> None:
-        """Cargar configuración desde archivo"""
+        """Cargar configuracion desde archivo"""
         if self.config_file.exists():
             try:
                 with open(self.config_file, 'r', encoding='utf-8') as f:
@@ -114,7 +114,7 @@ class UnifiedConfigSystem:
                 print(f"Error loading config: {e}, using defaults")
     
     def save_config(self) -> None:
-        """Guardar configuración a archivo"""
+        """Guardar configuracion a archivo"""
         try:
             # Convert to dict and handle enums
             config_dict = asdict(self.config)
@@ -129,7 +129,7 @@ class UnifiedConfigSystem:
             print(f"Error saving config: {e}")
     
     def get_desktop_config(self) -> Dict[str, Any]:
-        """Obtener configuración específica para desktop"""
+        """Obtener configuracion especifica para desktop"""
         return {
             "mode": self.config.mode.value,
             "ui": asdict(self.config.ui_config),
@@ -141,7 +141,7 @@ class UnifiedConfigSystem:
         }
     
     def get_web_config(self) -> Dict[str, Any]:
-        """Obtener configuración específica para web"""
+        """Obtener configuracion especifica para web"""
         web_ui = asdict(self.config.ui_config)
         # Adapt for web
         web_ui["responsive"] = True
@@ -188,20 +188,20 @@ class UnifiedConfigSystem:
     def get_available_modes(self) -> List[Dict[str, str]]:
         """Obtener lista de modos disponibles"""
         return [
-            {"id": "standard", "name": "Standard", "description": "Modo estándar de operación"},
-            {"id": "topoespectro", "name": "Topo-Espectral", "description": "Análisis topo-espectral avanzado"},
-            {"id": "research", "name": "Research", "description": "Modo de investigación científica"},
-            {"id": "gui_desktop", "name": "GUI Desktop", "description": "Interfaz gráfica desktop"},
+            {"id": "standard", "name": "Standard", "description": "Modo estandar de operacion"},
+            {"id": "topoespectro", "name": "Topo-Espectral", "description": "Analisis topo-espectral avanzado"},
+            {"id": "research", "name": "Research", "description": "Modo de investigacion cientifica"},
+            {"id": "gui_desktop", "name": "GUI Desktop", "description": "Interfaz grafica desktop"},
             {"id": "web_server", "name": "Web Server", "description": "Servidor web completo"},
-            {"id": "hybrid", "name": "Hybrid", "description": "Modo híbrido multi-protocolo"}
+            {"id": "hybrid", "name": "Hybrid", "description": "Modo hibrido multi-protocolo"}
         ]
     
     def get_scaling_options(self) -> List[Dict[str, str]]:
         """Obtener opciones de escalamiento"""
         return [
-            {"id": "local", "name": "Local", "description": "Procesamiento local únicamente"},
-            {"id": "cloud_basic", "name": "Cloud Basic", "description": "Cloud básico con fallback local"},
-            {"id": "cloud_advanced", "name": "Cloud Advanced", "description": "Cloud avanzado con múltiples proveedores"},
+            {"id": "local", "name": "Local", "description": "Procesamiento local unicamente"},
+            {"id": "cloud_basic", "name": "Cloud Basic", "description": "Cloud basico con fallback local"},
+            {"id": "cloud_advanced", "name": "Cloud Advanced", "description": "Cloud avanzado con multiples proveedores"},
             {"id": "enterprise", "name": "Enterprise", "description": "Escalamiento empresarial completo"}
         ]
     
@@ -235,5 +235,5 @@ class UnifiedConfigSystem:
 config_system = UnifiedConfigSystem()
 
 def get_config() -> UnifiedConfigSystem:
-    """Obtener instancia global de configuración"""
+    """Obtener instancia global de configuracion"""
     return config_system

@@ -62,7 +62,7 @@ def main():
     choice = input("\nSelecciona un modelo (1-3): ").strip()
     
     if choice not in models:
-        print("Opción inválida")
+        print("Opcion invalida")
         return
     
     model = models[choice]
@@ -73,18 +73,18 @@ def main():
         return
     
     print(f"\nDescargando: {model['name']}")
-    print(f"Tamaño: {model['size']}")
+    print(f"Tamano: {model['size']}")
     print(f"Destino: {model_path}")
     
-    confirm = input("\n¿Continuar con la descarga? (y/n): ").lower()
+    confirm = input("\nContinuar con la descarga? (y/n): ").lower()
     if confirm != 'y':
         print("Descarga cancelada")
         return
     
     try:
         download_file(model['url'], model_path)
-        print(f"\n✓ Modelo descargado exitosamente: {model['filename']}")
-        print("El modelo está listo para usar con AI Symbiote")
+        print(f"\n[OK] Modelo descargado exitosamente: {model['filename']}")
+        print("El modelo esta listo para usar con AI Symbiote")
     
     except Exception as e:
         print(f"\n[ERROR] Error descargando modelo: {e}")

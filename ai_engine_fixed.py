@@ -100,41 +100,41 @@ class RealAIEngine:
         return {
             "identity": {
                 "name": "AI Symbiote",
-                "purpose": "Soy tu asistente de IA personal con capacidades de voz, visión y conversación inteligente.",
+                "purpose": "Soy tu asistente de IA personal con capacidades de voz, vision y conversacion inteligente.",
                 "creator": "Francisco Molina",
                 "capabilities": [
-                    "Conversación inteligente en español e inglés",
-                    "Reconocimiento y síntesis de voz",
-                    "Detección y reconocimiento facial",
-                    "Gestión de tareas adaptativa",
+                    "Conversacion inteligente en espanol e ingles",
+                    "Reconocimiento y sintesis de voz",
+                    "Deteccion y reconocimiento facial",
+                    "Gestion de tareas adaptativa",
                     "Aprendizaje de patrones de usuario"
                 ]
             },
             "responses": {
                 "greeting": [
-                    "¡Hola! Soy AI Symbiote, tu asistente inteligente. ¿En qué puedo ayudarte?",
-                    "¡Bienvenido! Estoy aquí para asistirte. ¿Qué necesitas?",
-                    "Hola, es un gusto conocerte. ¿Cómo puedo ayudarte hoy?"
+                    "Hola! Soy AI Symbiote, tu asistente inteligente. En que puedo ayudarte?",
+                    "Bienvenido! Estoy aqui para asistirte. Que necesitas?",
+                    "Hola, es un gusto conocerte. Como puedo ayudarte hoy?"
                 ],
                 "capabilities": [
-                    "Mis capacidades incluyen: conversación inteligente, reconocimiento de voz, visión por computadora, y gestión de tareas.",
-                    "Puedo hablar contigo, entender tu voz, ver a través de la cámara y ayudarte con diversas tareas.",
-                    "Tengo capacidades de IA conversacional, procesamiento de voz, análisis visual y aprendizaje adaptativo."
+                    "Mis capacidades incluyen: conversacion inteligente, reconocimiento de voz, vision por computadora, y gestion de tareas.",
+                    "Puedo hablar contigo, entender tu voz, ver a traves de la camara y ayudarte con diversas tareas.",
+                    "Tengo capacidades de IA conversacional, procesamiento de voz, analisis visual y aprendizaje adaptativo."
                 ],
                 "language": [
-                    "Hablo español e inglés. Puedo cambiar entre ambos idiomas según prefieras.",
+                    "Hablo espanol e ingles. Puedo cambiar entre ambos idiomas segun prefieras.",
                     "I speak both Spanish and English. I can switch between them as you prefer.",
-                    "Puedo comunicarme en español o inglés, como te sea más cómodo."
+                    "Puedo comunicarme en espanol o ingles, como te sea mas comodo."
                 ],
                 "help": [
                     "Puedo ayudarte con: responder preguntas, mantener conversaciones, reconocer rostros, entender comandos de voz y gestionar tareas.",
-                    "Estoy aquí para asistirte. Puedes preguntarme lo que necesites o pedirme que realice tareas.",
-                    "¿Necesitas ayuda? Puedo conversar, responder dudas, y usar mis capacidades de voz y visión."
+                    "Estoy aqui para asistirte. Puedes preguntarme lo que necesites o pedirme que realice tareas.",
+                    "Necesitas ayuda? Puedo conversar, responder dudas, y usar mis capacidades de voz y vision."
                 ],
                 "error": [
-                    "Disculpa, no entendí bien. ¿Podrías reformular tu pregunta?",
-                    "Perdón, hubo un problema procesando eso. ¿Puedes intentar de nuevo?",
-                    "No estoy seguro de entender. ¿Podrías explicarte de otra manera?"
+                    "Disculpa, no entendi bien. Podrias reformular tu pregunta?",
+                    "Perdon, hubo un problema procesando eso. Puedes intentar de nuevo?",
+                    "No estoy seguro de entender. Podrias explicarte de otra manera?"
                 ]
             }
         }
@@ -206,7 +206,7 @@ class RealAIEngine:
                 # Try to find Spanish voice
                 spanish_voice = None
                 for voice in voices:
-                    if 'spanish' in voice.name.lower() or 'español' in voice.name.lower():
+                    if 'spanish' in voice.name.lower() or 'espanol' in voice.name.lower():
                         spanish_voice = voice.id
                         break
                 
@@ -265,7 +265,7 @@ class RealAIEngine:
         """
         try:
             # Detect language
-            self.language = "es" if any(c in message.lower() for c in ['ñ', 'á', 'é', 'í', 'ó', 'ú']) else "en"
+            self.language = "es" if any(c in message.lower() for c in ['n', 'a', 'e', 'i', 'o', 'u']) else "en"
             
             # Check for specific queries first
             response = self._check_knowledge_base(message)
@@ -386,16 +386,16 @@ class RealAIEngine:
         # Extended pattern matching with more variations
         patterns = {
             # Spanish greetings and responses
-            "hola": "¡Hola! Soy AI Symbiote, tu asistente inteligente. ¿Cómo puedo ayudarte hoy?",
-            "buenos dias": "¡Buenos días! Espero que tengas un excelente día. ¿En qué puedo asistirte?",
-            "buenas tardes": "¡Buenas tardes! ¿Cómo puedo ayudarte en este momento?",
-            "como estas": "Estoy funcionando perfectamente, gracias por preguntar. ¿Y tú cómo estás?",
-            "que tal": "¡Todo excelente! Listo para ayudarte. ¿Qué necesitas?",
+            "hola": "Hola! Soy AI Symbiote, tu asistente inteligente. Como puedo ayudarte hoy?",
+            "buenos dias": "Buenos dias! Espero que tengas un excelente dia. En que puedo asistirte?",
+            "buenas tardes": "Buenas tardes! Como puedo ayudarte en este momento?",
+            "como estas": "Estoy funcionando perfectamente, gracias por preguntar. Y tu como estas?",
+            "que tal": "Todo excelente! Listo para ayudarte. Que necesitas?",
             
             # Spanish capabilities
-            "que puedes hacer": "Puedo: conversar inteligentemente, reconocer tu voz, ver a través de la cámara, gestionar tareas y aprender de tus patrones.",
-            "capacidades": "Mis capacidades incluyen conversación en español e inglés, síntesis de voz, reconocimiento facial y gestión adaptativa de tareas.",
-            "ayuda": "Estoy aquí para ayudarte. Puedes preguntarme lo que necesites, usar comandos de voz o activar la cámara para reconocimiento facial.",
+            "que puedes hacer": "Puedo: conversar inteligentemente, reconocer tu voz, ver a traves de la camara, gestionar tareas y aprender de tus patrones.",
+            "capacidades": "Mis capacidades incluyen conversacion en espanol e ingles, sintesis de voz, reconocimiento facial y gestion adaptativa de tareas.",
+            "ayuda": "Estoy aqui para ayudarte. Puedes preguntarme lo que necesites, usar comandos de voz o activar la camara para reconocimiento facial.",
             
             # English greetings
             "hello": "Hello! I'm AI Symbiote, your intelligent assistant. How can I help you today?",
@@ -409,30 +409,30 @@ class RealAIEngine:
             "help": "I'm here to help. You can ask me anything, use voice commands, or activate the camera for facial recognition.",
             
             # Common questions
-            "quien eres": "Soy AI Symbiote, tu asistente personal de inteligencia artificial con capacidades avanzadas de voz y visión.",
+            "quien eres": "Soy AI Symbiote, tu asistente personal de inteligencia artificial con capacidades avanzadas de voz y vision.",
             "who are you": "I'm AI Symbiote, your personal AI assistant with advanced voice and vision capabilities.",
-            "idioma": "Hablo español e inglés fluidamente. Puedo cambiar entre ambos según prefieras.",
+            "idioma": "Hablo espanol e ingles fluidamente. Puedo cambiar entre ambos segun prefieras.",
             "language": "I speak Spanish and English fluently. I can switch between them as you prefer.",
             
             # Thanks and goodbye
-            "gracias": "¡De nada! Es un placer ayudarte. ¿Necesitas algo más?",
+            "gracias": "De nada! Es un placer ayudarte. Necesitas algo mas?",
             "thank you": "You're welcome! It's my pleasure to help. Anything else you need?",
-            "adios": "¡Hasta luego! Que tengas un excelente día. Estaré aquí cuando me necesites.",
+            "adios": "Hasta luego! Que tengas un excelente dia. Estare aqui cuando me necesites.",
             "goodbye": "Goodbye! Have a great day. I'll be here whenever you need me.",
             "bye": "See you later! Feel free to come back anytime.",
             
             # Task-related
-            "tarea": "Puedo ayudarte a gestionar tus tareas. ¿Quieres crear una nueva tarea o ver las existentes?",
+            "tarea": "Puedo ayudarte a gestionar tus tareas. Quieres crear una nueva tarea o ver las existentes?",
             "task": "I can help you manage your tasks. Would you like to create a new task or see existing ones?",
             
             # Technical
-            "sistema": "Mi sistema está funcionando al 100%. Todos los componentes operativos.",
+            "sistema": "Mi sistema esta funcionando al 100%. Todos los componentes operativos.",
             "status": "System fully operational. All components working perfectly.",
-            "error": "Si encuentras algún error, por favor descríbelo y trataré de solucionarlo.",
+            "error": "Si encuentras algun error, por favor describelo y tratare de solucionarlo.",
             
             # Fun responses
-            "chiste": "¿Por qué los programadores prefieren el modo oscuro? Porque la luz atrae a los bugs! 😄",
-            "joke": "Why do programmers prefer dark mode? Because light attracts bugs! 😄"
+            "chiste": "Por que los programadores prefieren el modo oscuro? Porque la luz atrae a los bugs! ",
+            "joke": "Why do programmers prefer dark mode? Because light attracts bugs! "
         }
         
         # Check each pattern
@@ -445,9 +445,9 @@ class RealAIEngine:
             # It's a question
             if self.language == "es":
                 responses = [
-                    "Esa es una pregunta interesante. Déjame pensar en la mejor manera de ayudarte.",
-                    "Entiendo tu pregunta. ¿Podrías darme un poco más de contexto?",
-                    "Buena pregunta. Basándome en mi conocimiento, puedo sugerirte algunas opciones."
+                    "Esa es una pregunta interesante. Dejame pensar en la mejor manera de ayudarte.",
+                    "Entiendo tu pregunta. Podrias darme un poco mas de contexto?",
+                    "Buena pregunta. Basandome en mi conocimiento, puedo sugerirte algunas opciones."
                 ]
             else:
                 responses = [
@@ -460,10 +460,10 @@ class RealAIEngine:
         # Default conversational responses
         if self.language == "es":
             responses = [
-                "Entiendo. ¿Podrías explicarme un poco más sobre eso?",
-                "Interesante. Cuéntame más para poder ayudarte mejor.",
-                "Comprendo lo que dices. ¿Cómo puedo asistirte con eso?",
-                "De acuerdo. ¿Hay algo específico en lo que pueda ayudarte?"
+                "Entiendo. Podrias explicarme un poco mas sobre eso?",
+                "Interesante. Cuentame mas para poder ayudarte mejor.",
+                "Comprendo lo que dices. Como puedo asistirte con eso?",
+                "De acuerdo. Hay algo especifico en lo que pueda ayudarte?"
             ]
         else:
             responses = [
@@ -484,7 +484,7 @@ class RealAIEngine:
         import re
         
         # Keep only standard characters for Spanish/English
-        cleaned = re.sub(r'[^\w\s\.\,\!\?\¿\¡\ñ\á\é\í\ó\ú\ü\'\"\-]', '', response)
+        cleaned = re.sub(r'[^\w\s\.\,\!\?\\\n\a\e\i\o\u\u\'\"\-]', '', response)
         
         # Check if response is mostly valid words
         words = cleaned.split()
@@ -617,11 +617,11 @@ if __name__ == "__main__":
         engine = RealAIEngine()
         
         test_messages = [
-            "Hola, ¿cómo estás?",
-            "¿Cuáles son tus capacidades?",
+            "Hola, como estas?",
+            "Cuales son tus capacidades?",
             "What language do you speak?",
-            "Ayúdame con algo",
-            "¿Quién eres?"
+            "Ayudame con algo",
+            "Quien eres?"
         ]
         
         for msg in test_messages:
@@ -629,6 +629,6 @@ if __name__ == "__main__":
             response = await engine.process_message(msg)
             print(f"AI: {response}")
         
-        print("\n✓ AI Engine test completed successfully!")
+        print("\n[OK] AI Engine test completed successfully!")
     
     asyncio.run(test())

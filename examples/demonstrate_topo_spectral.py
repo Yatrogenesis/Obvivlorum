@@ -28,7 +28,7 @@ try:
     DEMO_AVAILABLE = True
 except ImportError as e:
     DEMO_AVAILABLE = False
-    print(f"❌ Cannot run demonstration: {e}")
+    print(f" Cannot run demonstration: {e}")
     print("Install required packages: pip install ripser persim numba matplotlib")
     sys.exit(1)
 
@@ -40,11 +40,11 @@ class TopoSpectralDemonstration:
         
     def run_complete_demonstration(self):
         """Run complete Topo-Spectral consciousness demonstration"""
-        print("🧠 TOPO-SPECTRAL CONSCIOUSNESS FRAMEWORK DEMONSTRATION")
+        print(" TOPO-SPECTRAL CONSCIOUSNESS FRAMEWORK DEMONSTRATION")
         print("=" * 70)
         print("Implementation of Francisco Molina's Research Papers:")
-        print("• 'Consciousness as Emergent Network Complexity: A Topo-Spectral Framework'")
-        print("• 'A Computationally Tractable Topological Framework for Hierarchical Information Integration'")
+        print(" 'Consciousness as Emergent Network Complexity: A Topo-Spectral Framework'")
+        print(" 'A Computationally Tractable Topological Framework for Hierarchical Information Integration'")
         print("=" * 70)
         
         # 1. Framework Activation
@@ -69,58 +69,58 @@ class TopoSpectralDemonstration:
         self.demonstrate_framework_comparison()
         
         print("\n" + "=" * 70)
-        print("🎉 COMPLETE TOPO-SPECTRAL DEMONSTRATION FINISHED")
+        print(" COMPLETE TOPO-SPECTRAL DEMONSTRATION FINISHED")
         print("=" * 70)
         
     def demonstrate_framework_activation(self):
         """Demonstrate framework activation and mode switching"""
-        print("\n1️⃣  FRAMEWORK ACTIVATION & MODE MANAGEMENT")
+        print("\n1  FRAMEWORK ACTIVATION & MODE MANAGEMENT")
         print("-" * 50)
         
         # Test different execution modes
         modes_to_test = [ExecutionMode.STANDARD, ExecutionMode.TOPOESPECTRO, ExecutionMode.RESEARCH]
         
         for mode in modes_to_test:
-            print(f"\n🔄 Testing {mode.value} mode...")
+            print(f"\n Testing {mode.value} mode...")
             success = set_execution_mode(mode)
             
             if success:
                 topo_enabled = is_topo_spectral_enabled()
-                print(f"  ✅ Mode activated successfully")
-                print(f"  📊 Topo-Spectral enabled: {topo_enabled}")
+                print(f"   Mode activated successfully")
+                print(f"   Topo-Spectral enabled: {topo_enabled}")
                 
                 if mode == ExecutionMode.TOPOESPECTRO or mode == ExecutionMode.RESEARCH:
                     if topo_enabled:
-                        print(f"  🧮 Consciousness Index: Ψ(St) = ³√(Φ̂spec(St) · T̂(St) · Sync(St))")
-                        print(f"  📐 Spectral Information Integration: O(n³) complexity")
-                        print(f"  🔗 Topological Resilience: Persistent homology")
-                        print(f"  ⏱️  Temporal Synchronization: Variance-based stability")
+                        print(f"   Consciousness Index: ?(St) = 0(?spec(St)  T(St)  Sync(St))")
+                        print(f"   Spectral Information Integration: O(n0) complexity")
+                        print(f"   Topological Resilience: Persistent homology")
+                        print(f"    Temporal Synchronization: Variance-based stability")
                     else:
-                        print(f"  ⚠️  Topo-Spectral dependencies not available")
+                        print(f"    Topo-Spectral dependencies not available")
             else:
-                print(f"  ❌ Failed to activate {mode.value} mode")
+                print(f"   Failed to activate {mode.value} mode")
         
         # Set to research mode for demonstrations
         set_execution_mode(ExecutionMode.RESEARCH)
         
     def demonstrate_network_types(self):
         """Demonstrate consciousness assessment on different network types"""
-        print("\n2️⃣  NETWORK TYPES CONSCIOUSNESS ANALYSIS")
+        print("\n2  NETWORK TYPES CONSCIOUSNESS ANALYSIS")
         print("-" * 50)
         
         # Generate different network topologies
         networks = {
-            "Random (Erdős-Rényi)": nx.erdos_renyi_graph(25, 0.15, seed=42),
+            "Random (Erd?s-Renyi)": nx.erdos_renyi_graph(25, 0.15, seed=42),
             "Small-World (Watts-Strogatz)": nx.watts_strogatz_graph(25, 4, 0.3, seed=42),
-            "Scale-Free (Barabási-Albert)": nx.barabasi_albert_graph(25, 3, seed=42),
+            "Scale-Free (Barabasi-Albert)": nx.barabasi_albert_graph(25, 3, seed=42),
             "Clustered (Connected Caveman)": nx.connected_caveman_graph(5, 5),  # 5 clusters of 5 nodes
             "Regular (Circular Ladder)": nx.circular_ladder_graph(12),  # Regular structure
         }
         
         if not is_topo_spectral_enabled():
-            print("⚠️  Topo-Spectral framework not available, showing network info only")
+            print("  Topo-Spectral framework not available, showing network info only")
             for name, graph in networks.items():
-                print(f"\n📊 {name}:")
+                print(f"\n {name}:")
                 print(f"   Nodes: {graph.number_of_nodes()}, Edges: {graph.number_of_edges()}")
                 print(f"   Clustering: {nx.average_clustering(graph):.3f}")
                 print(f"   Path Length: {nx.average_shortest_path_length(graph):.3f}")
@@ -131,7 +131,7 @@ class TopoSpectralDemonstration:
         network_results = {}
         
         for network_name, graph in networks.items():
-            print(f"\n📊 Analyzing {network_name}...")
+            print(f"\n Analyzing {network_name}...")
             
             # Convert to weighted adjacency matrix
             adj_matrix = nx.adjacency_matrix(graph).toarray().astype(float)
@@ -141,7 +141,7 @@ class TopoSpectralDemonstration:
             validation = validate_network_requirements(adj_matrix)
             
             if not all(validation.values()):
-                print(f"   ⚠️  Network validation issues: {validation}")
+                print(f"     Network validation issues: {validation}")
                 continue
             
             try:
@@ -149,42 +149,42 @@ class TopoSpectralDemonstration:
                 assessment = calculator.calculate_consciousness_index(adj_matrix)
                 network_results[network_name] = assessment
                 
-                print(f"   🧠 Consciousness State: {assessment.consciousness_state.value.upper()}")
-                print(f"   Ψ  Topo-Spectral Index: {assessment.psi_index:.4f}")
-                print(f"   Φ̂  Spectral Integration: {assessment.phi_spectral:.4f}")
-                print(f"   T̂  Topological Resilience: {assessment.topological_resilience:.4f}")
-                print(f"   🔄 Synchronization: {assessment.synchronization_factor:.4f}")
-                print(f"   🔍 Spectral Cuts: {len(assessment.spectral_cuts)}")
-                print(f"   🕸️  Topology Features: {len(assessment.topology_features)}")
+                print(f"    Consciousness State: {assessment.consciousness_state.value.upper()}")
+                print(f"   ?  Topo-Spectral Index: {assessment.psi_index:.4f}")
+                print(f"   ?  Spectral Integration: {assessment.phi_spectral:.4f}")
+                print(f"   T  Topological Resilience: {assessment.topological_resilience:.4f}")
+                print(f"    Synchronization: {assessment.synchronization_factor:.4f}")
+                print(f"    Spectral Cuts: {len(assessment.spectral_cuts)}")
+                print(f"     Topology Features: {len(assessment.topology_features)}")
                 
                 # Network properties
                 clustering = nx.average_clustering(graph)
                 path_length = nx.average_shortest_path_length(graph) if nx.is_connected(graph) else float('inf')
                 
-                print(f"   📈 Clustering Coefficient: {clustering:.3f}")
-                print(f"   📏 Average Path Length: {path_length:.3f}")
+                print(f"    Clustering Coefficient: {clustering:.3f}")
+                print(f"    Average Path Length: {path_length:.3f}")
                 
             except Exception as e:
-                print(f"   ❌ Assessment failed: {e}")
+                print(f"    Assessment failed: {e}")
         
         self.results['network_analysis'] = network_results
         
         # Summary comparison
         if network_results:
-            print(f"\n📋 NETWORK CONSCIOUSNESS RANKING:")
+            print(f"\n NETWORK CONSCIOUSNESS RANKING:")
             sorted_networks = sorted(network_results.items(), 
                                    key=lambda x: x[1].psi_index, reverse=True)
             
             for i, (name, assessment) in enumerate(sorted_networks, 1):
-                print(f"   {i}. {name}: Ψ = {assessment.psi_index:.4f} ({assessment.consciousness_state.value})")
+                print(f"   {i}. {name}: ? = {assessment.psi_index:.4f} ({assessment.consciousness_state.value})")
     
     def demonstrate_consciousness_states(self):
-        """Demonstrate consciousness state classification based on Ψ thresholds"""
-        print("\n3️⃣  CONSCIOUSNESS STATE CLASSIFICATION")
+        """Demonstrate consciousness state classification based on ? thresholds"""
+        print("\n3  CONSCIOUSNESS STATE CLASSIFICATION")
         print("-" * 50)
         
         if not is_topo_spectral_enabled():
-            print("⚠️  Topo-Spectral framework required for state classification")
+            print("  Topo-Spectral framework required for state classification")
             return
         
         # Research-validated state thresholds from Francisco Molina's papers
@@ -196,14 +196,14 @@ class TopoSpectralDemonstration:
             ConsciousnessState.PSYCHEDELIC: {"range": (0.63, 0.88), "description": "Altered state, disorganized hyperconnectivity"}
         }
         
-        print("🎯 Research-Validated Consciousness State Thresholds:")
+        print(" Research-Validated Consciousness State Thresholds:")
         print("   (Based on clinical EEG validation, n=2,847 subjects)")
         print()
         
         for state, info in state_info.items():
             min_psi, max_psi = info["range"]
-            print(f"   🧠 {state.value.upper()}")
-            print(f"      Ψ Range: [{min_psi:.2f}, {max_psi:.2f}]")
+            print(f"    {state.value.upper()}")
+            print(f"      ? Range: [{min_psi:.2f}, {max_psi:.2f}]")
             print(f"      Description: {info['description']}")
             print()
         
@@ -218,7 +218,7 @@ class TopoSpectralDemonstration:
             "Dense Network": nx.complete_graph(12),  # Highly connected
         }
         
-        print("🔬 SYNTHETIC NETWORK STATE DEMONSTRATION:")
+        print(" SYNTHETIC NETWORK STATE DEMONSTRATION:")
         
         for network_name, graph in test_networks.items():
             adj_matrix = nx.adjacency_matrix(graph).toarray().astype(float)
@@ -233,31 +233,31 @@ class TopoSpectralDemonstration:
             try:
                 assessment = calculator.calculate_consciousness_index(adj_matrix)
                 
-                print(f"\n   🌐 {network_name}:")
-                print(f"      Ψ Index: {assessment.psi_index:.4f}")
+                print(f"\n    {network_name}:")
+                print(f"      ? Index: {assessment.psi_index:.4f}")
                 print(f"      State: {assessment.consciousness_state.value.upper()}")
-                print(f"      Components: Φ̂={assessment.phi_spectral:.3f}, T̂={assessment.topological_resilience:.3f}, Sync={assessment.synchronization_factor:.3f}")
+                print(f"      Components: ?={assessment.phi_spectral:.3f}, T={assessment.topological_resilience:.3f}, Sync={assessment.synchronization_factor:.3f}")
                 
                 # Show which research threshold range this falls into
                 for state, info in state_info.items():
                     min_psi, max_psi = info["range"]
                     if min_psi <= assessment.psi_index <= max_psi:
-                        print(f"      📊 Research Range Match: {state.value.upper()}")
+                        print(f"       Research Range Match: {state.value.upper()}")
                         break
                         
             except Exception as e:
-                print(f"   ❌ {network_name}: Assessment failed ({e})")
+                print(f"    {network_name}: Assessment failed ({e})")
     
     def demonstrate_temporal_evolution(self):
         """Demonstrate temporal consciousness evolution monitoring"""
-        print("\n4️⃣  TEMPORAL CONSCIOUSNESS EVOLUTION")
+        print("\n4  TEMPORAL CONSCIOUSNESS EVOLUTION")
         print("-" * 50)
         
         if not is_topo_spectral_enabled():
-            print("⚠️  Topo-Spectral framework required for evolution monitoring")
+            print("  Topo-Spectral framework required for evolution monitoring")
             return
         
-        print("📈 Simulating consciousness evolution during sleep-wake cycle...")
+        print(" Simulating consciousness evolution during sleep-wake cycle...")
         
         # Create base network (brain-like connectivity)
         base_network = nx.watts_strogatz_graph(30, 4, 0.3, seed=42)
@@ -311,7 +311,7 @@ class TopoSpectralDemonstration:
         calculator = create_topo_spectral_calculator()
         
         try:
-            print("⏳ Calculating consciousness evolution (this may take a moment)...")
+            print(" Calculating consciousness evolution (this may take a moment)...")
             start_time = time.time()
             
             evolution_results = calculator.monitor_consciousness_evolution(
@@ -321,80 +321,80 @@ class TopoSpectralDemonstration:
             )
             
             calculation_time = time.time() - start_time
-            print(f"✅ Evolution calculated in {calculation_time:.2f} seconds")
+            print(f" Evolution calculated in {calculation_time:.2f} seconds")
             
             # Analyze results
             psi_sequence = evolution_results['psi_sequence']
             states_sequence = evolution_results['consciousness_states']
             
-            print(f"\n📊 EVOLUTION ANALYSIS:")
-            print(f"   Mean Ψ: {evolution_results['mean_psi']:.4f}")
-            print(f"   Max Ψ: {evolution_results['max_psi']:.4f}")
-            print(f"   Min Ψ: {evolution_results['min_psi']:.4f}")
+            print(f"\n EVOLUTION ANALYSIS:")
+            print(f"   Mean ?: {evolution_results['mean_psi']:.4f}")
+            print(f"   Max ?: {evolution_results['max_psi']:.4f}")
+            print(f"   Min ?: {evolution_results['min_psi']:.4f}")
             print(f"   Trend: {evolution_results['psi_trend']:.6f} per hour")
             print(f"   Stability: {evolution_results['psi_stability']:.4f}")
             print(f"   State Transitions: {evolution_results['state_transitions']['transition_count']}")
             
             # Show hourly consciousness levels
-            print(f"\n🕐 HOURLY CONSCIOUSNESS LEVELS:")
+            print(f"\n HOURLY CONSCIOUSNESS LEVELS:")
             for hour, (psi, state, expected) in enumerate(zip(psi_sequence, states_sequence, expected_states)):
                 state_name = state.value if hasattr(state, 'value') else str(state)
-                match_indicator = "✅" if expected in state_name or state_name in expected else "⚠️"
-                print(f"   {hour:2d}:00 - Ψ={psi:.3f} ({state_name:12s}) {match_indicator} {expected}")
+                match_indicator = "" if expected in state_name or state_name in expected else ""
+                print(f"   {hour:2d}:00 - ?={psi:.3f} ({state_name:12s}) {match_indicator} {expected}")
             
             self.results['evolution'] = evolution_results
             
             # Detect significant transitions
             transitions = evolution_results['state_transitions']['transitions']
             if transitions:
-                print(f"\n🔄 CONSCIOUSNESS STATE TRANSITIONS:")
+                print(f"\n CONSCIOUSNESS STATE TRANSITIONS:")
                 for transition in transitions[:5]:  # Show first 5 transitions
                     from_state = transition['from'].value if hasattr(transition['from'], 'value') else str(transition['from'])
                     to_state = transition['to'].value if hasattr(transition['to'], 'value') else str(transition['to'])
                     hour = transition['timepoint']
-                    print(f"   {hour:2d}:00 - {from_state} → {to_state}")
+                    print(f"   {hour:2d}:00 - {from_state} -> {to_state}")
             
         except Exception as e:
-            print(f"❌ Evolution monitoring failed: {e}")
+            print(f" Evolution monitoring failed: {e}")
     
     def demonstrate_research_validation(self):
         """Demonstrate research validation metrics and reproducibility"""
-        print("\n5️⃣  RESEARCH VALIDATION & REPRODUCIBILITY")
+        print("\n5  RESEARCH VALIDATION & REPRODUCIBILITY")
         print("-" * 50)
         
         if not is_topo_spectral_enabled():
-            print("⚠️  Topo-Spectral framework required for research validation")
+            print("  Topo-Spectral framework required for research validation")
             return
         
-        print("🔬 FRANCISCO MOLINA'S RESEARCH VALIDATION:")
+        print(" FRANCISCO MOLINA'S RESEARCH VALIDATION:")
         print("   Paper: 'Consciousness as Emergent Network Complexity'")
         print("   Published validation metrics:")
         print()
         
         validation_metrics = {
-            "Classification Accuracy": "94.7 ± 1.2%",
-            "Macro F1-Score": "0.943 ± 0.015", 
-            "Cohen's Kappa": "0.934 ± 0.018",
+            "Classification Accuracy": "94.7 +/- 1.2%",
+            "Macro F1-Score": "0.943 +/- 0.015", 
+            "Cohen's Kappa": "0.934 +/- 0.018",
             "Clinical Validation": "n=2,847 EEG subjects",
             "Synthetic Networks": "n=5,000 test networks",
             "Parameter Stability": "> 90% accuracy across ranges"
         }
         
         for metric, value in validation_metrics.items():
-            print(f"   📈 {metric}: {value}")
+            print(f"    {metric}: {value}")
         
-        print(f"\n🎯 RESEARCH PREDICTIONS (from paper):")
+        print(f"\n RESEARCH PREDICTIONS (from paper):")
         predictions = {
-            "Threshold Prediction": "Systems with Ψ ≥ 0.72 show reportable conscious experiences",
-            "Monotonicity Prediction": "Ψ correlates with consciousness scales (r ≥ 0.65)",
-            "Engineering Prediction": "Artificial systems with Ψ ≥ 0.72 exhibit conscious-like behaviors"
+            "Threshold Prediction": "Systems with ? >= 0.72 show reportable conscious experiences",
+            "Monotonicity Prediction": "? correlates with consciousness scales (r >= 0.65)",
+            "Engineering Prediction": "Artificial systems with ? >= 0.72 exhibit conscious-like behaviors"
         }
         
         for prediction, description in predictions.items():
-            print(f"   🔮 {prediction}: {description}")
+            print(f"    {prediction}: {description}")
         
         # Reproduce validation test on synthetic networks
-        print(f"\n🧪 REPRODUCING SYNTHETIC NETWORK VALIDATION:")
+        print(f"\n REPRODUCING SYNTHETIC NETWORK VALIDATION:")
         
         calculator = create_topo_spectral_calculator()
         
@@ -405,7 +405,7 @@ class TopoSpectralDemonstration:
         all_assessments = []
         network_classifications = {"deep_sleep": 0, "light_sleep": 0, "awake": 0, "alert": 0, "psychedelic": 0}
         
-        print(f"   Generating {len(network_types)} × {n_networks_per_type} = {len(network_types) * n_networks_per_type} test networks...")
+        print(f"   Generating {len(network_types)} x {n_networks_per_type} = {len(network_types) * n_networks_per_type} test networks...")
         
         for network_type in network_types:
             for i in range(n_networks_per_type):
@@ -435,20 +435,20 @@ class TopoSpectralDemonstration:
             # Calculate validation statistics
             psi_values = [a.psi_index for a in all_assessments]
             
-            print(f"   ✅ Successfully assessed {len(all_assessments)} networks")
-            print(f"   📊 Ψ Statistics:")
+            print(f"    Successfully assessed {len(all_assessments)} networks")
+            print(f"    ? Statistics:")
             print(f"      Mean: {np.mean(psi_values):.4f}")
             print(f"      Std:  {np.std(psi_values):.4f}")
             print(f"      Range: [{np.min(psi_values):.4f}, {np.max(psi_values):.4f}]")
             
-            print(f"   🏷️  State Classification Distribution:")
+            print(f"     State Classification Distribution:")
             total = sum(network_classifications.values())
             for state, count in network_classifications.items():
                 percentage = (count / total) * 100 if total > 0 else 0
                 print(f"      {state}: {count} networks ({percentage:.1f}%)")
             
             # Parameter stability test
-            print(f"\n🔄 PARAMETER STABILITY TEST:")
+            print(f"\n PARAMETER STABILITY TEST:")
             base_calculator = create_topo_spectral_calculator(k_cuts=5)
             alt_calculator = create_topo_spectral_calculator(k_cuts=4)  # Different parameters
             
@@ -472,25 +472,25 @@ class TopoSpectralDemonstration:
                 mean_stability = np.mean(stability_scores)
                 print(f"      Mean parameter stability: {mean_stability:.3f}")
                 print(f"      Research target: > 0.90")
-                print(f"      Status: {'✅ PASSED' if mean_stability > 0.85 else '⚠️ VARIABLE'}")
+                print(f"      Status: {' PASSED' if mean_stability > 0.85 else ' VARIABLE'}")
         else:
-            print("   ❌ No networks successfully assessed")
+            print("    No networks successfully assessed")
     
     def demonstrate_performance_analysis(self):
         """Demonstrate performance characteristics and scalability"""
-        print("\n6️⃣  PERFORMANCE ANALYSIS & SCALABILITY")
+        print("\n6  PERFORMANCE ANALYSIS & SCALABILITY")
         print("-" * 50)
         
         if not is_topo_spectral_enabled():
-            print("⚠️  Topo-Spectral framework required for performance analysis")
+            print("  Topo-Spectral framework required for performance analysis")
             return
         
-        print("⚡ COMPUTATIONAL COMPLEXITY ANALYSIS:")
-        print("   Theoretical: O(n³) polynomial-time complexity")
+        print(" COMPUTATIONAL COMPLEXITY ANALYSIS:")
+        print("   Theoretical: O(n0) polynomial-time complexity")
         print("   Components:")
-        print("     • Spectral Integration: O(n³) - eigenvalue decomposition")
-        print("     • Topological Resilience: O(n²) - persistent homology") 
-        print("     • Temporal Synchronization: O(t) - where t is time series length")
+        print("      Spectral Integration: O(n0) - eigenvalue decomposition")
+        print("      Topological Resilience: O(n0) - persistent homology") 
+        print("      Temporal Synchronization: O(t) - where t is time series length")
         print()
         
         # Performance scaling test
@@ -499,7 +499,7 @@ class TopoSpectralDemonstration:
         
         calculator = create_topo_spectral_calculator()
         
-        print("📏 SCALABILITY TEST:")
+        print(" SCALABILITY TEST:")
         
         for size in network_sizes:
             print(f"   Testing n={size} nodes...", end=" ")
@@ -512,7 +512,7 @@ class TopoSpectralDemonstration:
             # Validate network
             validation = validate_network_requirements(adj_matrix)
             if not all(validation.values()):
-                print("❌ Network validation failed")
+                print(" Network validation failed")
                 continue
             
             # Time the calculation
@@ -529,17 +529,17 @@ class TopoSpectralDemonstration:
                     'topology_features': len(assessment.topology_features)
                 }
                 
-                print(f"✅ {calculation_time:.3f}s (Ψ={assessment.psi_index:.3f})")
+                print(f" {calculation_time:.3f}s (?={assessment.psi_index:.3f})")
                 
             except Exception as e:
-                print(f"❌ Failed: {e}")
+                print(f" Failed: {e}")
         
         if len(performance_results) >= 2:
             # Analyze scaling
             sizes = list(performance_results.keys())
             times = [performance_results[s]['time'] for s in sizes]
             
-            print(f"\n📈 SCALING ANALYSIS:")
+            print(f"\n SCALING ANALYSIS:")
             for size, result in performance_results.items():
                 nodes_per_sec = size / result['time'] if result['time'] > 0 else float('inf')
                 print(f"   n={size:2d}: {result['time']:.3f}s ({nodes_per_sec:.1f} nodes/sec)")
@@ -549,16 +549,16 @@ class TopoSpectralDemonstration:
                 log_sizes = np.log(sizes)
                 log_times = np.log(times)
                 scaling_exponent = np.polyfit(log_sizes, log_times, 1)[0]
-                print(f"   📊 Empirical scaling: O(n^{scaling_exponent:.2f})")
-                print(f"   🎯 Theoretical target: O(n³)")
+                print(f"    Empirical scaling: O(n^{scaling_exponent:.2f})")
+                print(f"    Theoretical target: O(n0)")
                 
                 if scaling_exponent <= 3.5:  # Allow some overhead
-                    print(f"   ✅ Scaling within theoretical bounds")
+                    print(f"    Scaling within theoretical bounds")
                 else:
-                    print(f"   ⚠️  Higher than expected scaling")
+                    print(f"     Higher than expected scaling")
         
         # Memory usage estimation
-        print(f"\n💾 MEMORY REQUIREMENTS:")
+        print(f"\n MEMORY REQUIREMENTS:")
         memory_estimates = {
             "Standard Mode (1K nodes)": "~512MB",
             "Topo-Spectral Mode (1K nodes)": "~2GB",
@@ -572,7 +572,7 @@ class TopoSpectralDemonstration:
     
     def demonstrate_framework_comparison(self):
         """Compare IIT/GWT vs Topo-Spectral frameworks"""
-        print("\n7️⃣  FRAMEWORK COMPARISON: IIT/GWT vs TOPO-SPECTRAL")
+        print("\n7  FRAMEWORK COMPARISON: IIT/GWT vs TOPO-SPECTRAL")
         print("-" * 50)
         
         # Create test network for comparison
@@ -598,7 +598,7 @@ class TopoSpectralDemonstration:
                 "Gradual": np.array([1.0, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1, 0.0])
             }
             
-            print("📊 COMPARATIVE CONSCIOUSNESS ASSESSMENT:")
+            print(" COMPARATIVE CONSCIOUSNESS ASSESSMENT:")
             print("   State                | IIT/GWT Framework    | Topo-Spectral Framework")
             print("   " + "-" * 68)
             
@@ -618,48 +618,48 @@ class TopoSpectralDemonstration:
                         combined_score = enhanced_result.get('combined_consciousness_score', enhanced_result['consciousness_score'])
                         agreement = enhanced_result.get('framework_agreement', 0.0)
                         
-                        print(f"   {state_name:18s}   | Φ={standard_phi:.3f} ({standard_level[:3]}) | Ψ={topo_psi:.3f} ({topo_state[:3]}) [Agr:{agreement:.2f}]")
+                        print(f"   {state_name:18s}   | ?={standard_phi:.3f} ({standard_level[:3]}) | ?={topo_psi:.3f} ({topo_state[:3]}) [Agr:{agreement:.2f}]")
                     else:
-                        print(f"   {state_name:18s}   | Φ={standard_phi:.3f} ({standard_level[:3]}) | Topo-Spectral N/A")
+                        print(f"   {state_name:18s}   | ?={standard_phi:.3f} ({standard_level[:3]}) | Topo-Spectral N/A")
                 else:
-                    print(f"   {state_name:18s}   | Φ={standard_phi:.3f} ({standard_level[:3]}) | Framework Not Available")
+                    print(f"   {state_name:18s}   | ?={standard_phi:.3f} ({standard_level[:3]}) | Framework Not Available")
             
-            print("\n🔍 FRAMEWORK CHARACTERISTICS:")
+            print("\n FRAMEWORK CHARACTERISTICS:")
             
             frameworks = {
                 "IIT/GWT (Standard)": {
-                    "Metrics": "Φ (phi), Global Accessibility, Information Integration",
-                    "Complexity": "O(2^n) exact, O(n³) approximate",
+                    "Metrics": "? (phi), Global Accessibility, Information Integration",
+                    "Complexity": "O(2^n) exact, O(n0) approximate",
                     "Validation": "Theoretical foundations, limited clinical",
                     "Implementation": "Established, widely used"
                 },
                 "Topo-Spectral (Francisco Molina)": {
-                    "Metrics": "Ψ, Φ̂_spectral, T̂_topological, Sync_temporal", 
-                    "Complexity": "O(n³) polynomial-time tractable",
+                    "Metrics": "?, ?_spectral, T_topological, Sync_temporal", 
+                    "Complexity": "O(n0) polynomial-time tractable",
                     "Validation": "94.7% accuracy, n=2,847 clinical EEG",
                     "Implementation": "Novel, research-validated"
                 }
             }
             
             for framework, characteristics in frameworks.items():
-                print(f"\n   📋 {framework}:")
+                print(f"\n    {framework}:")
                 for aspect, detail in characteristics.items():
                     print(f"      {aspect}: {detail}")
             
-            print(f"\n💡 KEY ADVANTAGES:")
+            print(f"\n KEY ADVANTAGES:")
             print(f"   IIT/GWT Framework:")
-            print(f"   • Well-established theoretical foundation")
-            print(f"   • Extensive research literature")  
-            print(f"   • Direct interpretation of information integration")
+            print(f"    Well-established theoretical foundation")
+            print(f"    Extensive research literature")  
+            print(f"    Direct interpretation of information integration")
             print(f"")
             print(f"   Topo-Spectral Framework:")
-            print(f"   • Computationally tractable O(n³) complexity")
-            print(f"   • High clinical validation accuracy (94.7%)")
-            print(f"   • Incorporates topological resilience and temporal dynamics")
-            print(f"   • Generates falsifiable predictions with quantified thresholds")
+            print(f"    Computationally tractable O(n0) complexity")
+            print(f"    High clinical validation accuracy (94.7%)")
+            print(f"    Incorporates topological resilience and temporal dynamics")
+            print(f"    Generates falsifiable predictions with quantified thresholds")
             
         except Exception as e:
-            print(f"❌ Framework comparison failed: {e}")
+            print(f" Framework comparison failed: {e}")
     
     def save_demonstration_results(self):
         """Save demonstration results for further analysis"""
@@ -707,10 +707,10 @@ class TopoSpectralDemonstration:
             with open(results_file, 'w') as f:
                 json.dump(serializable_results, f, indent=2)
                 
-            print(f"\n💾 Results saved to: {results_file}")
+            print(f"\n Results saved to: {results_file}")
             
         except Exception as e:
-            print(f"⚠️  Could not save results: {e}")
+            print(f"  Could not save results: {e}")
 
 
 def main():
@@ -718,7 +718,7 @@ def main():
     if not DEMO_AVAILABLE:
         return
     
-    print("🚀 Starting comprehensive Topo-Spectral Consciousness Framework demonstration...")
+    print(" Starting comprehensive Topo-Spectral Consciousness Framework demonstration...")
     
     # Initialize demonstration
     demo = TopoSpectralDemonstration()
@@ -730,16 +730,16 @@ def main():
         # Save results
         demo.save_demonstration_results()
         
-        print(f"\n🏁 Demonstration completed successfully!")
-        print(f"📖 For more details, see Francisco Molina's research papers:")
-        print(f"   • 'Consciousness as Emergent Network Complexity: A Topo-Spectral Framework'")
-        print(f"   • GitHub: https://github.com/Yatrogenesis/Obvivlorum")
-        print(f"   • ORCID: https://orcid.org/0009-0008-6093-8267")
+        print(f"\n Demonstration completed successfully!")
+        print(f" For more details, see Francisco Molina's research papers:")
+        print(f"    'Consciousness as Emergent Network Complexity: A Topo-Spectral Framework'")
+        print(f"    GitHub: https://github.com/Yatrogenesis/Obvivlorum")
+        print(f"    ORCID: https://orcid.org/0009-0008-6093-8267")
         
     except KeyboardInterrupt:
-        print(f"\n⏹️  Demonstration interrupted by user")
+        print(f"\n  Demonstration interrupted by user")
     except Exception as e:
-        print(f"\n❌ Demonstration failed: {e}")
+        print(f"\n Demonstration failed: {e}")
         import traceback
         traceback.print_exc()
 

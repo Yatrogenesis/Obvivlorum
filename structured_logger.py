@@ -5,8 +5,8 @@
 Advanced Structured Logger for AI Symbiote
 ==========================================
 
-Sistema de logging estructurado avanzado que elimina duplicación,
-proporciona métricas en tiempo real y soporta múltiples formatos.
+Sistema de logging estructurado avanzado que elimina duplicacion,
+proporciona metricas en tiempo real y soporta multiples formatos.
 
 Author: Francisco Molina
 ORCID: https://orcid.org/0009-0008-6093-8267
@@ -76,7 +76,7 @@ class LogContext:
             self._local.context.clear()
 
 class MetricsCollector:
-    """Recolector de métricas de logging"""
+    """Recolector de metricas de logging"""
     
     def __init__(self, window_size: int = 1000):
         self.window_size = window_size
@@ -88,7 +88,7 @@ class MetricsCollector:
         self._lock = threading.Lock()
     
     def record_log(self, level: str, logger_name: str, message: str, timestamp: datetime):
-        """Registrar un log para métricas"""
+        """Registrar un log para metricas"""
         with self._lock:
             self.log_counts[level] += 1
             
@@ -103,7 +103,7 @@ class MetricsCollector:
             })
     
     def record_performance(self, operation: str, duration: float, metadata: Dict[str, Any] = None):
-        """Registrar métrica de rendimiento"""
+        """Registrar metrica de rendimiento"""
         with self._lock:
             self.performance_metrics.append({
                 'timestamp': datetime.now().isoformat(),
@@ -113,7 +113,7 @@ class MetricsCollector:
             })
     
     def get_stats(self) -> Dict[str, Any]:
-        """Obtener estadísticas de logging"""
+        """Obtener estadisticas de logging"""
         with self._lock:
             uptime = datetime.now() - self.start_time
             
@@ -137,7 +137,7 @@ class MetricsCollector:
         return recent_errors / len(self.recent_logs)
     
     def _calculate_avg_performance(self) -> Dict[str, float]:
-        """Calcular rendimiento promedio por operación"""
+        """Calcular rendimiento promedio por operacion"""
         operation_times = defaultdict(list)
         
         for metric in self.performance_metrics:
@@ -189,11 +189,11 @@ class StructuredFormatter(logging.Formatter):
             'hostname': self.hostname
         }
         
-        # Añadir contexto si está disponible
+        # Anadir contexto si esta disponible
         if self.include_context and hasattr(record, 'context'):
             log_entry['context'] = record.context
         
-        # Añadir información de excepción si existe
+        # Anadir informacion de excepcion si existe
         if record.exc_info:
             log_entry['exception'] = {
                 'type': record.exc_info[0].__name__ if record.exc_info[0] else None,
@@ -201,7 +201,7 @@ class StructuredFormatter(logging.Formatter):
                 'traceback': self.formatException(record.exc_info)
             }
         
-        # Añadir campos extra
+        # Anadir campos extra
         for key, value in record.__dict__.items():
             if key not in ['name', 'msg', 'args', 'levelname', 'levelno', 'pathname',
                           'filename', 'module', 'lineno', 'funcName', 'created',
@@ -211,7 +211,7 @@ class StructuredFormatter(logging.Formatter):
                 log_entry['extra'] = log_entry.get('extra', {})
                 log_entry['extra'][key] = value
         
-        # Formatear según el tipo solicitado
+        # Formatear segun el tipo solicitado
         if self.format_type == LogFormat.JSON:
             return json.dumps(log_entry, ensure_ascii=False)
         elif self.format_type == LogFormat.COMPACT:
@@ -236,7 +236,7 @@ class StructuredFormatter(logging.Formatter):
                    f"{context_str}")
 
 class AsyncLogHandler(logging.Handler):
-    """Handler asíncrono para logging no bloqueante"""
+    """Handler asincrono para logging no bloqueante"""
     
     def __init__(self, target_handler: logging.Handler, queue_size: int = 10000):
         super().__init__()
@@ -247,28 +247,28 @@ class AsyncLogHandler(logging.Handler):
         self._shutdown = False
     
     def emit(self, record: logging.LogRecord):
-        """Emitir record de forma asíncrona"""
+        """Emitir record de forma asincrona"""
         if self.loop and not self._shutdown:
             try:
                 self.loop.call_soon_threadsafe(
                     lambda: asyncio.create_task(self._async_emit(record))
                 )
             except RuntimeError:
-                # Fallback a emisión síncrona
+                # Fallback a emision sincrona
                 self.target_handler.emit(record)
         else:
             self.target_handler.emit(record)
     
     async def _async_emit(self, record: logging.LogRecord):
-        """Emisión asíncrona del record"""
+        """Emision asincrona del record"""
         try:
             await self.queue.put(record)
         except asyncio.QueueFull:
-            # Si la cola está llena, emitir síncronamente
+            # Si la cola esta llena, emitir sincronamente
             self.target_handler.emit(record)
     
     def start_async_processing(self, loop: asyncio.AbstractEventLoop):
-        """Iniciar procesamiento asíncrono"""
+        """Iniciar procesamiento asincrono"""
         self.loop = loop
         self.task = loop.create_task(self._process_queue())
     
@@ -282,7 +282,7 @@ class AsyncLogHandler(logging.Handler):
             except asyncio.TimeoutError:
                 continue
             except Exception as e:
-                # Log error sin usar el logger para evitar recursión
+                # Log error sin usar el logger para evitar recursion
                 print(f"AsyncLogHandler error: {e}")
     
     def close(self):
@@ -303,20 +303,20 @@ class StructuredLogger:
         self.context = LogContext()
         self.metrics = MetricsCollector()
         
-        # Evitar duplicación de handlers
+        # Evitar duplicacion de handlers
         self._initialized_loggers = set()
         
         # Configurar logger principal
         self.logger = self._setup_logger()
         
-        # Configurar compresión automática
+        # Configurar compresion automatica
         self._setup_log_rotation()
         
-        # Configurar limpieza automática
+        # Configurar limpieza automatica
         self._setup_cleanup()
     
     def _default_config(self) -> Dict[str, Any]:
-        """Configuración por defecto"""
+        """Configuracion por defecto"""
         return {
             'level': LogLevel.INFO.value,
             'log_dir': Path('logs'),
@@ -335,7 +335,7 @@ class StructuredLogger:
     
     def _setup_logger(self) -> logging.Logger:
         """Configurar logger principal"""
-        # Prevenir duplicación
+        # Prevenir duplicacion
         if self.name in self._initialized_loggers:
             return logging.getLogger(self.name)
         
@@ -343,7 +343,7 @@ class StructuredLogger:
         log_dir = Path(self.config['log_dir'])
         log_dir.mkdir(exist_ok=True)
         
-        # Configurar logger raíz
+        # Configurar logger raiz
         logger = logging.getLogger(self.name)
         logger.setLevel(self.config['level'])
         
@@ -393,7 +393,7 @@ class StructuredLogger:
         security_handler.setFormatter(security_formatter)
         logger.addHandler(security_handler)
         
-        # Prevenir propagación para evitar duplicación
+        # Prevenir propagacion para evitar duplicacion
         logger.propagate = False
         
         # Marcar como inicializado
@@ -402,7 +402,7 @@ class StructuredLogger:
         return logger
     
     def _setup_log_rotation(self):
-        """Configurar rotación y compresión de logs"""
+        """Configurar rotacion y compresion de logs"""
         if not self.config['compress_backups']:
             return
         
@@ -424,7 +424,7 @@ class StructuredLogger:
                 compress_backup(str(backup_file))
     
     def _setup_cleanup(self):
-        """Configurar limpieza automática de logs antiguos"""
+        """Configurar limpieza automatica de logs antiguos"""
         def cleanup_old_logs():
             """Limpiar logs antiguos"""
             log_dir = Path(self.config['log_dir'])
@@ -451,7 +451,7 @@ class StructuredLogger:
         self.context.clear()
     
     def _log_with_context(self, level: int, message: str, **kwargs):
-        """Log con contexto y métricas"""
+        """Log con contexto y metricas"""
         # Obtener contexto actual
         context = self.context.get_all()
         context.update(kwargs)
@@ -468,7 +468,7 @@ class StructuredLogger:
         )
         record.context = context
         
-        # Registrar métricas
+        # Registrar metricas
         if self.config['metrics_enabled']:
             self.metrics.record_log(
                 level=logging.getLevelName(level),
@@ -523,7 +523,7 @@ class StructuredLogger:
             self.metrics.record_performance(operation, duration, metadata)
     
     def get_stats(self) -> Dict[str, Any]:
-        """Obtener estadísticas de logging"""
+        """Obtener estadisticas de logging"""
         return self.metrics.get_stats()
     
     def export_logs(self, output_file: str, format_type: LogFormat = LogFormat.JSON,
@@ -547,7 +547,7 @@ class StructuredLogger:
                             if end_time and log_time > end_time:
                                 continue
                             
-                            # Escribir según el formato solicitado
+                            # Escribir segun el formato solicitado
                             if format_type == LogFormat.JSON:
                                 outfile.write(line)
                             elif format_type == LogFormat.COMPACT:
@@ -628,7 +628,7 @@ if __name__ == "__main__":
     logger.security("Security event detected", event_type="unauthorized_access", ip="192.168.1.100")
     logger.audit("User action performed", action="login", user="admin")
     
-    # Métrica de rendimiento
+    # Metrica de rendimiento
     import time
     start_time = time.time()
     time.sleep(0.1)  # Simular trabajo
@@ -638,7 +638,7 @@ if __name__ == "__main__":
     logger.set_context(component="ai_engine")
     logger.info("AI engine initialized", model="gpt-4")
     
-    # Mostrar estadísticas
+    # Mostrar estadisticas
     print("\n=== LOGGER STATISTICS ===")
     stats = logger.get_stats()
     print(json.dumps(stats, indent=2))

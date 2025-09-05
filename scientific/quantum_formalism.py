@@ -62,18 +62,18 @@ class QuantumState:
     
     def __post_init__(self):
         if self.density_matrix is None:
-            # Create density matrix from state vector: ρ = |ψ⟩⟨ψ|
+            # Create density matrix from state vector: ? = |??|
             self.density_matrix = np.outer(self.state_vector, np.conj(self.state_vector))
         
-        # Verify trace normalization: Tr(ρ) = 1
+        # Verify trace normalization: Tr(?) = 1
         trace = np.trace(self.density_matrix)
         if not np.isclose(trace, 1.0):
             self.density_matrix = self.density_matrix / trace
     
     def fidelity(self, other: 'QuantumState') -> float:
         """
-        Calculate quantum fidelity F(ρ,σ) = Tr(√(√ρ σ √ρ))
-        For pure states: F = |⟨ψ₁|ψ₂⟩|²
+        Calculate quantum fidelity F(?,?) = Tr((? ? ?))
+        For pure states: F = |?0|?0|0
         """
         if self.state_type == QuantumStateType.PURE and other.state_type == QuantumStateType.PURE:
             # For pure states: faster calculation
@@ -88,7 +88,7 @@ class QuantumState:
     
     def trace_distance(self, other: 'QuantumState') -> float:
         """
-        Calculate trace distance: D(ρ,σ) = (1/2) Tr|ρ - σ|
+        Calculate trace distance: D(?,?) = (1/2) Tr|? - ?|
         """
         diff = self.density_matrix - other.density_matrix
         eigenvals = la.eigvals(diff)
@@ -97,7 +97,7 @@ class QuantumState:
 class QuantumSuperposition:
     """
     Mathematical implementation of quantum superposition
-    |ψ⟩ = Σᵢ αᵢ|φᵢ⟩ where Σᵢ |αᵢ|² = 1
+    |? = ?? ??|?? where ?? |??|0 = 1
     """
     
     def __init__(self, basis_states: List[QuantumState], amplitudes: List[complex]):
@@ -107,7 +107,7 @@ class QuantumSuperposition:
         self.basis_states = basis_states
         self.amplitudes = np.array(amplitudes)
         
-        # Normalize amplitudes: Σᵢ |αᵢ|² = 1
+        # Normalize amplitudes: ?? |??|0 = 1
         norm = np.sqrt(np.sum(np.abs(self.amplitudes) ** 2))
         if norm > 0:
             self.amplitudes = self.amplitudes / norm
@@ -119,7 +119,7 @@ class QuantumSuperposition:
         n_dim = self.basis_states[0].density_matrix.shape[0]
         self.density_matrix = np.zeros((n_dim, n_dim), dtype=complex)
         
-        # ρ = Σᵢⱼ αᵢα*ⱼ |φᵢ⟩⟨φⱼ|
+        # ? = ??? ???*? |????|
         for i, state_i in enumerate(self.basis_states):
             for j, state_j in enumerate(self.basis_states):
                 coeff = self.amplitudes[i] * np.conj(self.amplitudes[j])
@@ -130,7 +130,7 @@ class QuantumSuperposition:
     
     def collapse(self, measurement_basis: Optional[List[np.ndarray]] = None) -> Tuple[QuantumState, int]:
         """
-        Quantum measurement collapse with Born rule: P(i) = |αᵢ|²
+        Quantum measurement collapse with Born rule: P(i) = |??|0
         """
         probabilities = np.abs(self.amplitudes) ** 2
         
@@ -163,7 +163,7 @@ class QuantumSuperposition:
     
     def von_neumann_entropy(self) -> float:
         """
-        Calculate von Neumann entropy: S(ρ) = -Tr(ρ log ρ)
+        Calculate von Neumann entropy: S(?) = -Tr(? log ?)
         Measures entanglement and quantum information content
         """
         eigenvals = la.eigvals(self.density_matrix)
@@ -174,7 +174,7 @@ class QuantumSuperposition:
 class QuantumEntanglement:
     """
     Mathematical implementation of quantum entanglement
-    For bipartite systems: |ψ⟩ₐᵦ = Σᵢ αᵢ|φᵢ⟩ₐ ⊗ |χᵢ⟩ᵦ
+    For bipartite systems: |??? = ?? ??|??? x |???
     """
     
     def __init__(self, concept_a: Concept, concept_b: Concept, entanglement_strength: float = 0.5):
@@ -187,7 +187,7 @@ class QuantumEntanglement:
     
     def _create_entangled_state(self):
         """
-        Create maximally entangled state: |ψ⟩ = α|00⟩ + β|11⟩
+        Create maximally entangled state: |? = ?|00 + ?|11
         For partial entanglement: interpolate with product states
         """
         dim_a = len(self.concept_a.semantic_vector)
@@ -209,17 +209,17 @@ class QuantumEntanglement:
     
     def compute_concurrence(self) -> float:
         """
-        Compute concurrence C(ρ) as measure of entanglement
-        For 2-qubit systems: C = max(0, λ₁ - λ₂ - λ₃ - λ₄)
+        Compute concurrence C(?) as measure of entanglement
+        For 2-qubit systems: C = max(0, ?0 - ?0 - ?0 - ?0)
         """
         # Pauli-Y matrix
         sigma_y = np.array([[0, -1j], [1j, 0]])
         
-        # Spin-flipped density matrix: ρ̃ = (σy ⊗ σy) ρ* (σy ⊗ σy)
+        # Spin-flipped density matrix: ? = (?y x ?y) ?* (?y x ?y)
         flip_op = np.kron(sigma_y, sigma_y)
         rho_tilde = flip_op @ np.conj(self.density_matrix) @ flip_op
         
-        # R = ρ ρ̃
+        # R = ? ?
         R = self.density_matrix @ rho_tilde
         
         # Eigenvalues in descending order
@@ -280,10 +280,10 @@ class QuantumSymbolicProcessor:
     def create_concept_superposition(self, concepts: List[Concept], amplitudes: Optional[List[complex]] = None) -> str:
         """
         Create quantum superposition of concepts with mathematical rigor
-        |ψ⟩ = Σᵢ αᵢ|concept_i⟩
+        |? = ?? ??|concept_i
         """
         if amplitudes is None:
-            # Equal superposition: αᵢ = 1/√N
+            # Equal superposition: ?? = 1/N
             n = len(concepts)
             amplitudes = [1/np.sqrt(n) + 0j] * n
         
@@ -356,7 +356,7 @@ class QuantumSymbolicProcessor:
     def quantum_interference(self, state_ids: List[str], phases: Optional[List[float]] = None) -> str:
         """
         Create quantum interference between states
-        |ψ⟩ = Σᵢ e^(iφᵢ)|ψᵢ⟩
+        |? = ?? e^(i??)|??
         """
         if phases is None:
             phases = [0.0] * len(state_ids)

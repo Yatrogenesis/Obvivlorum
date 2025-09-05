@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Sistema de Reparación Automática para AI Symbiote
+Sistema de Reparacion Automatica para AI Symbiote
 ================================================
 Soluciona los problemas identificados en el sistema.
 """
@@ -29,14 +29,14 @@ def fix_logging_duplicates():
         with open(symbiote_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Buscar la sección de logging y asegurarse de que no haya duplicación
-        # El problema está en que se configura logging dos veces
+        # Buscar la seccion de logging y asegurarse de que no haya duplicacion
+        # El problema esta en que se configura logging dos veces
         
-        # Reemplazar la configuración duplicada
+        # Reemplazar la configuracion duplicada
         if content.count("logger.info(f\"Initializing AI Symbiote system...\")") > 1:
             logger.info("  [OK] Logs duplicados detectados y corregidos")
         else:
-            logger.info("  ℹ️ No se detectaron logs duplicados")
+            logger.info("  ? No se detectaron logs duplicados")
             
         # Asegurarse de que los handlers no se dupliquen
         fix_code = """
@@ -45,7 +45,7 @@ def fix_logging_duplicates():
         """
         
         if "logger.handlers.clear()" not in content:
-            # Insertar antes de añadir handlers
+            # Insertar antes de anadir handlers
             content = content.replace(
                 "# Setup file handler",
                 f"{fix_code}\n        # Setup file handler"
@@ -59,7 +59,7 @@ def fix_logging_duplicates():
         logger.error(f"  [ERROR] Error al corregir logs: {e}")
 
 def fix_windows_permissions():
-    """Implementar solución alternativa para persistencia sin admin."""
+    """Implementar solucion alternativa para persistencia sin admin."""
     logger.info("[*] Implementando persistencia alternativa...")
     
     try:
@@ -78,7 +78,7 @@ exit
         with open(batch_file, 'w') as f:
             f.write(batch_content)
         
-        # Método 1: Añadir al registro (HKCU - no requiere admin)
+        # Metodo 1: Anadir al registro (HKCU - no requiere admin)
         try:
             key = winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
@@ -90,9 +90,9 @@ exit
             winreg.CloseKey(key)
             logger.info("  [OK] Agregado al registro de inicio (HKCU)")
         except Exception as e:
-            logger.warning(f"  [WARNING] No se pudo añadir al registro: {e}")
+            logger.warning(f"  [WARNING] No se pudo anadir al registro: {e}")
         
-        # Método 2: Crear acceso directo en Startup
+        # Metodo 2: Crear acceso directo en Startup
         startup_folder = Path(os.environ['APPDATA']) / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup"
         if startup_folder.exists():
             startup_batch = startup_folder / "AI_Symbiote.bat"
@@ -100,7 +100,7 @@ exit
                 f.write(batch_content)
             logger.info("  [OK] Agregado a la carpeta de inicio")
         
-        # Método 3: Crear VBS silencioso para evitar ventana CMD
+        # Metodo 3: Crear VBS silencioso para evitar ventana CMD
         vbs_content = f"""Set WshShell = CreateObject("WScript.Shell")
 WshShell.Run chr(34) & "{batch_file}" & Chr(34), 0
 Set WshShell = Nothing
@@ -126,7 +126,7 @@ def fix_wsl_default():
             subprocess.run(["wsl", "--set-default", "ParrotOS"], shell=True)
             logger.info("  [OK] ParrotOS configurado como WSL por defecto")
         else:
-            logger.warning("  [WARNING] ParrotOS no está instalado en WSL")
+            logger.warning("  [WARNING] ParrotOS no esta instalado en WSL")
             
     except Exception as e:
         logger.warning(f"  [WARNING] No se pudo configurar WSL: {e}")
@@ -178,13 +178,13 @@ echo.
 REM Verificar Python
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo ERROR: Python no está instalado o no está en PATH
+    echo ERROR: Python no esta instalado o no esta en PATH
     pause
     exit /b 1
 )
 
 REM Iniciar componentes
-echo [1/3] Iniciando núcleo del sistema...
+echo [1/3] Iniciando nucleo del sistema...
 start /min cmd /c "cd /d D:\\Obvivlorum && python ai_symbiote.py --background --persistent"
 timeout /t 3 /nobreak >nul
 
@@ -239,21 +239,21 @@ def test_interfaces():
     if server_file.exists():
         logger.info("  [OK] Servidor web encontrado")
         
-        # Verificar si el puerto 8000 está disponible
+        # Verificar si el puerto 8000 esta disponible
         import socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex(('localhost', 8000))
         sock.close()
         
         if result == 0:
-            logger.warning("  [WARNING] Puerto 8000 ya está en uso")
+            logger.warning("  [WARNING] Puerto 8000 ya esta en uso")
         else:
             logger.info("  [OK] Puerto 8000 disponible")
     else:
         logger.error("  [ERROR] Servidor web no encontrado")
 
 def create_config_file():
-    """Crear archivo de configuración optimizado."""
+    """Crear archivo de configuracion optimizado."""
     logger.info("[*] Creando configuracion optimizada...")
     
     config = {
@@ -321,7 +321,7 @@ def main():
 ========================================
     """)
     
-    logger.info("Iniciando proceso de reparación...\n")
+    logger.info("Iniciando proceso de reparacion...\n")
     
     # Ejecutar reparaciones
     fix_logging_duplicates()
@@ -347,15 +347,15 @@ def main():
     
     logger.info("REPARACION COMPLETADA")
     print("""
-Próximos pasos:
+Proximos pasos:
 1. Ejecutar START_SYSTEM_FIXED.bat para iniciar el sistema
 2. Si hay problemas, usar START_SAFE_MODE_FIXED.bat
-3. La persistencia se activará en el próximo reinicio
+3. La persistencia se activara en el proximo reinicio
 
 Archivos creados:
 - START_SYSTEM_FIXED.bat - Inicio completo del sistema
 - START_SAFE_MODE_FIXED.bat - Modo seguro
-- config_optimized.json - Configuración optimizada
+- config_optimized.json - Configuracion optimizada
     """)
 
 if __name__ == "__main__":

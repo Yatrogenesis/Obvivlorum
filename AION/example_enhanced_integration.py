@@ -169,7 +169,7 @@ def demonstrate_enhanced_aion():
             systems_used = result["result"]["enhanced_systems_used"]
             print(f"   Enhanced Systems Used:")
             for system, used in systems_used.items():
-                print(f"      - {system.replace('_', ' ').title()}: {'✓' if used else '✗'}")
+                print(f"      - {system.replace('_', ' ').title()}: {'[OK]' if used else '[FAIL]'}")
     
     print()
     
@@ -356,13 +356,13 @@ def demonstrate_enhanced_aion():
     
     print("\n=== Enhanced Demo Complete ===")
     print("\nSystems Successfully Demonstrated:")
-    print("✓ AION Protocol Core with enhanced systems")
-    print("✓ Vector Memory Management with mathematical operations") 
-    print("✓ Quantum Adaptive Framework with state creation and entanglement")
-    print("✓ Metacognitive Learning System with pattern recognition")
-    print("✓ Fractal Memory System with holographic storage and semantic search")
-    print("✓ AI Communication Protocol with concept sharing and optimization")
-    print("✓ Multi-system integration and cross-component data flow")
+    print("[OK] AION Protocol Core with enhanced systems")
+    print("[OK] Vector Memory Management with mathematical operations") 
+    print("[OK] Quantum Adaptive Framework with state creation and entanglement")
+    print("[OK] Metacognitive Learning System with pattern recognition")
+    print("[OK] Fractal Memory System with holographic storage and semantic search")
+    print("[OK] AI Communication Protocol with concept sharing and optimization")
+    print("[OK] Multi-system integration and cross-component data flow")
     print()
     
     return {

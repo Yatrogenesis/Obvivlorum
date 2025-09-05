@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 OBVIVLORUM - SINGLE CLICK LAUNCHER
+ OBVIVLORUM - SINGLE CLICK LAUNCHER
 ====================================
 
 Lanzador unificado de un solo clic con selector de modo
@@ -25,7 +25,7 @@ class ModeSelectorDialog:
     
     def _setup_dialog(self):
         """Configurar dialog"""
-        self.root.title("🚀 OBVIVLORUM LAUNCHER")
+        self.root.title(" OBVIVLORUM LAUNCHER")
         self.root.geometry("600x400")
         self.root.configure(bg='#0a0a0a')
         self.root.resizable(False, False)
@@ -43,7 +43,7 @@ class ModeSelectorDialog:
         header.pack(fill='x')
         header.pack_propagate(False)
         
-        title = tk.Label(header, text="🧠 OBVIVLORUM", 
+        title = tk.Label(header, text=" OBVIVLORUM", 
                         fg='#00ff88', bg='#1a1a1a',
                         font=('Inter Black', 20, 'bold'))
         title.pack(expand=True)
@@ -59,29 +59,29 @@ class ModeSelectorDialog:
         
         # Modo Desktop (Predeterminado/Recomendado)
         self._create_mode_option(modes_frame, 
-            title="🖥️ DESKTOP MODE", 
-            subtitle="Interfaz Gráfica Brutal • Configuración Completa • ParrotOS Ready",
-            advantages="✅ UI/UX Impresionante\n✅ Control Total\n✅ Configuración Avanzada\n✅ ParrotOS Integration\n✅ Rendimiento Óptimo",
-            disadvantages="❌ Solo local (no web access)\n❌ Requiere GUI disponible",
+            title=" DESKTOP MODE", 
+            subtitle="Interfaz Grafica Brutal  Configuracion Completa  ParrotOS Ready",
+            advantages=" UI/UX Impresionante\n Control Total\n Configuracion Avanzada\n ParrotOS Integration\n Rendimiento Optimo",
+            disadvantages=" Solo local (no web access)\n Requiere GUI disponible",
             command="desktop",
             recommended=True
         )
         
         # Modo Web
         self._create_mode_option(modes_frame,
-            title="🌐 WEB MODE", 
-            subtitle="Servidor Web • API REST • Acceso Remoto",
-            advantages="✅ Acceso desde cualquier dispositivo\n✅ API REST completa\n✅ Multi-usuario\n✅ Responsive design",
-            disadvantages="❌ UI menos avanzada\n❌ Requiere navegador\n❌ Mayor uso de recursos",
+            title=" WEB MODE", 
+            subtitle="Servidor Web  API REST  Acceso Remoto",
+            advantages=" Acceso desde cualquier dispositivo\n API REST completa\n Multi-usuario\n Responsive design",
+            disadvantages=" UI menos avanzada\n Requiere navegador\n Mayor uso de recursos",
             command="web",
             recommended=False
         )
         
-        # Botón de lanzamiento
+        # Boton de lanzamiento
         launch_frame = tk.Frame(self.root, bg='#0a0a0a')
         launch_frame.pack(fill='x', padx=40, pady=20)
         
-        self.launch_button = tk.Button(launch_frame, text="🚀 LANZAR DESKTOP (RECOMENDADO)", 
+        self.launch_button = tk.Button(launch_frame, text=" LANZAR DESKTOP (RECOMENDADO)", 
                                       command=lambda: self._launch_mode("desktop"),
                                       bg='#00ff88', fg='#000000',
                                       font=('Inter Medium', 12, 'bold'),
@@ -89,7 +89,7 @@ class ModeSelectorDialog:
         self.launch_button.pack()
     
     def _create_mode_option(self, parent, title, subtitle, advantages, disadvantages, command, recommended):
-        """Crear opción de modo"""
+        """Crear opcion de modo"""
         frame = tk.Frame(parent, bg='#1a1a1a', relief='ridge', bd=2)
         frame.pack(fill='x', pady=10)
         
@@ -104,7 +104,7 @@ class ModeSelectorDialog:
         title_label.pack(anchor='w')
         
         if recommended:
-            rec_label = tk.Label(header_frame, text="⭐ RECOMENDADO", 
+            rec_label = tk.Label(header_frame, text=" RECOMENDADO", 
                                 fg='#ffeb3b', bg='#1a1a1a',
                                 font=('Inter', 10, 'bold'))
             rec_label.pack(anchor='w')
@@ -138,7 +138,7 @@ class ModeSelectorDialog:
                                justify='left')
         disadv_label.pack(anchor='w')
         
-        # Botón de selección
+        # Boton de seleccion
         select_btn = tk.Button(frame, text=f"Seleccionar {title.split()[1]}", 
                               command=lambda: self._select_mode(command),
                               bg='#2d2d2d', fg='#ffffff',
@@ -149,11 +149,11 @@ class ModeSelectorDialog:
     def _select_mode(self, mode):
         """Seleccionar modo"""
         if mode == "desktop":
-            self.launch_button.config(text="🚀 LANZAR DESKTOP MODE", 
+            self.launch_button.config(text=" LANZAR DESKTOP MODE", 
                                     command=lambda: self._launch_mode("desktop"),
                                     bg='#00ff88')
         else:
-            self.launch_button.config(text="🚀 LANZAR WEB MODE", 
+            self.launch_button.config(text=" LANZAR WEB MODE", 
                                     command=lambda: self._launch_mode("web"),
                                     bg='#ff6b35')
     
@@ -190,57 +190,57 @@ class SingleClickLauncher:
     
     def launch_desktop_mode(self):
         """Lanzar modo desktop"""
-        print("🚀 Launching DESKTOP MODE...")
+        print(" Launching DESKTOP MODE...")
         
         try:
             # Verificar dependencias
             deps = self.check_dependencies()
             
             if not deps['brutal_ui']:
-                print("⚠️ Brutal UI not found, falling back to standard GUI...")
+                print(" Brutal UI not found, falling back to standard GUI...")
                 if deps['gui_desktop']:
                     subprocess.Popen([sys.executable, "ai_symbiote_gui.py"])
                 else:
-                    print("❌ No GUI components found!")
+                    print(" No GUI components found!")
                     return False
             else:
                 # Lanzar Brutal UI Desktop
                 subprocess.Popen([sys.executable, "brutal_ui_desktop.py"])
             
-            print("✅ Desktop mode launched successfully!")
+            print(" Desktop mode launched successfully!")
             return True
             
         except Exception as e:
-            print(f"❌ Error launching desktop mode: {e}")
+            print(f" Error launching desktop mode: {e}")
             return False
     
     def launch_web_mode(self):
         """Lanzar modo web"""
-        print("🌐 Launching WEB MODE...")
+        print(" Launching WEB MODE...")
         
         try:
             deps = self.check_dependencies()
             
             if not deps['web_backend']:
-                print("❌ Web backend not found!")
+                print(" Web backend not found!")
                 return False
             
             # Lanzar servidor web
             web_server_path = self.project_root / "web" / "backend" / "symbiote_server.py"
             subprocess.Popen([sys.executable, str(web_server_path)])
             
-            print("✅ Web server launched!")
-            print("🌐 Access at: http://localhost:8000")
+            print(" Web server launched!")
+            print(" Access at: http://localhost:8000")
             return True
             
         except Exception as e:
-            print(f"❌ Error launching web mode: {e}")
+            print(f" Error launching web mode: {e}")
             return False
     
     def run(self):
         """Ejecutar launcher principal"""
         print("=" * 60)
-        print("🧠 OBVIVLORUM - SINGLE CLICK LAUNCHER")
+        print(" OBVIVLORUM - SINGLE CLICK LAUNCHER")
         print("=" * 60)
         
         # Mostrar selector de modo
@@ -256,14 +256,14 @@ class SingleClickLauncher:
             success = self.launch_desktop_mode()
         
         if not success:
-            print("❌ Launch failed!")
+            print(" Launch failed!")
             input("Press Enter to exit...")
         else:
-            print("🎉 System launched successfully!")
+            print(" System launched successfully!")
             print("Check your desktop/browser for the application.")
 
 def main():
-    """Función principal"""
+    """Funcion principal"""
     launcher = SingleClickLauncher()
     launcher.run()
 

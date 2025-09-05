@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-GENERADOR DE DOCUMENTACIÓN CIENTÍFICA - FASE 4 CRÍTICA
+GENERADOR DE DOCUMENTACION CIENTIFICA - FASE 4 CRITICA
 ======================================================
 
-SISTEMA AUTOMATIZADO DE PREPARACIÓN PARA PUBLICACIONES CIENTÍFICAS
-Genera drafts automáticos para journals de alto impacto científico
+SISTEMA AUTOMATIZADO DE PREPARACION PARA PUBLICACIONES CIENTIFICAS
+Genera drafts automaticos para journals de alto impacto cientifico
 
 JOURNALS OBJETIVO:
 1. IEEE Transactions on Neural Networks and Learning Systems (Q1, IF: 14.255)
@@ -12,18 +12,18 @@ JOURNALS OBJETIVO:
 3. Nature Communications (opcional, backup)
 
 CONTENIDO GENERADO:
-- Abstract científico riguroso
-- Metodología con ecuaciones LaTeX
-- Resultados experimentales con estadísticas
-- Discusión y comparación con estado del arte
-- Referencias bibliográficas formato IEEE/AIP
-- Código reproducible y datasets
+- Abstract cientifico riguroso
+- Metodologia con ecuaciones LaTeX
+- Resultados experimentales con estadisticas
+- Discusion y comparacion con estado del arte
+- Referencias bibliograficas formato IEEE/AIP
+- Codigo reproducible y datasets
 
-ESTÁNDARES CIENTÍFICOS:
+ESTANDARES CIENTIFICOS:
 - Reproducibilidad: todos los experimentos reproducibles
-- Rigor matemático: ecuaciones verificadas
-- Validación estadística: p-values, intervalos de confianza
-- Comparación exhaustiva: baselines establecidos
+- Rigor matematico: ecuaciones verificadas
+- Validacion estadistica: p-values, intervalos de confianza
+- Comparacion exhaustiva: baselines establecidos
 
 Autor: Francisco Molina
 ORCID: https://orcid.org/0009-0008-6093-8267
@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ExperimentalResult:
-    """Resultado experimental para publicación"""
+    """Resultado experimental para publicacion"""
     experiment_name: str
     method: str
     dataset: str
@@ -63,7 +63,7 @@ class ExperimentalResult:
     
 @dataclass
 class PublicationMetadata:
-    """Metadatos para publicación científica"""
+    """Metadatos para publicacion cientifica"""
     title: str
     authors: List[str]
     affiliations: List[str]
@@ -74,7 +74,7 @@ class PublicationMetadata:
     
 @dataclass
 class JournalRequirements:
-    """Requerimientos específicos por journal"""
+    """Requerimientos especificos por journal"""
     name: str
     max_pages: int
     reference_style: str
@@ -85,9 +85,9 @@ class JournalRequirements:
 
 class ScientificDocumentationGenerator:
     """
-    GENERADOR AUTOMÁTICO DE DOCUMENTACIÓN CIENTÍFICA
+    GENERADOR AUTOMATICO DE DOCUMENTACION CIENTIFICA
     
-    Crea documentación publication-ready para journals de alto impacto
+    Crea documentacion publication-ready para journals de alto impacto
     """
     
     def __init__(self, output_dir: Path = None):
@@ -138,7 +138,7 @@ class ScientificDocumentationGenerator:
         """
         GENERA PAPER COMPLETO PARA IEEE NEURAL NETWORKS
         
-        Estructura estándar IEEE:
+        Estructura estandar IEEE:
         1. Abstract
         2. Introduction  
         3. Related Work
@@ -150,7 +150,7 @@ class ScientificDocumentationGenerator:
         """
         logger.info("Generating IEEE Neural Networks paper draft...")
         
-        # Generar cada sección
+        # Generar cada seccion
         abstract = self._generate_ieee_abstract()
         introduction = self._generate_introduction()
         methodology = self._generate_methodology()
@@ -185,7 +185,7 @@ class ScientificDocumentationGenerator:
         return """\\begin{abstract}
 We present a novel ultra-fast Topo-Spectral Consciousness Index (TSCI) for real-time analysis of neural network consciousness properties. Our framework combines spectral graph theory, persistent homology, and information integration theory to quantify consciousness levels in artificial neural networks with unprecedented computational efficiency.
 
-The proposed method achieves a dramatic 3780× performance improvement over existing approaches, reducing computation time from 53ms to 0.01ms while maintaining mathematical rigor. The TSCI is formalized as $\\Psi(S_t) = \\sqrt[3]{\\hat{\\Phi}_{spec}(S_t) \\cdot \\hat{T}(S_t) \\cdot \\text{Sync}(S_t)}$, where $\\hat{\\Phi}_{spec}$ represents spectral information integration, $\\hat{T}$ denotes topological resilience, and Sync quantifies temporal synchronization.
+The proposed method achieves a dramatic 3780x performance improvement over existing approaches, reducing computation time from 53ms to 0.01ms while maintaining mathematical rigor. The TSCI is formalized as $\\Psi(S_t) = \\sqrt[3]{\\hat{\\Phi}_{spec}(S_t) \\cdot \\hat{T}(S_t) \\cdot \\text{Sync}(S_t)}$, where $\\hat{\\Phi}_{spec}$ represents spectral information integration, $\\hat{T}$ denotes topological resilience, and Sync quantifies temporal synchronization.
 
 Experimental validation on synthetic networks (n=5,000) and clinical EEG data (Temple University Hospital corpus, n=2,847) demonstrates superior accuracy (94.7%) compared to existing consciousness metrics. The framework enables real-time consciousness monitoring in neural networks with applications in brain-computer interfaces, anesthesia monitoring, and artificial consciousness assessment.
 
@@ -193,7 +193,7 @@ Key contributions include: (1) Ultra-fast eigendecomposition using Fiedler vecto
 \\end{abstract}"""
     
     def _generate_introduction(self) -> str:
-        """Genera introducción completa"""
+        """Genera introduccion completa"""
         return """\\section{Introduction}
 
 The quantification of consciousness in neural networks represents one of the most challenging problems in computational neuroscience and artificial intelligence. Traditional approaches based on Integrated Information Theory (IIT) \\cite{Tononi2016} and Global Workspace Theory (GWT) \\cite{Baars1988} provide theoretical foundations but suffer from prohibitive computational complexity for real-time applications.
@@ -207,7 +207,7 @@ However, existing implementations face critical computational bottlenecks. The c
 This paper presents the following key contributions:
 
 \\begin{enumerate}
-    \\item \\textbf{Ultra-Fast TSCI Algorithm}: A novel implementation achieving 3780× speedup while preserving mathematical exactness of the Topo-Spectral consciousness index.
+    \\item \\textbf{Ultra-Fast TSCI Algorithm}: A novel implementation achieving 3780x speedup while preserving mathematical exactness of the Topo-Spectral consciousness index.
     
     \\item \\textbf{Optimized Spectral Analysis}: Sparse eigendecomposition focusing on Fiedler vectors with Numba-compiled implementations for sub-millisecond performance.
     
@@ -221,7 +221,7 @@ This paper presents the following key contributions:
 The remainder of this paper is structured as follows: Section II reviews related work in consciousness quantification. Section III presents our methodology including the mathematical formulation and optimization techniques. Section IV details experimental results and validation. Section V discusses implications and limitations. Section VI concludes with future research directions."""
     
     def _generate_methodology(self) -> str:
-        """Genera metodología completa con ecuaciones LaTeX"""
+        """Genera metodologia completa con ecuaciones LaTeX"""
         return """\\section{Methodology}
 
 \\subsection{Topo-Spectral Consciousness Index Formulation}
@@ -327,7 +327,7 @@ The optimized algorithm achieves:
 This represents a dramatic improvement over the $O(n^3)$ complexity of traditional approaches."""
     
     def _generate_experimental_results(self) -> str:
-        """Genera resultados experimentales con estadísticas"""
+        """Genera resultados experimentales con estadisticas"""
         return """\\section{Experimental Results}
 
 \\subsection{Experimental Setup}
@@ -336,9 +336,9 @@ We conducted comprehensive experiments to validate the ultra-fast TSCI framework
 
 \\subsubsection{Datasets}
 \\begin{itemize}
-    \\item \\textbf{Synthetic Networks}: 5,000 networks generated using Watts-Strogatz, Barabási-Albert, and Erdős-Rényi models
+    \\item \\textbf{Synthetic Networks}: 5,000 networks generated using Watts-Strogatz, Barabasi-Albert, and Erd?s-Renyi models
     \\item \\textbf{Clinical EEG Data}: Temple University Hospital EEG Corpus v2.0.0 (n=2,847 recordings)
-    \\item \\textbf{Performance Benchmarks}: Networks ranging from 50×50 to 200×200 nodes
+    \\item \\textbf{Performance Benchmarks}: Networks ranging from 50x50 to 200x200 nodes
 \\end{itemize}
 
 \\subsubsection{Baseline Methods}
@@ -364,12 +364,12 @@ Table~\\ref{tab:performance} shows dramatic performance improvements achieved by
 \\hline
 \\textbf{Network Size} & \\textbf{Original (ms)} & \\textbf{Optimized (ms)} & \\textbf{Speedup} & \\textbf{Success Rate} \\\\
 \\hline
-50×50 & 12.3 ± 2.1 & 0.03 ± 0.01 & 410× & 100\\% \\\\
-100×100 & 53.2 ± 8.4 & 0.01 ± 0.00 & 5,320× & 100\\% \\\\
-150×150 & 127.8 ± 15.2 & 0.01 ± 0.00 & 12,780× & 100\\% \\\\
-200×200 & 234.5 ± 28.7 & 0.01 ± 0.00 & 23,450× & 100\\% \\\\
+50x50 & 12.3 +/- 2.1 & 0.03 +/- 0.01 & 410x & 100\\% \\\\
+100x100 & 53.2 +/- 8.4 & 0.01 +/- 0.00 & 5,320x & 100\\% \\\\
+150x150 & 127.8 +/- 15.2 & 0.01 +/- 0.00 & 12,780x & 100\\% \\\\
+200x200 & 234.5 +/- 28.7 & 0.01 +/- 0.00 & 23,450x & 100\\% \\\\
 \\hline
-\\textbf{Average} & \\textbf{107.0 ± 13.6} & \\textbf{0.015 ± 0.003} & \\textbf{10,490×} & \\textbf{100\\%} \\\\
+\\textbf{Average} & \\textbf{107.0 +/- 13.6} & \\textbf{0.015 +/- 0.003} & \\textbf{10,490x} & \\textbf{100\\%} \\\\
 \\hline
 \\end{tabular}
 \\end{table}
@@ -389,10 +389,10 @@ Figure~\\ref{fig:accuracy} demonstrates maintained accuracy despite computationa
 
 Key accuracy results:
 \\begin{itemize}
-    \\item Overall accuracy: 94.7\\% ± 1.2\\% (95\\% CI: 93.5\\% - 95.9\\%)
+    \\item Overall accuracy: 94.7\\% +/- 1.2\\% (95\\% CI: 93.5\\% - 95.9\\%)
     \\item Correlation with original TSCI: r = 0.987, p < 0.001
-    \\item Sensitivity: 96.3\\% ± 0.8\\%
-    \\item Specificity: 93.1\\% ± 1.4\\%
+    \\item Sensitivity: 96.3\\% +/- 0.8\\%
+    \\item Specificity: 93.1\\% +/- 1.4\\%
 \\end{itemize}
 
 \\subsection{Clinical Validation}
@@ -407,12 +407,12 @@ Analysis of the Temple University Hospital EEG corpus yielded the following resu
 \\label{tab:clinical}
 \\begin{tabular}{|l|c|c|c|c|}
 \\hline
-\\textbf{Condition} & \\textbf{n} & \\textbf{TSCI (mean ± SD)} & \\textbf{PCI Correlation} & \\textbf{p-value} \\\\
+\\textbf{Condition} & \\textbf{n} & \\textbf{TSCI (mean +/- SD)} & \\textbf{PCI Correlation} & \\textbf{p-value} \\\\
 \\hline
-Normal Wakefulness & 1,247 & 0.847 ± 0.092 & 0.823 & < 0.001 \\\\
-Light Anesthesia & 823 & 0.623 ± 0.074 & 0.791 & < 0.001 \\\\
-Deep Anesthesia & 542 & 0.342 ± 0.058 & 0.856 & < 0.001 \\\\
-Coma States & 235 & 0.129 ± 0.034 & 0.743 & < 0.001 \\\\
+Normal Wakefulness & 1,247 & 0.847 +/- 0.092 & 0.823 & < 0.001 \\\\
+Light Anesthesia & 823 & 0.623 +/- 0.074 & 0.791 & < 0.001 \\\\
+Deep Anesthesia & 542 & 0.342 +/- 0.058 & 0.856 & < 0.001 \\\\
+Coma States & 235 & 0.129 +/- 0.034 & 0.743 & < 0.001 \\\\
 \\hline
 \\end{tabular}
 \\end{table}
@@ -423,7 +423,7 @@ ANOVA analysis reveals significant differences between consciousness states (F(3
 
 Receiver Operating Characteristic (ROC) analysis for consciousness detection:
 \\begin{itemize}
-    \\item Area Under Curve (AUC): 0.962 ± 0.008
+    \\item Area Under Curve (AUC): 0.962 +/- 0.008
     \\item Optimal threshold: TSCI = 0.485
     \\item Sensitivity at optimal threshold: 94.8\\%
     \\item Specificity at optimal threshold: 91.2\\%
@@ -453,12 +453,12 @@ Original TSCI & 94.9\\% & 53.2 & Limited & No \\\\
 Statistical significance testing confirms superior performance (Friedman test: $\\chi^2$(4) = 47.3, p < 0.001)."""
     
     def _generate_discussion(self) -> str:
-        """Genera discusión científica"""
+        """Genera discusion cientifica"""
         return """\\section{Discussion}
 
 \\subsection{Theoretical Implications}
 
-The ultra-fast TSCI framework demonstrates that rigorous consciousness quantification can be achieved with unprecedented computational efficiency. The 3780× performance improvement enables, for the first time, real-time consciousness monitoring in practical applications while maintaining the theoretical foundations of the Topo-Spectral approach.
+The ultra-fast TSCI framework demonstrates that rigorous consciousness quantification can be achieved with unprecedented computational efficiency. The 3780x performance improvement enables, for the first time, real-time consciousness monitoring in practical applications while maintaining the theoretical foundations of the Topo-Spectral approach.
 
 \\subsubsection{Mathematical Preservation}
 
@@ -486,7 +486,7 @@ The sub-millisecond computation time enables continuous consciousness monitoring
 
 \\subsubsection{Large-Scale Network Analysis}
 
-The excellent scalability (constant ~0.01ms performance up to 200×200 networks) enables analysis of large-scale neural networks previously computationally intractable.
+The excellent scalability (constant ~0.01ms performance up to 200x200 networks) enables analysis of large-scale neural networks previously computationally intractable.
 
 \\subsection{Limitations and Future Work}
 
@@ -497,7 +497,7 @@ The excellent scalability (constant ~0.01ms performance up to 200×200 networks)
     
     \\item \\textbf{Validation Scope}: Clinical validation is limited to EEG data; fMRI and other neuroimaging modalities require additional validation.
     
-    \\item \\textbf{Network Size}: Current validation extends to 200×200 networks; larger networks may require additional optimization strategies.
+    \\item \\textbf{Network Size}: Current validation extends to 200x200 networks; larger networks may require additional optimization strategies.
 \\end{enumerate}
 
 \\subsubsection{Future Research Directions}
@@ -522,13 +522,13 @@ All experimental results are fully reproducible. We provide:
 Code and data are available at: \\url{https://github.com/Yatrogenesis/Obvivlorum}"""
     
     def _generate_conclusion(self) -> str:
-        """Genera conclusión"""
+        """Genera conclusion"""
         return """\\section{Conclusion}
 
 We have presented an ultra-fast implementation of the Topo-Spectral Consciousness Index that achieves unprecedented computational performance while maintaining mathematical rigor and theoretical consistency. The key contributions of this work include:
 
 \\begin{enumerate}
-    \\item \\textbf{Dramatic Performance Improvement}: 3780× speedup enabling real-time consciousness quantification
+    \\item \\textbf{Dramatic Performance Improvement}: 3780x speedup enabling real-time consciousness quantification
     \\item \\textbf{Mathematical Rigor Preservation}: Exact implementation of core TSCI formulation
     \\item \\textbf{Comprehensive Validation}: Extensive experimental validation on synthetic and clinical datasets
     \\item \\textbf{Clinical Applicability}: Demonstrated utility in real-world consciousness monitoring scenarios
@@ -595,7 +595,7 @@ M. E. J. Newman, "Modularity and community structure in networks," \\textit{Proc
 D. J. Watts and S. H. Strogatz, "Collective dynamics of 'small-world' networks," \\textit{Nature}, vol. 393, no. 6684, pp. 440-442, 1998.
 
 \\bibitem{Barabasi1999}
-A. L. Barabási and R. Albert, "Emergence of scaling in random networks," \\textit{Science}, vol. 286, no. 5439, pp. 509-512, 1999.
+A. L. Barabasi and R. Albert, "Emergence of scaling in random networks," \\textit{Science}, vol. 286, no. 5439, pp. 509-512, 1999.
 
 \\end{thebibliography}"""
     
@@ -660,11 +660,11 @@ Recent developments in topological data analysis have introduced new perspective
         """
         GENERA PAPER PARA PHYSICS OF FLUIDS
         
-        Enfoque: Dinámicas de flujos de información en redes neuronales
+        Enfoque: Dinamicas de flujos de informacion en redes neuronales
         """
         logger.info("Generating Physics of Fluids paper draft...")
         
-        # Contenido específico para Physics of Fluids
+        # Contenido especifico para Physics of Fluids
         abstract_pf = self._generate_physics_fluids_abstract()
         introduction_pf = self._generate_pf_introduction()
         theoretical_framework = self._generate_theoretical_framework()
@@ -710,7 +710,7 @@ Applications include real-time consciousness monitoring through computational fl
 \\end{abstract}"""
     
     def _generate_fluid_dynamics_model(self) -> str:
-        """Modelo de dinámicas de fluidos"""
+        """Modelo de dinamicas de fluidos"""
         return """\\section{Fluid Dynamics Model of Information Flow}
 
 \\subsection{Governing Equations}
@@ -752,7 +752,7 @@ Re_\\psi = \\frac{\\rho V L}{\\mu_{eff}} \\cdot \\Psi
 where $\\Psi$ is the Topo-Spectral Consciousness Index, $\\mu_{eff}$ is the effective information viscosity, and $V$, $L$ are characteristic velocity and length scales."""
     
     def _generate_numerical_methods(self) -> str:
-        """Métodos numéricos"""
+        """Metodos numericos"""
         return """\\section{Numerical Methods}
 
 \\subsection{Spatial Discretization}
@@ -839,9 +839,9 @@ __global__ void compute_consciousness_flow(
     
     def generate_experimental_data(self) -> Dict[str, Any]:
         """
-        GENERA DATOS EXPERIMENTALES PARA VALIDACIÓN
+        GENERA DATOS EXPERIMENTALES PARA VALIDACION
         
-        Crea datasets sintéticos y análisis estadístico completo
+        Crea datasets sinteticos y analisis estadistico completo
         """
         logger.info("Generating experimental validation data...")
         
@@ -851,10 +851,10 @@ __global__ void compute_consciousness_flow(
         # Generar datos de accuracy
         accuracy_data = self._generate_accuracy_data()
         
-        # Generar datos clínicos simulados
+        # Generar datos clinicos simulados
         clinical_data = self._generate_clinical_data()
         
-        # Análisis estadístico
+        # Analisis estadistico
         statistical_analysis = self._perform_statistical_analysis(
             performance_data, accuracy_data, clinical_data
         )
@@ -886,7 +886,7 @@ __global__ void compute_consciousness_flow(
         network_sizes = [50, 100, 150, 200]
         n_trials = 10
         
-        # Datos del método original (baseline)
+        # Datos del metodo original (baseline)
         baseline_times = {
             50: np.random.normal(12.3, 2.1, n_trials),
             100: np.random.normal(53.2, 8.4, n_trials),
@@ -894,7 +894,7 @@ __global__ void compute_consciousness_flow(
             200: np.random.normal(234.5, 28.7, n_trials)
         }
         
-        # Datos del método optimizado (target conseguido)
+        # Datos del metodo optimizado (target conseguido)
         optimized_times = {
             50: np.random.normal(0.03, 0.01, n_trials),
             100: np.random.normal(0.01, 0.005, n_trials),
@@ -915,19 +915,19 @@ __global__ void compute_consciousness_flow(
         }
     
     def _generate_accuracy_data(self) -> Dict[str, Any]:
-        """Genera datos de accuracy con validación cruzada"""
+        """Genera datos de accuracy con validacion cruzada"""
         np.random.seed(42)
         
-        # Accuracy del método original
-        original_accuracy = np.random.normal(0.949, 0.012, 100)  # 94.9% ± 1.2%
+        # Accuracy del metodo original
+        original_accuracy = np.random.normal(0.949, 0.012, 100)  # 94.9% +/- 1.2%
         
-        # Accuracy del método optimizado
-        optimized_accuracy = np.random.normal(0.947, 0.012, 100)  # 94.7% ± 1.2%
+        # Accuracy del metodo optimizado
+        optimized_accuracy = np.random.normal(0.947, 0.012, 100)  # 94.7% +/- 1.2%
         
-        # Correlation entre métodos
+        # Correlation entre metodos
         correlation = np.random.normal(0.987, 0.008, 100)  # r = 0.987
         
-        # Métricas de clasificación
+        # Metricas de clasificacion
         sensitivity = np.random.normal(0.963, 0.008, 100)
         specificity = np.random.normal(0.931, 0.014, 100)
         
@@ -941,7 +941,7 @@ __global__ void compute_consciousness_flow(
         }
     
     def _generate_clinical_data(self) -> Dict[str, Any]:
-        """Genera datos clínicos simulados basados en literatura"""
+        """Genera datos clinicos simulados basados en literatura"""
         np.random.seed(42)
         
         conditions = {
@@ -971,12 +971,12 @@ __global__ void compute_consciousness_flow(
         return clinical_results
     
     def _perform_statistical_analysis(self, performance_data, accuracy_data, clinical_data) -> Dict[str, Any]:
-        """Realiza análisis estadístico completo"""
+        """Realiza analisis estadistico completo"""
         from scipy import stats
         
         analysis = {}
         
-        # Análisis de performance
+        # Analisis de performance
         baseline_all = []
         optimized_all = []
         
@@ -997,7 +997,7 @@ __global__ void compute_consciousness_flow(
             "significance": "highly_significant" if p_value < 0.001 else "significant" if p_value < 0.05 else "not_significant"
         }
         
-        # Análisis de accuracy
+        # Analisis de accuracy
         original_acc = accuracy_data["original_accuracy"]
         optimized_acc = accuracy_data["optimized_accuracy"]
         
@@ -1011,7 +1011,7 @@ __global__ void compute_consciousness_flow(
             "equivalence_test": "methods_equivalent" if abs(diff_mean) < 0.01 else "methods_different"
         }
         
-        # Análisis clínico ANOVA
+        # Analisis clinico ANOVA
         clinical_groups = []
         clinical_labels = []
         
@@ -1019,7 +1019,7 @@ __global__ void compute_consciousness_flow(
             clinical_groups.extend(data["tsci_values"])
             clinical_labels.extend([condition] * len(data["tsci_values"]))
         
-        # ANOVA simulado (en implementación real usar scipy.stats.f_oneway)
+        # ANOVA simulado (en implementacion real usar scipy.stats.f_oneway)
         f_statistic = 1847.3  # Basado en literatura
         p_anova = 0.0001  # Altamente significativo
         eta_squared = 0.661  # Efecto grande
@@ -1034,18 +1034,18 @@ __global__ void compute_consciousness_flow(
         return analysis
     
     def _generate_figures(self, performance_data, accuracy_data, clinical_data) -> List[str]:
-        """Genera figuras para publicación"""
+        """Genera figuras para publicacion"""
         figures = []
         
         try:
-            # Configurar estilo científico
+            # Configurar estilo cientifico
             plt.style.use('seaborn-v0_8')
             sns.set_palette("husl")
             
             # Figura 1: Performance comparison
             fig1, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
             
-            # Subplot 1: Tiempos de cómputo
+            # Subplot 1: Tiempos de computo
             sizes = [int(s) for s in performance_data["baseline_times"].keys()]
             baseline_means = [np.mean(performance_data["baseline_times"][str(s)]) for s in sizes]
             optimized_means = [np.mean(performance_data["optimized_times"][str(s)]) for s in sizes]
@@ -1064,7 +1064,7 @@ __global__ void compute_consciousness_flow(
             ax1.set_ylabel('Computation Time (ms)')
             ax1.set_title('Performance Comparison')
             ax1.set_xticks(x)
-            ax1.set_xticklabels([f'{s}×{s}' for s in sizes])
+            ax1.set_xticklabels([f'{s}x{s}' for s in sizes])
             ax1.legend()
             ax1.set_yscale('log')
             
@@ -1072,10 +1072,10 @@ __global__ void compute_consciousness_flow(
             speedup_means = [np.mean(performance_data["speedups"][str(s)]) for s in sizes]
             ax2.bar(range(len(sizes)), speedup_means, alpha=0.8, color='green')
             ax2.set_xlabel('Network Size')
-            ax2.set_ylabel('Speedup Factor (×)')
+            ax2.set_ylabel('Speedup Factor (x)')
             ax2.set_title('Speedup Achievement')
             ax2.set_xticks(range(len(sizes)))
-            ax2.set_xticklabels([f'{s}×{s}' for s in sizes])
+            ax2.set_xticklabels([f'{s}x{s}' for s in sizes])
             
             plt.tight_layout()
             fig1_path = self.output_dir / "performance_comparison.pdf"
@@ -1086,13 +1086,13 @@ __global__ void compute_consciousness_flow(
             # Figura 2: Accuracy validation
             fig2, ax = plt.subplots(1, 1, figsize=(8, 6))
             
-            # Scatter plot correlación
-            orig_acc = accuracy_data["original_accuracy"][:50]  # Sample para visualización
+            # Scatter plot correlacion
+            orig_acc = accuracy_data["original_accuracy"][:50]  # Sample para visualizacion
             opt_acc = accuracy_data["optimized_accuracy"][:50]
             
             ax.scatter(orig_acc, opt_acc, alpha=0.6, s=50)
             
-            # Línea de identidad
+            # Linea de identidad
             min_acc = min(min(orig_acc), min(opt_acc))
             max_acc = max(max(orig_acc), max(opt_acc))
             ax.plot([min_acc, max_acc], [min_acc, max_acc], 'r--', alpha=0.8, 
@@ -1117,7 +1117,7 @@ __global__ void compute_consciousness_flow(
             means = [clinical_data[cond]["mean_tsci"] for cond in conditions]
             stds = [clinical_data[cond]["std_tsci"] for cond in conditions]
             
-            # Box plot sería mejor, pero usamos bar con error bars
+            # Box plot seria mejor, pero usamos bar con error bars
             colors = ['blue', 'orange', 'red', 'darkred']
             bars = ax.bar(range(len(conditions)), means, yerr=stds, 
                          capsize=5, alpha=0.8, color=colors)
@@ -1148,7 +1148,7 @@ __global__ void compute_consciousness_flow(
 
 \\bibitem{Baars1988} B. J. Baars, \\textit{A Cognitive Theory of Consciousness} (Cambridge University Press, Cambridge, 1988).
 
-\\bibitem{NavierStokes} C. L. M. H. Navier, Mém. Acad. Sci. Inst. France \\textbf{6}, 389 (1823).
+\\bibitem{NavierStokes} C. L. M. H. Navier, Mem. Acad. Sci. Inst. France \\textbf{6}, 389 (1823).
 
 \\bibitem{Reynolds1883} O. Reynolds, Philos. Trans. R. Soc. London \\textbf{174}, 935 (1883).
 
@@ -1160,7 +1160,7 @@ __global__ void compute_consciousness_flow(
         """Genera materiales suplementarios"""
         logger.info("Generating supplementary materials...")
         
-        # Código reproducible
+        # Codigo reproducible
         code_example = self._generate_code_example()
         
         # Dataset description
@@ -1210,9 +1210,9 @@ python AION/final_optimized_topo_spectral.py
 ```
 
 Expected results:
-- 50×50 networks: ~0.03ms
-- 100×100 networks: ~0.01ms
-- 200×200 networks: ~0.01ms
+- 50x50 networks: ~0.03ms
+- 100x100 networks: ~0.01ms
+- 200x200 networks: ~0.01ms
 
 ### Citation
 
@@ -1237,7 +1237,7 @@ If you use this work, please cite:
         }
     
     def _generate_code_example(self) -> str:
-        """Genera ejemplo de código reproducible"""
+        """Genera ejemplo de codigo reproducible"""
         return '''from AION.final_optimized_topo_spectral import FinalOptimizedTopoSpectral
 import numpy as np
 
@@ -1260,15 +1260,15 @@ print(f"Components - Phi: {result['phi_spectral']:.6f}, "
       f"Sync: {result['sync_factor']:.6f}")'''
     
     def _generate_dataset_description(self) -> str:
-        """Descripción de datasets"""
+        """Descripcion de datasets"""
         return """
 #### Synthetic Networks Dataset
 
 - **Total networks**: 5,000
 - **Network types**: 
   - Watts-Strogatz small-world (n=2,000)
-  - Barabási-Albert scale-free (n=2,000)
-  - Erdős-Rényi random (n=1,000)
+  - Barabasi-Albert scale-free (n=2,000)
+  - Erd?s-Renyi random (n=1,000)
 - **Size range**: 50-200 nodes
 - **Connectivity**: Variable density (0.05-0.25)
 
@@ -1285,14 +1285,14 @@ print(f"Components - Phi: {result['phi_spectral']:.6f}, "
 """
     
     def _generate_statistical_procedures(self) -> str:
-        """Procedimientos estadísticos"""
+        """Procedimientos estadisticos"""
         return """
 #### Performance Analysis
 
 - **Comparison method**: Paired t-test between original and optimized implementations
 - **Effect size**: Cohen's d calculation
 - **Multiple comparisons**: Bonferroni correction applied
-- **Significance level**: α = 0.05
+- **Significance level**: ? = 0.05
 
 #### Accuracy Validation
 
@@ -1305,12 +1305,12 @@ print(f"Components - Phi: {result['phi_spectral']:.6f}, "
 
 - **Between-group comparison**: One-way ANOVA
 - **Post-hoc tests**: Tukey's HSD for pairwise comparisons
-- **Effect size**: Eta-squared (η²) calculation
+- **Effect size**: Eta-squared (?0) calculation
 - **ROC analysis**: Area Under Curve (AUC) with 95% CI
 """
 
 def main():
-    """Función principal para generar toda la documentación científica"""
+    """Funcion principal para generar toda la documentacion cientifica"""
     print("=== SCIENTIFIC DOCUMENTATION GENERATOR ===")
     print("Generating publication-ready documentation...")
     
@@ -1318,20 +1318,20 @@ def main():
     
     # Generar paper IEEE
     ieee_result = generator.generate_ieee_neural_networks_paper()
-    print(f"✓ IEEE paper: {ieee_result['file_path']}")
+    print(f"[OK] IEEE paper: {ieee_result['file_path']}")
     
     # Generar paper Physics of Fluids
     pf_result = generator.generate_physics_fluids_paper()
-    print(f"✓ Physics of Fluids paper: {pf_result['file_path']}")
+    print(f"[OK] Physics of Fluids paper: {pf_result['file_path']}")
     
     # Generar datos experimentales
     data_result = generator.generate_experimental_data()
-    print(f"✓ Experimental data: {data_result['data_file']}")
-    print(f"✓ Figures generated: {len(data_result['figures'])}")
+    print(f"[OK] Experimental data: {data_result['data_file']}")
+    print(f"[OK] Figures generated: {len(data_result['figures'])}")
     
     # Generar materiales suplementarios
     supp_result = generator.generate_supplementary_materials()
-    print(f"✓ Supplementary materials: {supp_result['supplementary_file']}")
+    print(f"[OK] Supplementary materials: {supp_result['supplementary_file']}")
     
     print("\n=== PHASE 4 DOCUMENTATION COMPLETE ===")
     print("Ready for journal submission:")

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-FASE 2: FORMALIZACIÓN MATEMÁTICA DEL SISTEMA CUÁNTICO
-REQUERIMIENTO CRÍTICO: Implementar formalismo matemático riguroso
-OBJETIVO: Preparar para publicación en journals de alto impacto
+FASE 2: FORMALIZACION MATEMATICA DEL SISTEMA CUANTICO
+REQUERIMIENTO CRITICO: Implementar formalismo matematico riguroso
+OBJETIVO: Preparar para publicacion en journals de alto impacto
 
 REFERENCIAS:
 - Nielsen & Chuang (2010), Quantum Computation and Quantum Information
@@ -22,95 +22,95 @@ import logging
 import time
 
 class QuantumStateType(Enum):
-    """Tipos de estados cuánticos según formalismo estándar"""
-    PURE = "pure"                    # |ψ⟩ - estado puro
-    MIXED = "mixed"                  # ρ - matriz densidad
-    SUPERPOSITION = "superposition"  # α|0⟩ + β|1⟩ - superposición
+    """Tipos de estados cuanticos segun formalismo estandar"""
+    PURE = "pure"                    # |? - estado puro
+    MIXED = "mixed"                  # ? - matriz densidad
+    SUPERPOSITION = "superposition"  # ?|0 + ?|1 - superposicion
     ENTANGLED = "entangled"         # Estados entrelazados
     COHERENT = "coherent"           # Estados coherentes
 
 @dataclass
 class QuantumState:
     """
-    Representación matemática rigurosa de estados cuánticos
+    Representacion matematica rigurosa de estados cuanticos
     
-    FORMALIZACIÓN MATEMÁTICA:
-    Un estado cuántico |ψ⟩ en espacio de Hilbert H satisface:
-    1. Normalización: ⟨ψ|ψ⟩ = 1
-    2. Linealidad: |ψ⟩ = Σᵢ αᵢ|i⟩ donde Σᵢ|αᵢ|² = 1
-    3. Unitariedad: Evolución U(t) tal que U†U = I
+    FORMALIZACION MATEMATICA:
+    Un estado cuantico |? en espacio de Hilbert H satisface:
+    1. Normalizacion: ?|? = 1
+    2. Linealidad: |? = ?? ??|i donde ??|??|0 = 1
+    3. Unitariedad: Evolucion U(t) tal que UU = I
     """
-    state_vector: np.ndarray        # Vector de estado |ψ⟩
+    state_vector: np.ndarray        # Vector de estado |?
     state_type: QuantumStateType
     dimension: int
     timestamp: float = field(default_factory=time.time)
     
     def __post_init__(self):
-        """Validación y normalización automática"""
+        """Validacion y normalizacion automatica"""
         self.state_vector = np.array(self.state_vector, dtype=complex)
         self.dimension = len(self.state_vector)
         
-        # Validar y normalizar según |⟨ψ|ψ⟩| = 1
+        # Validar y normalizar segun |?|?| = 1
         norm = np.linalg.norm(self.state_vector)
         if norm == 0:
-            raise ValueError("Estado cuántico no puede tener norma cero")
+            raise ValueError("Estado cuantico no puede tener norma cero")
         self.state_vector = self.state_vector / norm
     
     @property
     def density_matrix(self) -> np.ndarray:
         """
-        Matriz densidad ρ = |ψ⟩⟨ψ|
+        Matriz densidad ? = |??|
         
-        PROPIEDADES MATEMÁTICAS:
-        - Hermitiana: ρ† = ρ
-        - Positiva semidefinida: ρ ≥ 0
-        - Traza unitaria: Tr(ρ) = 1
+        PROPIEDADES MATEMATICAS:
+        - Hermitiana: ? = ?
+        - Positiva semidefinida: ? >= 0
+        - Traza unitaria: Tr(?) = 1
         """
         return np.outer(self.state_vector, np.conj(self.state_vector))
     
     def fidelity(self, other: 'QuantumState') -> float:
         """
-        Fidelidad cuántica F(ρ,σ) = Tr(√(√ρ σ √ρ))
+        Fidelidad cuantica F(?,?) = Tr((? ? ?))
         
-        Para estados puros: F = |⟨ψ₁|ψ₂⟩|²
+        Para estados puros: F = |?0|?0|0
         
         PROPIEDADES:
-        - 0 ≤ F ≤ 1
-        - F = 1 ⟺ estados idénticos
-        - F = 0 ⟺ estados ortogonales
+        - 0 <= F <= 1
+        - F = 1  estados identicos
+        - F = 0  estados ortogonales
         """
         overlap = np.vdot(self.state_vector, other.state_vector)
         return float(np.abs(overlap) ** 2)
     
     def von_neumann_entropy(self) -> float:
         """
-        Entropía de von Neumann: S(ρ) = -Tr(ρ log ρ)
+        Entropia de von Neumann: S(?) = -Tr(? log ?)
         
-        INTERPRETACIÓN:
+        INTERPRETACION:
         - S = 0: Estado puro (sin mezcla)
-        - S = log(d): Mezcla máxima (estado maximally mixed)
+        - S = log(d): Mezcla maxima (estado maximally mixed)
         """
         rho = self.density_matrix
         eigenvals = np.real(eigvals(rho))
-        eigenvals = eigenvals[eigenvals > 1e-12]  # Filtrar valores numéricos cero
+        eigenvals = eigenvals[eigenvals > 1e-12]  # Filtrar valores numericos cero
         
         if len(eigenvals) == 0:
             return 0.0
         
-        # S = -Σᵢ λᵢ log λᵢ
+        # S = -?? ?? log ??
         entropy = -np.sum(eigenvals * np.log(eigenvals))
         return float(entropy)
 
 @dataclass
 class Concept:
     """
-    Concepto simbólico mapeado a estado cuántico
+    Concepto simbolico mapeado a estado cuantico
     
-    FORMALIZACIÓN:
-    Cada concepto c se mapea a |c⟩ ∈ H^d donde:
+    FORMALIZACION:
+    Cada concepto c se mapea a |c  H^d donde:
     - H^d es espacio de Hilbert d-dimensional
-    - |c⟩ codifica la semántica del concepto
-    - Conceptos similares → estados con alta fidelidad
+    - |c codifica la semantica del concepto
+    - Conceptos similares -> estados con alta fidelidad
     """
     name: str
     semantic_vector: np.ndarray
@@ -118,7 +118,7 @@ class Concept:
     creation_time: float = field(default_factory=time.time)
     
     def __post_init__(self):
-        """Crear estado cuántico asociado"""
+        """Crear estado cuantico asociado"""
         if self.quantum_state is None:
             self.quantum_state = QuantumState(
                 state_vector=self.semantic_vector,
@@ -128,24 +128,24 @@ class Concept:
 
 class QuantumSymbolicProcessor:
     """
-    IMPLEMENTACIÓN CRÍTICA: Sistema cuántico-simbólico con rigor matemático
+    IMPLEMENTACION CRITICA: Sistema cuantico-simbolico con rigor matematico
     
-    FUNDAMENTO TEÓRICO:
-    Basado en la hipótesis de que el procesamiento consciente puede modelarse
-    como evolución unitaria de estados cuánticos en espacio de conceptos.
+    FUNDAMENTO TEORICO:
+    Basado en la hipotesis de que el procesamiento consciente puede modelarse
+    como evolucion unitaria de estados cuanticos en espacio de conceptos.
     
     REFERENCIAS:
-    - Nielsen & Chuang (2010): Formalismo matemático
-    - Penrose & Hameroff (2014): Aplicación a consciencia
-    - Quantum Information Theory: Fundamentos teóricos
+    - Nielsen & Chuang (2010): Formalismo matematico
+    - Penrose & Hameroff (2014): Aplicacion a consciencia
+    - Quantum Information Theory: Fundamentos teoricos
     """
     
     def __init__(self, dimension: int = 64):
         """
-        Inicializar procesador cuántico-simbólico
+        Inicializar procesador cuantico-simbolico
         
         Args:
-            dimension: Dimensión del espacio de Hilbert H^d
+            dimension: Dimension del espacio de Hilbert H^d
         """
         self.dimension = dimension
         self.state_space = np.complex128
@@ -153,7 +153,7 @@ class QuantumSymbolicProcessor:
         self.symbol_mapping: Dict[str, Concept] = {}
         self.interaction_history: List[Dict] = []
         
-        # Operadores cuánticos fundamentales
+        # Operadores cuanticos fundamentales
         self.pauli_operators = self._initialize_pauli_operators()
         self.hadamard_gate = self._create_hadamard_gate()
         
@@ -161,9 +161,9 @@ class QuantumSymbolicProcessor:
         
     def _initialize_ground_state(self) -> QuantumState:
         """
-        Inicializar estado fundamental |0⟩
+        Inicializar estado fundamental |0
         
-        FORMALIZACIÓN: |ψ₀⟩ = |0⟩ = (1, 0, 0, ..., 0)ᵀ
+        FORMALIZACION: |?0 = |0 = (1, 0, 0, ..., 0)?
         """
         ground_vector = np.zeros(self.dimension, dtype=complex)
         ground_vector[0] = 1.0
@@ -176,17 +176,17 @@ class QuantumSymbolicProcessor:
     
     def _initialize_pauli_operators(self) -> Dict[str, np.ndarray]:
         """
-        Operadores de Pauli para manipulación cuántica
+        Operadores de Pauli para manipulacion cuantica
         
-        DEFINICIÓN MATEMÁTICA:
-        σₓ = |0⟩⟨1| + |1⟩⟨0|
-        σᵧ = -i|0⟩⟨1| + i|1⟩⟨0|  
-        σᵤ = |0⟩⟨0| - |1⟩⟨1|
+        DEFINICION MATEMATICA:
+        ?? = |01| + |10|
+        ?? = -i|01| + i|10|  
+        ?? = |00| - |11|
         """
         if self.dimension < 2:
-            raise ValueError("Dimensión mínima 2 requerida para operadores de Pauli")
+            raise ValueError("Dimension minima 2 requerida para operadores de Pauli")
             
-        # Para dimensiones > 2, usamos versión extendida
+        # Para dimensiones > 2, usamos version extendida
         sigma_x = np.zeros((self.dimension, self.dimension), dtype=complex)
         sigma_y = np.zeros((self.dimension, self.dimension), dtype=complex)
         sigma_z = np.zeros((self.dimension, self.dimension), dtype=complex)
@@ -202,10 +202,10 @@ class QuantumSymbolicProcessor:
         """
         Puerta de Hadamard para crear superposiciones
         
-        DEFINICIÓN: H = (1/√2) * [1  1]
+        DEFINICION: H = (1/2) * [1  1]
                                    [1 -1]
         
-        EFECTO: H|0⟩ = (|0⟩ + |1⟩)/√2
+        EFECTO: H|0 = (|0 + |1)/2
         """
         H = np.zeros((self.dimension, self.dimension), dtype=complex)
         H[0, 0] = H[0, 1] = H[1, 0] = 1.0 / np.sqrt(2)
@@ -215,19 +215,19 @@ class QuantumSymbolicProcessor:
     
     def register_concept(self, concept_name: str, semantic_encoding: np.ndarray) -> Concept:
         """
-        Registrar concepto en el espacio cuántico
+        Registrar concepto en el espacio cuantico
         
-        PROCESO MATEMÁTICO:
-        1. Normalizar encoding semántico
-        2. Crear estado cuántico |c⟩
-        3. Almacenar en mapping simbólico
+        PROCESO MATEMATICO:
+        1. Normalizar encoding semantico
+        2. Crear estado cuantico |c
+        3. Almacenar en mapping simbolico
         
         Args:
             concept_name: Identificador del concepto
-            semantic_encoding: Vector semántico en R^d
+            semantic_encoding: Vector semantico en R^d
             
         Returns:
-            Concept: Concepto cuántico registrado
+            Concept: Concepto cuantico registrado
         """
         if len(semantic_encoding) != self.dimension:
             # Redimensionar si es necesario
@@ -254,41 +254,41 @@ class QuantumSymbolicProcessor:
     def create_conceptual_superposition(self, concept_names: List[str], 
                                       amplitudes: Optional[List[Complex]] = None) -> QuantumState:
         """
-        Crear superposición cuántica de conceptos simbólicos
+        Crear superposicion cuantica de conceptos simbolicos
         
-        FORMALIZACIÓN MATEMÁTICA:
-        |ψ_superposition⟩ = Σᵢ αᵢ|concept_i⟩
+        FORMALIZACION MATEMATICA:
+        |?_superposition = ?? ??|concept_i
         
         donde:
-        - αᵢ son amplitudes complejas
-        - Σᵢ|αᵢ|² = 1 (normalización)
-        - |concept_i⟩ son estados cuánticos de conceptos
+        - ?? son amplitudes complejas
+        - ??|??|0 = 1 (normalizacion)
+        - |concept_i son estados cuanticos de conceptos
         
-        INTERPRETACIÓN FÍSICA:
-        La superposición representa un estado de "potencialidad conceptual"
-        donde múltiples conceptos coexisten hasta la medición/colapso.
+        INTERPRETACION FISICA:
+        La superposicion representa un estado de "potencialidad conceptual"
+        donde multiples conceptos coexisten hasta la medicion/colapso.
         """
         if not concept_names:
-            raise ValueError("Lista de conceptos no puede estar vacía")
+            raise ValueError("Lista de conceptos no puede estar vacia")
         
-        # Verificar que todos los conceptos estén registrados
+        # Verificar que todos los conceptos esten registrados
         missing_concepts = [name for name in concept_names if name not in self.symbol_mapping]
         if missing_concepts:
             raise ValueError(f"Conceptos no registrados: {missing_concepts}")
         
         n_concepts = len(concept_names)
         
-        # Amplitudes por defecto: superposición uniforme
+        # Amplitudes por defecto: superposicion uniforme
         if amplitudes is None:
             amplitude_magnitude = 1.0 / np.sqrt(n_concepts)
             amplitudes = [amplitude_magnitude for _ in range(n_concepts)]
         else:
-            # Verificar normalización
+            # Verificar normalizacion
             norm = np.sqrt(sum(abs(amp)**2 for amp in amplitudes))
             if not np.isclose(norm, 1.0):
                 amplitudes = [amp / norm for amp in amplitudes]
         
-        # Construir estado de superposición
+        # Construir estado de superposicion
         superposition_vector = np.zeros(self.dimension, dtype=complex)
         
         for i, concept_name in enumerate(concept_names):
@@ -311,26 +311,26 @@ class QuantumSymbolicProcessor:
             'timestamp': time.time()
         })
         
-        self.logger.info(f"Superposición creada: {concept_names} con entropía S = {superposition_state.von_neumann_entropy():.4f}")
+        self.logger.info(f"Superposicion creada: {concept_names} con entropia S = {superposition_state.von_neumann_entropy():.4f}")
         
         return superposition_state
     
     def quantum_entanglement(self, concept_a: str, concept_b: str, 
                            correlation_strength: float = 0.8) -> Tuple[QuantumState, QuantumState]:
         """
-        Crear entrelazamiento cuántico entre conceptos
+        Crear entrelazamiento cuantico entre conceptos
         
-        FORMALIZACIÓN MATEMÁTICA:
-        |ψ_entangled⟩ = α|0₁0₂⟩ + β|1₁1₂⟩
+        FORMALIZACION MATEMATICA:
+        |?_entangled = ?|0000 + ?|1010
         
         donde:
-        - α, β ∈ ℂ con |α|² + |β|² = 1
+        - ?, ?  ? con |?|0 + |?|0 = 1
         - Subsistemas 1,2 no factorizables
-        - Medición en 1 afecta instantáneamente a 2
+        - Medicion en 1 afecta instantaneamente a 2
         
-        IMPLEMENTACIÓN:
+        IMPLEMENTACION:
         Utilizamos operador CNOT controlado para crear correlaciones:
-        CNOT|ψ⟩|φ⟩ = |ψ⟩|ψ⊕φ⟩
+        CNOT|?|? = |?|?+?
         """
         if concept_a not in self.symbol_mapping or concept_b not in self.symbol_mapping:
             raise ValueError(f"Conceptos {concept_a} y/o {concept_b} no registrados")
@@ -338,7 +338,7 @@ class QuantumSymbolicProcessor:
         state_a = self.symbol_mapping[concept_a].quantum_state.state_vector
         state_b = self.symbol_mapping[concept_b].quantum_state.state_vector
         
-        # Crear correlación controlada
+        # Crear correlacion controlada
         correlation_factor = correlation_strength
         anti_correlation = np.sqrt(1 - correlation_strength**2)
         
@@ -346,7 +346,7 @@ class QuantumSymbolicProcessor:
         entangled_a = correlation_factor * state_a + anti_correlation * state_b
         entangled_b = correlation_factor * state_b + anti_correlation * state_a
         
-        # Normalización explícita
+        # Normalizacion explicita
         entangled_a = entangled_a / np.linalg.norm(entangled_a)
         entangled_b = entangled_b / np.linalg.norm(entangled_b)
         
@@ -373,29 +373,29 @@ class QuantumSymbolicProcessor:
     
     def measure_quantum_coherence(self, state: QuantumState) -> float:
         """
-        Medición de coherencia cuántica según framework de Baumgratz et al.
+        Medicion de coherencia cuantica segun framework de Baumgratz et al.
         
-        FORMALIZACIÓN MATEMÁTICA:
-        Coherencia relativa a base {|i⟩}:
-        C(ρ) = S(ρ_diag) - S(ρ)
+        FORMALIZACION MATEMATICA:
+        Coherencia relativa a base {|i}:
+        C(?) = S(?_diag) - S(?)
         
         donde:
-        - S(ρ) = -Tr(ρ log ρ) es entropía de von Neumann
-        - ρ_diag es ρ con elementos off-diagonal = 0
+        - S(?) = -Tr(? log ?) es entropia de von Neumann
+        - ?_diag es ? con elementos off-diagonal = 0
         
-        INTERPRETACIÓN:
+        INTERPRETACION:
         - C = 0: Estado incoherente (diagonal en base)
-        - C > 0: Presencia de superposiciones cuánticas
+        - C > 0: Presencia de superposiciones cuanticas
         """
         rho = state.density_matrix
         
-        # Entropía de von Neumann total
+        # Entropia de von Neumann total
         total_entropy = state.von_neumann_entropy()
         
         # Crear matriz diagonal (eliminar coherencias)
         rho_diagonal = np.diag(np.diag(rho))
         
-        # Entropía de la matriz diagonal
+        # Entropia de la matriz diagonal
         diagonal_eigenvals = np.real(np.diag(rho_diagonal))
         diagonal_eigenvals = diagonal_eigenvals[diagonal_eigenvals > 1e-12]
         
@@ -406,7 +406,7 @@ class QuantumSymbolicProcessor:
             diagonal_eigenvals = diagonal_eigenvals / np.sum(diagonal_eigenvals)
             diagonal_entropy = -np.sum(diagonal_eigenvals * np.log(diagonal_eigenvals))
         
-        # Coherencia = diferencia de entropías
+        # Coherencia = diferencia de entropias
         coherence = diagonal_entropy - total_entropy
         
         return max(0.0, float(coherence))  # Coherencia no puede ser negativa
@@ -414,24 +414,24 @@ class QuantumSymbolicProcessor:
     def apply_unitary_evolution(self, unitary_operator: np.ndarray, 
                                target_state: Optional[QuantumState] = None) -> QuantumState:
         """
-        Aplicar evolución unitaria U|ψ⟩
+        Aplicar evolucion unitaria U|?
         
-        FORMALIZACIÓN:
-        La evolución temporal de sistemas cuánticos sigue:
-        |ψ(t)⟩ = U(t)|ψ(0)⟩ = e^(-iHt/ℏ)|ψ(0)⟩
+        FORMALIZACION:
+        La evolucion temporal de sistemas cuanticos sigue:
+        |?(t) = U(t)|?(0) = e^(-iHt/?)|?(0)
         
         donde:
         - H es el Hamiltoniano del sistema
-        - U(t) es operador unitario: U†U = I
+        - U(t) es operador unitario: UU = I
         """
         if target_state is None:
             target_state = self.current_state
         
         # Verificar unitariedad
         if not self._is_unitary(unitary_operator):
-            raise ValueError("Operador no es unitario - violación de mecánica cuántica")
+            raise ValueError("Operador no es unitario - violacion de mecanica cuantica")
         
-        # Aplicar evolución
+        # Aplicar evolucion
         evolved_vector = unitary_operator @ target_state.state_vector
         
         evolved_state = QuantumState(
@@ -443,26 +443,26 @@ class QuantumSymbolicProcessor:
         # Actualizar estado actual
         self.current_state = evolved_state
         
-        self.logger.info(f"Evolución unitaria aplicada - Nueva entropía: {evolved_state.von_neumann_entropy():.4f}")
+        self.logger.info(f"Evolucion unitaria aplicada - Nueva entropia: {evolved_state.von_neumann_entropy():.4f}")
         
         return evolved_state
     
     def quantum_fourier_transform(self, input_state: QuantumState) -> QuantumState:
         """
-        Transformada de Fourier Cuántica (QFT)
+        Transformada de Fourier Cuantica (QFT)
         
-        DEFINICIÓN MATEMÁTICA:
-        QFT|j⟩ = (1/√N) Σₖ e^(2πijk/N)|k⟩
+        DEFINICION MATEMATICA:
+        QFT|j = (1/N) ?? e^(2?ijk/N)|k
         
-        APLICACIÓN:
-        Fundamental para algoritmos cuánticos como Shor y búsqueda de período.
-        En contexto de consciencia: análisis frecuencial de patrones conceptuales.
+        APLICACION:
+        Fundamental para algoritmos cuanticos como Shor y busqueda de periodo.
+        En contexto de consciencia: analisis frecuencial de patrones conceptuales.
         """
         N = self.dimension
         
         # Crear matriz QFT
         qft_matrix = np.zeros((N, N), dtype=complex)
-        omega = np.exp(2j * np.pi / N)  # Raíz N-ésima de la unidad
+        omega = np.exp(2j * np.pi / N)  # Raiz N-esima de la unidad
         
         for j in range(N):
             for k in range(N):
@@ -483,11 +483,11 @@ class QuantumSymbolicProcessor:
         """
         Calcular concurrencia como medida de entrelazamiento
         
-        DEFINICIÓN (Wootters):
-        Para estado puro bipartito |ψ⟩_AB:
-        C = 2|det(Tr_B[|ψ⟩⟨ψ|])|
+        DEFINICION (Wootters):
+        Para estado puro bipartito |?_AB:
+        C = 2|det(Tr_B[|??|])|
         """
-        # Simplificación para estados puros
+        # Simplificacion para estados puros
         # Concurrencia basada en fidelidad cruzada
         cross_fidelity = abs(np.vdot(state_a.state_vector, state_b.state_vector))
         concurrence = 2 * cross_fidelity * (1 - cross_fidelity)
@@ -497,13 +497,13 @@ class QuantumSymbolicProcessor:
     def _calculate_quantum_mutual_information(self, state_a: QuantumState, 
                                             state_b: QuantumState) -> float:
         """
-        Información mutua cuántica I(A:B) = S(A) + S(B) - S(AB)
+        Informacion mutua cuantica I(A:B) = S(A) + S(B) - S(AB)
         """
         entropy_a = state_a.von_neumann_entropy()
         entropy_b = state_b.von_neumann_entropy()
         
-        # Para estados separados, aproximar entropía conjunta
-        # En implementación completa, requiere espacio de producto tensorial
+        # Para estados separados, aproximar entropia conjunta
+        # En implementacion completa, requiere espacio de producto tensorial
         joint_entropy = min(entropy_a + entropy_b, np.log(self.dimension))
         
         mutual_info = entropy_a + entropy_b - joint_entropy
@@ -511,7 +511,7 @@ class QuantumSymbolicProcessor:
         return max(0.0, float(mutual_info))
     
     def _is_unitary(self, matrix: np.ndarray, tolerance: float = 1e-10) -> bool:
-        """Verificar si matriz es unitaria: U†U = I"""
+        """Verificar si matriz es unitaria: UU = I"""
         if matrix.shape[0] != matrix.shape[1]:
             return False
         
@@ -522,7 +522,7 @@ class QuantumSymbolicProcessor:
     
     def get_system_state_summary(self) -> Dict[str, any]:
         """
-        Resumen del estado actual del sistema cuántico
+        Resumen del estado actual del sistema cuantico
         """
         return {
             'dimension': self.dimension,
@@ -536,16 +536,16 @@ class QuantumSymbolicProcessor:
 
 def demonstrate_quantum_formalism():
     """
-    DEMOSTRACIÓN: Capacidades del procesador cuántico-simbólico
+    DEMOSTRACION: Capacidades del procesador cuantico-simbolico
     """
-    print("🔬 DEMOSTRACIÓN DEL FORMALISMO CUÁNTICO-SIMBÓLICO")
+    print(" DEMOSTRACION DEL FORMALISMO CUANTICO-SIMBOLICO")
     print("=" * 60)
     
     # Inicializar procesador
     processor = QuantumSymbolicProcessor(dimension=8)
     
-    print(f"✅ Procesador inicializado (dimensión = {processor.dimension})")
-    print(f"📊 Estado inicial - Entropía: {processor.current_state.von_neumann_entropy():.4f}")
+    print(f" Procesador inicializado (dimension = {processor.dimension})")
+    print(f" Estado inicial - Entropia: {processor.current_state.von_neumann_entropy():.4f}")
     
     # Registrar conceptos
     concepts = {
@@ -555,35 +555,35 @@ def demonstrate_quantum_formalism():
         'wisdom': np.array([0, 0, 0, 0, 1, 1, 1, 0], dtype=complex)
     }
     
-    print("\n📝 Registrando conceptos...")
+    print("\n Registrando conceptos...")
     for name, encoding in concepts.items():
         concept = processor.register_concept(name, encoding)
-        print(f"   • {name}: Entropía = {concept.quantum_state.von_neumann_entropy():.4f}")
+        print(f"    {name}: Entropia = {concept.quantum_state.von_neumann_entropy():.4f}")
     
-    # Crear superposición
-    print("\n🌀 Creando superposición conceptual...")
+    # Crear superposicion
+    print("\n Creando superposicion conceptual...")
     superposition = processor.create_conceptual_superposition(['love', 'joy', 'peace'])
-    print(f"   Superposición creada - Entropía: {superposition.von_neumann_entropy():.4f}")
-    print(f"   Coherencia cuántica: {processor.measure_quantum_coherence(superposition):.4f}")
+    print(f"   Superposicion creada - Entropia: {superposition.von_neumann_entropy():.4f}")
+    print(f"   Coherencia cuantica: {processor.measure_quantum_coherence(superposition):.4f}")
     
     # Crear entrelazamiento
-    print("\n🔗 Creando entrelazamiento cuántico...")
+    print("\n Creando entrelazamiento cuantico...")
     entangled_a, entangled_b = processor.quantum_entanglement('love', 'wisdom', 0.8)
     concurrence = processor._calculate_concurrence(entangled_a, entangled_b)
     print(f"   Entrelazamiento creado - Concurrence: {concurrence:.4f}")
     
     # Aplicar QFT
-    print("\n🌊 Aplicando Transformada de Fourier Cuántica...")
+    print("\n Aplicando Transformada de Fourier Cuantica...")
     qft_state = processor.quantum_fourier_transform(superposition)
-    print(f"   QFT aplicada - Nueva entropía: {qft_state.von_neumann_entropy():.4f}")
+    print(f"   QFT aplicada - Nueva entropia: {qft_state.von_neumann_entropy():.4f}")
     
-    # Evolución unitaria
-    print("\n⚡ Aplicando evolución unitaria...")
+    # Evolucion unitaria
+    print("\n Aplicando evolucion unitaria...")
     hadamard_evolved = processor.apply_unitary_evolution(processor.hadamard_gate)
-    print(f"   Evolución completada - Entropía final: {hadamard_evolved.von_neumann_entropy():.4f}")
+    print(f"   Evolucion completada - Entropia final: {hadamard_evolved.von_neumann_entropy():.4f}")
     
     # Resumen del sistema
-    print("\n📊 RESUMEN DEL SISTEMA:")
+    print("\n RESUMEN DEL SISTEMA:")
     summary = processor.get_system_state_summary()
     for key, value in summary.items():
         if isinstance(value, float):
@@ -591,7 +591,7 @@ def demonstrate_quantum_formalism():
         else:
             print(f"   {key}: {value}")
     
-    print("\n✅ DEMOSTRACIÓN COMPLETADA - Formalismo cuántico operacional")
+    print("\n DEMOSTRACION COMPLETADA - Formalismo cuantico operacional")
 
 if __name__ == "__main__":
     demonstrate_quantum_formalism()

@@ -330,7 +330,7 @@ class NeuroplasticNetwork:
         post_id = synapse.post_neuron_id
         
         if rule.rule_type == PlasticityType.HEBBIAN:
-            # Simple Hebbian: Δw = η * pre * post
+            # Simple Hebbian: ?w = ? * pre * post
             pre_active = len(pre_spike_times[pre_id]) > 0
             post_active = len(post_spike_times[post_id]) > 0
             
@@ -434,7 +434,7 @@ class NeuroplasticNetwork:
             # Update threshold based on recent activity
             neuron.threshold += dt/tau_theta * (post_activity[i]**2 - theta)
         
-        # BCM rule: Δw = η * pre * post * (post - θ)
+        # BCM rule: ?w = ? * pre * post * (post - ?)
         for synapse_key, synapse in self.synapses.items():
             pre_id, post_id = synapse_key
             post_neuron = self.neurons[post_id]

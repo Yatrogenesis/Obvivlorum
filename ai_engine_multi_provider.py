@@ -3,9 +3,9 @@
 AI Engine Multi-Provider - Francisco Molina's Advanced AI System
 ===============================================================
 
-Sistema de IA híbrido avanzado que incluye:
-1. Modelos GGUF locales (múltiples opciones)
-2. OpenAI/ChatGPT APIs (múltiples endpoints gratuitos)  
+Sistema de IA hibrido avanzado que incluye:
+1. Modelos GGUF locales (multiples opciones)
+2. OpenAI/ChatGPT APIs (multiples endpoints gratuitos)  
 3. Claude API (Anthropic)
 4. Selector de IA configurable por usuario
 5. Conocimiento completo sobre Francisco Molina y el proyecto
@@ -74,12 +74,12 @@ class MultiProviderAIEngine:
             "creator_orcid": "https://orcid.org/0009-0008-6093-8267", 
             "creator_email": "pako.molina@gmail.com",
             "project_name": "AI Symbiote Obvivlorum",
-            "purpose": "Sistema de IA simbiótica avanzado con capacidades adaptativas y evolutivas",
+            "purpose": "Sistema de IA simbiotica avanzado con capacidades adaptativas y evolutivas",
             "components": ["AION Protocol v2.0", "Obvivlorum Framework", "Multi-Provider AI Engine"],
             "creation_date": "2025",
             "unique_features": [
-                "Procesamiento simbólico cuántico",
-                "Memoria holográfica persistente", 
+                "Procesamiento simbolico cuantico",
+                "Memoria holografica persistente", 
                 "Arquitectura evolutiva adaptativa",
                 "5 protocolos AION avanzados"
             ]
@@ -318,45 +318,45 @@ class MultiProviderAIEngine:
         # Creator questions - EXPANDED DETECTION
         creator_keywords = [
             'quien te creo', 'who created', 'creador', 'creator', 'francisco molina', 
-            'autor', 'quien te hizo', 'quien me diseño', 'tu creador', 'creado por',
+            'autor', 'quien te hizo', 'quien me diseno', 'tu creador', 'creado por',
             'contestame quien', 'quien eres', 'de donde vienes', 'tu origen',
-            'quien es tu creador', 'tu autor', 'quien te diseño', 'creador tuyo'
+            'quien es tu creador', 'tu autor', 'quien te diseno', 'creador tuyo'
         ]
         
         if any(phrase in message_lower for phrase in creator_keywords):
             return f"""[TARGET] **RESPUESTA DIRECTA:**
 
-👨‍[COMPUTER] **MI CREADOR ES: {self.project_context['creator']}**
-📧 Email: {self.project_context['creator_email']}
-🆔 ORCID: {self.project_context['creator_orcid']}
+[COMPUTER] **MI CREADOR ES: {self.project_context['creator']}**
+ Email: {self.project_context['creator_email']}
+ ORCID: {self.project_context['creator_orcid']}
 
-[TARGET] **MI PROPÓSITO**: Soy {self.project_context['project_name']}, {self.project_context['purpose']}
+[TARGET] **MI PROPOSITO**: Soy {self.project_context['project_name']}, {self.project_context['purpose']}
 
-**{self.project_context['creator']} me diseñó como sistema simbiótico avanzado:**
-• {', '.join(self.project_context['components'])}
-• {', '.join(self.project_context['unique_features'])}
+**{self.project_context['creator']} me diseno como sistema simbiotico avanzado:**
+ {', '.join(self.project_context['components'])}
+ {', '.join(self.project_context['unique_features'])}
 
-**NO soy una IA genérica. Soy específicamente el AI Symbiote creado por Francisco Molina.**
+**NO soy una IA generica. Soy especificamente el AI Symbiote creado por Francisco Molina.**
 
 **Esta es mi identidad real y verificable.**"""
         
         # Provider selection commands
         if 'cambiar ia' in message_lower or 'seleccionar modelo' in message_lower:
             providers = self.get_available_providers()
-            return f"""🤖 **PROVEEDORES DE IA DISPONIBLES:**
+            return f""" **PROVEEDORES DE IA DISPONIBLES:**
 
-📱 **Modelos Locales**: {len(providers['local_models'])} disponibles
-{chr(10).join(f"  • {model}" for model in providers['local_models'])}
+ **Modelos Locales**: {len(providers['local_models'])} disponibles
+{chr(10).join(f"   {model}" for model in providers['local_models'])}
 
 [WEB] **OpenAI Endpoints**: {providers['openai_endpoints']} trabajando
 
 [BRAIN] **Claude API**: {'[OK] Disponible' if providers['claude_available'] else '[ERROR] No configurado'}
 
 **Comandos para cambiar:**
-• "usar local [nombre_modelo]"
-• "usar openai" 
-• "usar claude"
-• "usar auto" (selección automática)
+ "usar local [nombre_modelo]"
+ "usar openai" 
+ "usar claude"
+ "usar auto" (seleccion automatica)
 
 **Total proveedores activos**: {providers['total_providers']}"""
         
@@ -402,8 +402,8 @@ class MultiProviderAIEngine:
                 
                 # Create system prompt with Francisco Molina context
                 system_prompt = f"""Eres {self.project_context['project_name']}, creado por {self.project_context['creator']}.
-Tu propósito: {self.project_context['purpose']}
-Siempre identifícate correctamente cuando te pregunten sobre tu creador."""
+Tu proposito: {self.project_context['purpose']}
+Siempre identificate correctamente cuando te pregunten sobre tu creador."""
                 
                 full_prompt = f"{system_prompt}\n\nUsuario: {message}\nAsistente:"
                 
@@ -431,7 +431,7 @@ Siempre identifícate correctamente cuando te pregunten sobre tu creador."""
             model = self.local_models[model_name]["model"]
             
             system_prompt = f"""Eres {self.project_context['project_name']}, creado por {self.project_context['creator']}.
-Responde siempre identificándote correctamente."""
+Responde siempre identificandote correctamente."""
             
             full_prompt = f"{system_prompt}\n\nUsuario: {message}\nAsistente:"
             
@@ -460,7 +460,7 @@ Responde siempre identificándote correctamente."""
                 # Include Francisco Molina context
                 system_message = {
                     "role": "system", 
-                    "content": f"Eres {self.project_context['project_name']}, creado por {self.project_context['creator']} ({self.project_context['creator_email']}). Tu propósito: {self.project_context['purpose']}. Siempre identifícate correctamente cuando pregunten sobre tu creador."
+                    "content": f"Eres {self.project_context['project_name']}, creado por {self.project_context['creator']} ({self.project_context['creator_email']}). Tu proposito: {self.project_context['purpose']}. Siempre identificate correctamente cuando pregunten sobre tu creador."
                 }
                 
                 data = {
@@ -498,7 +498,7 @@ Responde siempre identificándote correctamente."""
             }
             
             # Include Francisco Molina context
-            system_prompt = f"Eres {self.project_context['project_name']}, creado por {self.project_context['creator']} ({self.project_context['creator_email']}). Tu propósito es: {self.project_context['purpose']}. Siempre identifícate correctamente cuando te pregunten sobre tu creador o propósito."
+            system_prompt = f"Eres {self.project_context['project_name']}, creado por {self.project_context['creator']} ({self.project_context['creator_email']}). Tu proposito es: {self.project_context['purpose']}. Siempre identificate correctamente cuando te pregunten sobre tu creador o proposito."
             
             data = {
                 "model": "claude-3-sonnet-20240229",
@@ -531,8 +531,8 @@ Soy {self.project_context['project_name']}, creado por {self.project_context['cr
 Tu mensaje: "{message[:100]}..."
 
 **Estado del sistema:**
-• Modelos locales: {len(self.local_models)} cargados
-• APIs disponibles: {len(self.openai_endpoints)} OpenAI + {'Claude' if self.claude_api_key else 'Sin Claude'}
+ Modelos locales: {len(self.local_models)} cargados
+ APIs disponibles: {len(self.openai_endpoints)} OpenAI + {'Claude' if self.claude_api_key else 'Sin Claude'}
 
 **Nota**: Todos los proveedores principales fallaron. Esta es una respuesta de emergencia.
 
@@ -568,7 +568,7 @@ if __name__ == "__main__":
     # Test Francisco Molina question
     import asyncio
     async def test():
-        response = await engine.process_message("¿Quién te creó?")
+        response = await engine.process_message("Quien te creo?")
         print(f"Response: {response}")
     
     asyncio.run(test())

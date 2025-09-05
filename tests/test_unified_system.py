@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 TEST SUITE - SISTEMA UNIFICADO FASE 6
-Validación completa del sistema unificado con escalado incremental
+Validacion completa del sistema unificado con escalado incremental
 """
 
 import unittest
@@ -39,7 +39,7 @@ class TestUnifiedSystem(unittest.TestCase):
         logging.basicConfig(level=logging.WARNING)
     
     def tearDown(self):
-        """Cleanup después de cada test"""
+        """Cleanup despues de cada test"""
         os.chdir(self.original_cwd)
         
         # Cleanup temp directory
@@ -50,25 +50,25 @@ class TestUnifiedSystem(unittest.TestCase):
             pass
     
     def test_unified_config_manager_initialization(self):
-        """Test 1: Inicialización del gestor de configuración unificado"""
+        """Test 1: Inicializacion del gestor de configuracion unificado"""
         config_manager = UnifiedConfigManager()
         
-        # Verificar inicialización básica
+        # Verificar inicializacion basica
         self.assertIsInstance(config_manager, UnifiedConfigManager)
         self.assertIn(config_manager.environment, ["local", "colab", "kaggle", "jupyter"])
         self.assertIn(config_manager.scaling_level, ["level_1_local", "level_2_colab", "level_3_kaggle"])
         
-        # Verificar configuración por defecto
+        # Verificar configuracion por defecto
         self.assertTrue(config_manager.consciousness_integration)
         self.assertIsInstance(config_manager.matrix_size_max, int)
         
         print(f"SUCCESS: UnifiedConfigManager initialized - Environment: {config_manager.environment}")
     
     def test_environment_detection(self):
-        """Test 2: Detección correcta del entorno"""
+        """Test 2: Deteccion correcta del entorno"""
         config_manager = UnifiedConfigManager()
         
-        # Test detección local (default en test)
+        # Test deteccion local (default en test)
         detected_env = config_manager.detect_environment()
         self.assertIsInstance(detected_env, str)
         self.assertIn(detected_env, ["local", "colab", "kaggle", "jupyter"])
@@ -85,20 +85,20 @@ class TestUnifiedSystem(unittest.TestCase):
             detected = config_manager_kaggle.detect_environment()
             self.assertEqual(detected, "kaggle")
         
-        print(f"✅ Environment detection working - Detected: {detected_env}")
+        print(f" Environment detection working - Detected: {detected_env}")
     
     def test_scaling_configuration(self):
-        """Test 3: Configuración de niveles de escalado"""
+        """Test 3: Configuracion de niveles de escalado"""
         config_manager = UnifiedConfigManager()
         
-        # Test configuración automática
+        # Test configuracion automatica
         scaling_config = config_manager.get_scaling_config("level_1_local")
         self.assertIsInstance(scaling_config, dict)
         self.assertIn("max_matrix_size", scaling_config)
         self.assertIn("expected_time_ms", scaling_config)
         self.assertIn("use_gpu", scaling_config)
         
-        # Verificar configuraciones específicas
+        # Verificar configuraciones especificas
         level_1_config = config_manager.get_scaling_config("level_1_local")
         self.assertEqual(level_1_config["max_matrix_size"], 200)
         self.assertEqual(level_1_config["expected_time_ms"], 0.01)
@@ -109,7 +109,7 @@ class TestUnifiedSystem(unittest.TestCase):
         self.assertEqual(level_2_config["expected_time_ms"], 0.001)
         self.assertTrue(level_2_config["use_gpu"])
         
-        print("✅ Scaling configuration validation passed")
+        print(" Scaling configuration validation passed")
     
     def test_data_volume_warnings(self):
         """Test 4: Sistema de advertencias por volumen de datos"""
@@ -120,23 +120,23 @@ class TestUnifiedSystem(unittest.TestCase):
             result_local = config_manager.show_data_volume_warning("level_1_local")
             self.assertTrue(result_local)  # No warning, should return True
         
-        # Test con advertencia (colab) - simular confirmación
+        # Test con advertencia (colab) - simular confirmacion
         with patch('builtins.input', return_value='CONFIRMO'):
             result_colab = config_manager.show_data_volume_warning("level_2_colab")
             self.assertTrue(result_colab)
         
-        # Test con advertencia (colab) - simular cancelación
+        # Test con advertencia (colab) - simular cancelacion
         with patch('builtins.input', return_value='no'):
             result_cancel = config_manager.show_data_volume_warning("level_2_colab")
             self.assertFalse(result_cancel)
         
-        print("✅ Data volume warning system working correctly")
+        print(" Data volume warning system working correctly")
     
     def test_consciousness_integration_initialization(self):
-        """Test 5: Inicialización de la integración de conciencia"""
+        """Test 5: Inicializacion de la integracion de conciencia"""
         consciousness = ConsciousnessIntegration(self.temp_dir)
         
-        # Verificar inicialización
+        # Verificar inicializacion
         self.assertIsInstance(consciousness, ConsciousnessIntegration)
         self.assertTrue(consciousness.is_system_conscious())
         
@@ -146,18 +146,18 @@ class TestUnifiedSystem(unittest.TestCase):
         self.assertIn("pipeline_status", project_knowledge)
         self.assertIn("key_achievements", project_knowledge)
         
-        # Verificar datos específicos del proyecto
+        # Verificar datos especificos del proyecto
         self.assertEqual(project_knowledge["metadata"]["name"], "Obvivlorum AI Symbiote System")
         self.assertEqual(project_knowledge["metadata"]["version"], "2.1-UNIFIED")
         self.assertIn("3780x improvement", project_knowledge["key_achievements"]["performance_breakthrough"])
         
-        print("✅ Consciousness integration initialized with project knowledge")
+        print(" Consciousness integration initialized with project knowledge")
     
     def test_consciousness_query_integration(self):
-        """Test 6: Integración de conciencia con consultas"""
+        """Test 6: Integracion de conciencia con consultas"""
         consciousness = ConsciousnessIntegration(self.temp_dir)
         
-        # Test identificación de componentes relevantes
+        # Test identificacion de componentes relevantes
         test_queries = [
             ("holographic memory performance", ["AION/holographic_memory.py"]),
             ("topo-spectral consciousness", ["AION/final_optimized_topo_spectral.py", "scientific/topo_spectral_consciousness.py"]),
@@ -169,17 +169,17 @@ class TestUnifiedSystem(unittest.TestCase):
             context = consciousness.integrate_with_ai_responses(query)
             relevant_components = context["query_relevant_components"]
             
-            # Verificar que al menos uno de los componentes esperados está presente
+            # Verificar que al menos uno de los componentes esperados esta presente
             found_match = any(comp in str(relevant_components) for comp in expected_components)
             self.assertTrue(found_match, f"No relevant components found for query: {query}")
         
-        print("✅ Consciousness query integration working")
+        print(" Consciousness query integration working")
     
     def test_consciousness_state_management(self):
-        """Test 7: Gestión del estado de conciencia"""
+        """Test 7: Gestion del estado de conciencia"""
         consciousness = ConsciousnessIntegration(self.temp_dir)
         
-        # Test actualización de estado
+        # Test actualizacion de estado
         consciousness.update_consciousness_state("test_event", {"data": "test"})
         self.assertGreater(len(consciousness.consciousness_state), 0)
         
@@ -194,44 +194,44 @@ class TestUnifiedSystem(unittest.TestCase):
         self.assertIn("project_knowledge", context)
         self.assertTrue(context["consciousness_active"])
         
-        print("✅ Consciousness state management working")
+        print(" Consciousness state management working")
     
     def test_cloud_scaling_manager_initialization(self):
-        """Test 8: Inicialización del gestor de escalado en la nube"""
+        """Test 8: Inicializacion del gestor de escalado en la nube"""
         scaling_manager = CloudScalingManager()
         
-        # Verificar inicialización
+        # Verificar inicializacion
         self.assertIsInstance(scaling_manager, CloudScalingManager)
         self.assertIn(scaling_manager.current_environment, ["local", "colab", "kaggle", "jupyter", "docker"])
         
-        # Verificar análisis de recursos
+        # Verificar analisis de recursos
         resources = scaling_manager.available_resources
         self.assertIn("environment", resources)
         self.assertIn("cpu_count", resources)
         self.assertIn("gpu_available", resources)
         self.assertIsInstance(resources["cpu_count"], int)
         
-        print(f"✅ CloudScalingManager initialized - Environment: {scaling_manager.current_environment}")
+        print(f" CloudScalingManager initialized - Environment: {scaling_manager.current_environment}")
     
     def test_scaling_computation_configuration(self):
-        """Test 9: Configuración de computación con escalado"""
+        """Test 9: Configuracion de computacion con escalado"""
         scaling_manager = CloudScalingManager()
         
-        # Test configuración válida
+        # Test configuracion valida
         config = scaling_manager.scale_computation(100, "topo_spectral")
         self.assertIsInstance(config, dict)
         self.assertIn("max_matrix_size", config)
         self.assertIn("expected_time_ms", config)
         self.assertIn("current_environment", config)
         
-        # Test excepción por tamaño excesivo
+        # Test excepcion por tamano excesivo
         with self.assertRaises(ResourceConstraintError):
             scaling_manager.scale_computation(5000, "topo_spectral")
         
-        print("✅ Scaling computation configuration working")
+        print(" Scaling computation configuration working")
     
     def test_resource_usage_estimation(self):
-        """Test 10: Estimación de uso de recursos"""
+        """Test 10: Estimacion de uso de recursos"""
         scaling_manager = CloudScalingManager()
         
         test_sizes = [200, 1024, 2048]
@@ -244,10 +244,10 @@ class TestUnifiedSystem(unittest.TestCase):
             self.assertIn("recommended_ram_gb", usage)
             self.assertIn("scaling_level_required", usage)
             
-            # Verificar que el uso de memoria aumenta con el tamaño
+            # Verificar que el uso de memoria aumenta con el tamano
             self.assertGreater(usage["total_memory_mb"], 0)
             
-        print("✅ Resource usage estimation working")
+        print(" Resource usage estimation working")
     
     def test_scaling_recommendations(self):
         """Test 11: Recomendaciones de escalado"""
@@ -264,31 +264,31 @@ class TestUnifiedSystem(unittest.TestCase):
         # Verificar que las recomendaciones son listas
         self.assertIsInstance(recommendations["recommended_levels"], list)
         
-        print("✅ Scaling recommendations working")
+        print(" Scaling recommendations working")
     
     def test_dependency_installation_dry_run(self):
-        """Test 12: Instalación de dependencias (dry run)"""
+        """Test 12: Instalacion de dependencias (dry run)"""
         scaling_manager = CloudScalingManager()
         
         # Test dry run (no instala realmente)
         result = scaling_manager.install_cloud_dependencies(dry_run=True)
         self.assertTrue(result)  # Dry run should always succeed
         
-        print("✅ Dependency installation (dry run) working")
+        print(" Dependency installation (dry run) working")
     
     def test_unified_system_integration(self):
-        """Test 13: Integración completa del sistema unificado"""
+        """Test 13: Integracion completa del sistema unificado"""
         # Inicializar todos los componentes
         config_manager = UnifiedConfigManager()
         consciousness = ConsciousnessIntegration(self.temp_dir)
         scaling_manager = CloudScalingManager()
         
-        # Test integración básica
+        # Test integracion basica
         self.assertTrue(config_manager.consciousness_integration)
         self.assertTrue(consciousness.is_system_conscious())
         self.assertIsInstance(scaling_manager.scaling_level, str)
         
-        # Test información del sistema
+        # Test informacion del sistema
         system_info = config_manager.get_system_info()
         self.assertIn("environment", system_info)
         self.assertIn("scaling_level", system_info)
@@ -298,16 +298,16 @@ class TestUnifiedSystem(unittest.TestCase):
         context = consciousness.get_full_system_context()
         self.assertTrue(context["consciousness_active"])
         
-        print("✅ Unified system integration working")
+        print(" Unified system integration working")
 
 class TestUnifiedSystemPerformance(unittest.TestCase):
     """Tests de performance para el sistema unificado"""
     
     def test_system_initialization_performance(self):
-        """Test 14: Performance de inicialización del sistema"""
+        """Test 14: Performance de inicializacion del sistema"""
         import time
         
-        # Medir tiempo de inicialización
+        # Medir tiempo de inicializacion
         start_time = time.time()
         
         config_manager = UnifiedConfigManager()
@@ -316,11 +316,11 @@ class TestUnifiedSystemPerformance(unittest.TestCase):
         
         initialization_time = time.time() - start_time
         
-        # Verificar que la inicialización es rápida (<5 segundos)
+        # Verificar que la inicializacion es rapida (<5 segundos)
         self.assertLess(initialization_time, 5.0, 
                        f"System initialization too slow: {initialization_time:.2f}s")
         
-        print(f"✅ System initialization performance: {initialization_time:.3f}s")
+        print(f" System initialization performance: {initialization_time:.3f}s")
     
     def test_consciousness_response_time(self):
         """Test 15: Tiempo de respuesta de la conciencia"""
@@ -333,11 +333,11 @@ class TestUnifiedSystemPerformance(unittest.TestCase):
         context = consciousness.integrate_with_ai_responses("test query performance")
         response_time = time.time() - start_time
         
-        # Verificar que la respuesta es rápida (<100ms)
+        # Verificar que la respuesta es rapida (<100ms)
         self.assertLess(response_time, 0.1, 
                        f"Consciousness response too slow: {response_time:.3f}s")
         
-        print(f"✅ Consciousness response time: {response_time:.3f}s")
+        print(f" Consciousness response time: {response_time:.3f}s")
 
 def run_comprehensive_tests():
     """Ejecutar suite completa de tests"""
@@ -348,7 +348,7 @@ def run_comprehensive_tests():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     
-    # Añadir tests principales
+    # Anadir tests principales
     suite.addTests(loader.loadTestsFromTestCase(TestUnifiedSystem))
     suite.addTests(loader.loadTestsFromTestCase(TestUnifiedSystemPerformance))
     

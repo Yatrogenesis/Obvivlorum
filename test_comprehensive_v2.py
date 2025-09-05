@@ -571,9 +571,9 @@ def run_test_suite():
     print(f"\nSuccess rate: {success_rate:.1f}%")
     
     if success_rate >= 80:
-        print("✅ Test suite PASSED with acceptable success rate")
+        print(" Test suite PASSED with acceptable success rate")
     else:
-        print("❌ Test suite FAILED - success rate below 80%")
+        print(" Test suite FAILED - success rate below 80%")
     
     print(f"Completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 80)
