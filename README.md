@@ -56,7 +56,7 @@
 - **IEEE Neural Networks**: Auto-generated paper draft
 - **Physics of Fluids**: Theoretical framework documentation
 - **CI/CD Validation**: Scientific reproducibility pipeline
-- **Benchmark Results**: 94.7% accuracy on synthetic networks (n=5,000), clinical validation (n=2,847)
+- **Benchmark Results**: Research and clinical validation protocols in development
 
 ## Key Features
 
@@ -409,8 +409,8 @@ The system has been comprehensively validated with:
   - Holographic memory encoding: <1ms average
   - Quantum-symbolic processing: ~1ms average  
   - CI/CD scientific validation: Complete pipeline success
-- **Research validation**: 94.7% accuracy on synthetic networks (n=5,000)
-- **Clinical validation**: Temple University Hospital EEG corpus (n=2,847)
+- **Research validation**: Protocols in development
+- **Clinical validation**: Protocols in development
 
 ## Security Considerations
 
