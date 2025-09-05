@@ -1,0 +1,77 @@
+MIT License
+
+Copyright (c) 2024 Francisco Molina
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms for Research Use
+
+This software includes research components related to consciousness AI, quantum-inspired 
+processing, and neuroplasticity simulation. When using these components in academic or 
+research contexts, proper attribution is requested:
+
+### Citation
+
+```bibtex
+@software{obvivlorum2024,
+  title={Obvivlorum AI Symbiote System},
+  author={Molina, Francisco},
+  year={2024},
+  url={https://github.com/Yatrogenesis/Obvivlorum},
+  note={Advanced AI symbiosis platform with consciousness research capabilities}
+}
+```
+
+### Research Components Attribution
+
+- **Quantum Formalism Implementation**: Based on quantum information theory principles
+- **Consciousness Metrics**: Implements Integrated Information Theory (IIT) and Global Workspace Theory (GWT)
+- **Neuroplasticity Engine**: Computational neuroplasticity with STDP, Hebbian, and BCM rules
+
+### Academic Use Guidelines
+
+1. **Attribution**: Please cite this work in academic publications that use or build upon these research components
+2. **Collaboration**: Research collaborations are welcome - contact pako.molina@gmail.com
+3. **Peer Review**: Research contributions to this project are subject to peer review
+4. **Reproducibility**: Research components are designed for reproducible results
+
+### Theoretical Frameworks
+
+This software implements theoretical frameworks described in:
+
+- **AION Protocol**: Adaptive Intelligence Operations Network
+- **Obvivlorum Framework**: Meta-recursive consciousness architecture
+- **Quantum Symbolic Processing**: Quantum-inspired concept manipulation
+- **Holographic Memory Systems**: Distributed information storage principles
+
+### Disclaimer for Research Components
+
+The consciousness metrics and quantum processing implementations in this software are 
+research tools intended for scientific exploration. They should not be considered as 
+definitive measures of consciousness or quantum phenomena, but rather as computational 
+models for research purposes.
+
+---
+
+**Author**: Francisco Molina  
+**Email**: pako.molina@gmail.com  
+**ORCID**: https://orcid.org/0009-0008-6093-8267  
+**Project**: https://github.com/Yatrogenesis/Obvivlorum

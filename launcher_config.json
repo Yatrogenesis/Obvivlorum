@@ -1,0 +1,153 @@
+{
+  "core": {
+    "name": "core",
+    "description": "Start core orchestrator (default mode)",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "core_orchestrator.py"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "core"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "legacy": {
+    "name": "legacy",
+    "description": "Start legacy AI symbiote system",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "ai_symbiote.py"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "legacy"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "gui": {
+    "name": "gui",
+    "description": "Start GUI interface",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "ai_symbiote_gui.py"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "gui"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "background": {
+    "name": "background",
+    "description": "Start in background mode",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "ai_symbiote.py",
+      "--background",
+      "--persistent"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "background"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": true
+  },
+  "sandbox": {
+    "name": "sandbox",
+    "description": "Start in Docker sandbox",
+    "command": [
+      "docker-compose",
+      "up",
+      "-d"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "sandbox"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "test": {
+    "name": "test",
+    "description": "Run system tests",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "QUICK_SYSTEM_TEST.py"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "test"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "web": {
+    "name": "web",
+    "description": "Start web interface",
+    "command": [
+      "python",
+      "-m",
+      "http.server",
+      "8000"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "web"
+    },
+    "working_dir": "D:\\Obvivlorum\\web\\frontend",
+    "requires_admin": false,
+    "background": false
+  },
+  "parrot": {
+    "name": "parrot",
+    "description": "Start with ParrotOS WSL integration",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "ai_symbiote.py",
+      "--linux-mode"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "parrot",
+      "LINUX_DISTRO": "ParrotOS",
+      "WSL_ENABLED": "true"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  },
+  "security": {
+    "name": "security",
+    "description": "Start security audit mode",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "security_manager.py",
+      "--audit"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "security"
+    },
+    "working_dir": null,
+    "requires_admin": true,
+    "background": false
+  },
+  "minimal": {
+    "name": "minimal",
+    "description": "Start minimal core without persistence",
+    "command": [
+      "C:\\Users\\Propietario\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "core_orchestrator.py",
+      "--minimal"
+    ],
+    "environment": {
+      "OBVIVLORUM_MODE": "minimal",
+      "DISABLE_PERSISTENCE": "true"
+    },
+    "working_dir": null,
+    "requires_admin": false,
+    "background": false
+  }
+}

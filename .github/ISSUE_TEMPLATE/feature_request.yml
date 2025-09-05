@@ -1,0 +1,169 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for Obvivlorum
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to suggest a new feature! 
+        Your input helps make Obvivlorum better for everyone.
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: I would like to see...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component would this feature affect?
+      options:
+        - Core Orchestrator
+        - Security Manager
+        - Human-in-the-Loop
+        - Smart Provider Selector
+        - Structured Logger
+        - AION Protocol
+        - Unified Launcher
+        - Docker Sandbox
+        - Web Interface
+        - Documentation
+        - New Component
+        - Multiple Components
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New Functionality
+        - Performance Improvement
+        - User Experience Enhancement
+        - Security Enhancement
+        - Integration/API
+        - Documentation
+        - Developer Tools
+        - Configuration/Management
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Important for my use case
+        - Critical - Blocking my usage
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: I've also considered...
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific use cases where this feature would be beneficial.
+      placeholder: |
+        1. When working on...
+        2. In the scenario where...
+        3. For users who...
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: Technical Requirements
+      description: Any specific technical requirements or constraints to consider?
+      placeholder: This would require...
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: Implementation Ideas
+      description: Do you have any ideas about how this could be implemented?
+      placeholder: This could be implemented by...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: research-frameworks
+    attributes:
+      label: Research Framework Relevance
+      description: Does this feature relate to our research frameworks? (Check all that apply)
+      options:
+        - label: AION Protocol enhancements
+        - label: Obvivlorum theoretical framework
+        - label: Consciousness research capabilities
+        - label: Quantum-inspired processing
+        - label: Neuroplasticity simulation
+        - label: Holographic memory systems
+        - label: Meta-recursive architectures
+        - label: Not research-related
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility Considerations
+      description: Platform and version compatibility (Check all that apply)
+      options:
+        - label: Should work on Windows
+        - label: Should work on Linux
+        - label: Should work on macOS
+        - label: Requires Docker
+        - label: Requires WSL
+        - label: Backwards compatibility important
+        - label: Breaking changes acceptable
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, or examples about the feature request here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: Before submitting, please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have clearly described the problem this feature would solve
+          required: true
+        - label: I have provided specific use cases for this feature
+          required: true

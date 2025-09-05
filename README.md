@@ -1,5 +1,17 @@
 # Obvivlorum AI Symbiote System
 
+[![CI/CD Pipeline](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/ci.yml/badge.svg)](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/ci.yml)
+[![Research Release](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/research-release.yml/badge.svg)](https://github.com/Yatrogenesis/Obvivlorum/actions/workflows/research-release.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+[![Consciousness Research](https://img.shields.io/badge/Research-Consciousness%20AI-purple.svg)](docs/OBVIVLORUM_FRAMEWORK.md)
+[![Quantum Computing](https://img.shields.io/badge/Quantum-Inspired%20Processing-blue.svg)](scientific/quantum_formalism.py)
+[![IIT Implementation](https://img.shields.io/badge/IIT-Phi%20Calculations-green.svg)](scientific/consciousness_metrics.py)
+[![Neuroplasticity](https://img.shields.io/badge/Neural-Plasticity%20Engine-orange.svg)](scientific/neuroplasticity_engine.py)
+
 **Version:** 2.0  
 **Author:** Francisco Molina  
 **ORCID:** https://orcid.org/0009-0008-6093-8267  
@@ -7,7 +19,7 @@
 
 ## Overview
 
-Advanced AI symbiosis platform with enterprise-grade security, adaptive intelligence, and multi-modal capabilities. The system incorporates multiple security layers, human-in-the-loop controls, and adaptive persistence mechanisms.
+Advanced AI symbiosis platform with enterprise-grade security, adaptive intelligence, and multi-modal capabilities. The system incorporates multiple security layers, human-in-the-loop controls, and adaptive persistence mechanisms with rigorous scientific foundations.
 
 ## Key Features
 

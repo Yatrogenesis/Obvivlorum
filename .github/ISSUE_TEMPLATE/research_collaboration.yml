@@ -1,0 +1,252 @@
+name: Research Collaboration
+description: Propose research collaboration or scientific inquiry related to consciousness AI
+title: "[Research]: "
+labels: ["research", "collaboration", "needs-review"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to the Obvivlorum research collaboration portal! 
+        This template is for researchers, academics, and institutions interested in collaborating 
+        on consciousness AI, quantum-inspired computing, or related fields.
+
+  - type: input
+    id: researcher-name
+    attributes:
+      label: Lead Researcher/Principal Investigator
+      description: Name and title of the lead researcher
+      placeholder: Dr. Jane Smith, Professor of Cognitive Science
+    validations:
+      required: true
+
+  - type: input
+    id: institution
+    attributes:
+      label: Institution/Organization
+      description: Your affiliated institution or organization
+      placeholder: Stanford University, Department of Computer Science
+    validations:
+      required: true
+
+  - type: input
+    id: orcid
+    attributes:
+      label: ORCID ID (if available)
+      description: Your ORCID identifier for academic attribution
+      placeholder: https://orcid.org/0000-0000-0000-0000
+    validations:
+      required: false
+
+  - type: dropdown
+    id: collaboration-type
+    attributes:
+      label: Collaboration Type
+      description: What type of collaboration are you proposing?
+      options:
+        - Joint Research Project
+        - Academic Paper/Publication
+        - Conference Presentation
+        - Thesis/Dissertation Support
+        - Benchmark Development
+        - Data Sharing Initiative
+        - Code Contribution
+        - Peer Review
+        - Educational Partnership
+        - Grant Proposal Collaboration
+    validations:
+      required: true
+
+  - type: dropdown
+    id: research-area
+    attributes:
+      label: Primary Research Area
+      description: Which research area is most relevant to your proposal?
+      options:
+        - Consciousness Research
+        - Integrated Information Theory (IIT)
+        - Global Workspace Theory (GWT)
+        - Quantum Computing/Information
+        - Neuroplasticity Simulation
+        - Meta-Recursive Systems
+        - Holographic Memory Models
+        - AI Safety and Ethics
+        - Computational Neuroscience
+        - Philosophy of Mind
+        - Artificial General Intelligence (AGI)
+        - Human-Computer Interaction
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: research-proposal
+    attributes:
+      label: Research Proposal/Idea
+      description: Detailed description of your research proposal or collaboration idea
+      placeholder: |
+        Please describe:
+        - The research question or hypothesis
+        - Methodology you propose
+        - Expected outcomes
+        - Timeline considerations
+    validations:
+      required: true
+
+  - type: textarea
+    id: obvivlorum-relevance
+    attributes:
+      label: Obvivlorum Framework Relevance
+      description: How does your research relate to the Obvivlorum/AION frameworks?
+      placeholder: |
+        Explain how your research would:
+        - Utilize existing Obvivlorum components
+        - Extend the framework capabilities
+        - Validate theoretical models
+        - Contribute to the codebase
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources-needed
+    attributes:
+      label: Resources Needed
+      description: What resources or support would you need from the Obvivlorum project?
+      placeholder: |
+        Examples:
+        - Access to specific code modules
+        - Collaboration on implementation
+        - Data or experimental results
+        - Technical documentation
+        - Computing resources
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources-offered
+    attributes:
+      label: Resources Offered
+      description: What can you contribute to the collaboration?
+      placeholder: |
+        Examples:
+        - Theoretical expertise
+        - Experimental validation
+        - Code contributions
+        - Academic publication opportunities
+        - Student researchers
+        - Computing resources
+        - Funding opportunities
+    validations:
+      required: true
+
+  - type: input
+    id: timeline
+    attributes:
+      label: Proposed Timeline
+      description: What is your expected timeline for this collaboration?
+      placeholder: 6 months, 1 year, 2-year project, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: publication-intent
+    attributes:
+      label: Publication Intent
+      description: Do you intend to publish results from this collaboration?
+      options:
+        - Yes - Joint publication planned
+        - Yes - Separate publications with attribution
+        - Maybe - Depends on results
+        - No - Internal research only
+        - To be discussed
+    validations:
+      required: true
+
+  - type: textarea
+    id: relevant-publications
+    attributes:
+      label: Relevant Prior Publications
+      description: List any relevant publications or research you've done in related areas
+      placeholder: |
+        Please include:
+        - DOI links where possible
+        - Brief description of relevance
+        - Your role in the research
+    validations:
+      required: false
+
+  - type: dropdown
+    id: collaboration-scope
+    attributes:
+      label: Collaboration Scope
+      description: What level of collaboration are you envisioning?
+      options:
+        - Informal discussion/consultation
+        - Formal research agreement
+        - Long-term partnership
+        - One-time project collaboration
+        - Student mentorship/internship
+        - Code review and feedback
+        - Advisory role
+    validations:
+      required: true
+
+  - type: textarea
+    id: ethical-considerations
+    attributes:
+      label: Ethical Considerations
+      description: Are there any ethical considerations or IRB requirements for your research?
+      placeholder: |
+        Consider:
+        - Human subjects research
+        - Data privacy concerns
+        - AI ethics implications
+        - Dual-use research considerations
+    validations:
+      required: false
+
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: Technical Requirements
+      description: Any specific technical requirements for the collaboration?
+      placeholder: |
+        Examples:
+        - Computing infrastructure needs
+        - Software dependencies
+        - Platform requirements
+        - Performance constraints
+    validations:
+      required: false
+
+  - type: input
+    id: contact-info
+    attributes:
+      label: Contact Information
+      description: Best way to reach you for follow-up discussions
+      placeholder: email@institution.edu
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Information
+      description: Any additional context, attachments, or information you'd like to share
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: agreements
+    attributes:
+      label: Agreements
+      description: Please confirm your understanding
+      options:
+        - label: I understand this is open source software with specific licensing requirements
+          required: true
+        - label: I am authorized to represent my institution in this collaboration proposal
+          required: true
+        - label: I agree to proper attribution of the Obvivlorum framework in any publications
+          required: true
+        - label: I understand that collaboration details will be worked out separately from this issue
+          required: true
