@@ -45,10 +45,10 @@ jobs:
         print(f'Execution Time: {results["total_execution_time_s"]:.2f}s')
         
         if results['overall_status'] != 'passed':
-            print('❌ Pipeline failed')
+            print('ERROR: Pipeline failed')
             sys.exit(1)
         else:
-            print('✅ Pipeline passed')
+            print('SUCCESS: Pipeline passed')
         "
     
     - name: Upload Pipeline Reports
@@ -85,10 +85,10 @@ jobs:
         print(f'Average computation time: {mean_time:.3f}ms')
         
         if mean_time > 5.0:
-            print(f'❌ Performance regression detected: {mean_time:.3f}ms > 5.0ms target')
+            print(f'ERROR: Performance regression detected: {mean_time:.3f}ms > 5.0ms target')
             exit(1)
         else:
-            print(f'✅ Performance target met: {mean_time:.3f}ms < 5.0ms')
+            print(f'SUCCESS: Performance target met: {mean_time:.3f}ms < 5.0ms')
         "
 
   documentation-update:
@@ -126,5 +126,5 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add README.md API_DOCUMENTATION.md .claude.json
-        git diff --staged --quiet || git commit -m "🤖 Auto-update documentation [skip ci]"
+        git diff --staged --quiet || git commit -m "? Auto-update documentation [skip ci]"
         git push

@@ -357,12 +357,12 @@ jobs:
     steps:
     - name: Success notification
       run: |
-        echo "🎉 All CI/CD checks passed successfully!"
-        echo "📊 Test results: PASSED"
-        echo "🔍 Code quality: PASSED"
-        echo "🛡️ Security scan: COMPLETED" 
-        echo "📚 Documentation: VALIDATED"
-        echo "🧬 Research validation: COMPLETED"
+        echo "SUCCESS: All CI/CD checks passed successfully!"
+        echo "Test results: PASSED"
+        echo "Code quality: PASSED"
+        echo "Security scan: COMPLETED" 
+        echo "Documentation: VALIDATED"
+        echo "Research validation: COMPLETED"
 
   notify-failure:
     name: Notify Failure
@@ -373,6 +373,6 @@ jobs:
     steps:
     - name: Failure notification
       run: |
-        echo "❌ Some CI/CD checks failed"
+        echo "ERROR: Some CI/CD checks failed"
         echo "Please check the failed jobs and fix the issues"
-        echo "💡 Tip: Run tests locally before pushing: python test_system_final.py"
+        echo "TIP: Run tests locally before pushing: python test_system_final.py"

@@ -32,13 +32,13 @@ jobs:
     
     - name: Validate all scientific modules
       run: |
-        echo "🧬 Validating Quantum Formalism..."
+        echo "Validating Quantum Formalism..."
         python scientific/quantum_formalism.py
         
-        echo "🧠 Validating Consciousness Metrics..."
+        echo "Validating Consciousness Metrics..."
         python scientific/consciousness_metrics.py
         
-        echo "🔗 Validating Neuroplasticity Engine..."
+        echo "Validating Neuroplasticity Engine..."
         python scientific/neuroplasticity_engine.py
     
     - name: Run comprehensive research tests
@@ -53,9 +53,9 @@ jobs:
         echo "**Date**: $(date)" >> research_validation.md
         echo "" >> research_validation.md
         echo "## Component Status" >> research_validation.md
-        echo "- ✅ Quantum Formalism: Operational" >> research_validation.md
-        echo "- ✅ Consciousness Metrics: Operational" >> research_validation.md
-        echo "- ✅ Neuroplasticity Engine: Operational" >> research_validation.md
+        echo "- [OK] Quantum Formalism: Operational" >> research_validation.md
+        echo "- [OK] Consciousness Metrics: Operational" >> research_validation.md
+        echo "- [OK] Neuroplasticity Engine: Operational" >> research_validation.md
         echo "" >> research_validation.md
         echo "## Mathematical Validations" >> research_validation.md
         echo "- Bell state fidelity calculations: Verified" >> research_validation.md
@@ -158,7 +158,7 @@ jobs:
         import numpy as np
         from scientific.consciousness_metrics import ConsciousnessAssessment, create_test_network
         
-        print('🧠 Consciousness Metrics Performance Benchmark')
+        print('Consciousness Metrics Performance Benchmark')
         print('=' * 50)
         
         # Create test network
@@ -186,7 +186,7 @@ jobs:
         import numpy as np
         from scientific.quantum_formalism import QuantumSymbolicProcessor, Concept
         
-        print('⚛️  Quantum Processing Performance Benchmark')
+        print('Quantum Processing Performance Benchmark')
         print('=' * 50)
         
         processor = QuantumSymbolicProcessor(128)
@@ -216,7 +216,7 @@ jobs:
         import numpy as np
         from scientific.neuroplasticity_engine import NeuroplasticNetwork, PlasticityRule, PlasticityType
         
-        print('🔗 Neuroplasticity Performance Benchmark')
+        print('Neuroplasticity Performance Benchmark')
         print('=' * 50)
         
         # Create network
@@ -253,14 +253,14 @@ jobs:
     - name: Generate release announcement
       run: |
         cat > release_announcement.md << 'EOF'
-        # 🧬 Obvivlorum Research Release ${{ github.ref_name }}
+        # Obvivlorum Research Release ${{ github.ref_name }}
         
         ## New in this release:
         
         ### Research Components
-        - ✅ Validated quantum formalism with mathematical rigor
-        - ✅ IIT-based consciousness metrics with experimental validation
-        - ✅ High-performance neuroplasticity simulation engine
+        - [OK] Validated quantum formalism with mathematical rigor
+        - [OK] IIT-based consciousness metrics with experimental validation
+        - [OK] High-performance neuroplasticity simulation engine
         
         ### Performance Improvements
         - Optimized consciousness assessment algorithms
@@ -334,9 +334,9 @@ jobs:
         
         | Component | Status | Performance | Documentation |
         |-----------|--------|-------------|---------------|
-        | Quantum Formalism | ✅ Stable | High | Complete |
-        | Consciousness Metrics | ✅ Stable | Medium | Complete |
-        | Neuroplasticity Engine | ✅ Stable | High | Complete |
+        | Quantum Formalism | [OK] Stable | High | Complete |
+        | Consciousness Metrics | [OK] Stable | Medium | Complete |
+        | Neuroplasticity Engine | [OK] Stable | High | Complete |
         
         ## Recent Updates
         
