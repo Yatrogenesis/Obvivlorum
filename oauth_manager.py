@@ -372,13 +372,25 @@ class OAuthManager:
             return False
     
     def _start_web_flow(self, provider: OAuthProvider, config: OAuthConfig) -> bool:
-        """Start web-based OAuth flow with local server."""
+        """Start web-based OAuth flow with local server or fallback methods."""
         try:
-            # Start local callback server and wait for it to be ready
-            if not self._start_callback_server():
-                print("Failed to start local callback server")
-                return False
+            # Try local server first
+            server_started = self._start_callback_server()
             
+            if server_started:
+                return self._web_flow_with_server(provider, config)
+            else:
+                print("Local server failed to start. Using manual code entry method...")
+                return self._web_flow_manual_entry(provider, config)
+                
+        except Exception as e:
+            logger.error(f"Web flow failed: {e}")
+            print("Falling back to manual code entry...")
+            return self._web_flow_manual_entry(provider, config)
+    
+    def _web_flow_with_server(self, provider: OAuthProvider, config: OAuthConfig) -> bool:
+        """Web flow using local server callback."""
+        try:
             # Wait a moment for server to be fully ready
             import time
             time.sleep(1)
@@ -419,7 +431,66 @@ class OAuthManager:
                 return self._wait_for_callback(120)  # 2 minute timeout for manual
                 
         except Exception as e:
-            logger.error(f"Web flow failed: {e}")
+            logger.error(f"Server-based web flow failed: {e}")
+            return False
+    
+    def _web_flow_manual_entry(self, provider: OAuthProvider, config: OAuthConfig) -> bool:
+        """Web flow using manual code entry when server fails."""
+        try:
+            # Generate state for security
+            self.state_verifier = secrets.token_urlsafe(32)
+            
+            # Build authorization URL with special redirect
+            auth_params = {
+                'client_id': config.client_id,
+                'redirect_uri': 'http://localhost:8080/manual',  # Will fail but show code
+                'scope': config.scope,
+                'response_type': 'code',
+                'state': self.state_verifier
+            }
+            
+            # Add provider-specific parameters
+            if provider == OAuthProvider.GOOGLE:
+                auth_params['access_type'] = 'offline'
+                auth_params['prompt'] = 'consent'
+            
+            auth_url = f"{config.auth_url}?{urllib.parse.urlencode(auth_params)}"
+            
+            print(f"\n{provider.value.title()} Manual Authentication:")
+            print("=" * 60)
+            print("The local server cannot start due to firewall/network restrictions.")
+            print("Using manual code entry method instead.")
+            print()
+            print("Instructions:")
+            print("1. Browser will open for authentication")
+            print("2. Complete the authentication process")  
+            print("3. You'll see an error page - this is expected")
+            print("4. Look at the URL in your browser")
+            print("5. Copy the 'code=' parameter from the URL")
+            print("6. Paste it when prompted below")
+            print()
+            
+            # Open browser
+            if webbrowser.open(auth_url):
+                print("Browser opened successfully")
+            else:
+                print(f"Please open manually: {auth_url}")
+            
+            print()
+            print("After authentication, the browser will show an error.")
+            print("Check the URL bar and copy the authorization code.")
+            
+            # Wait for user to enter code
+            auth_code = input("\nPaste the authorization code here: ").strip()
+            
+            if auth_code:
+                return self._exchange_code_for_token(provider, config, auth_code)
+            else:
+                print("No authorization code provided")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Manual web flow failed: {e}")
             return False
     
     def _exchange_code_for_token(self, provider: OAuthProvider, config: OAuthConfig, auth_code: str) -> bool:
@@ -515,8 +586,28 @@ class OAuthManager:
             return True
         
         try:
-            # Find available port
-            for port in range(8080, 8090):
+            # Test if ports are blocked by firewall
+            import socket
+            test_ports = [8080, 8081, 8082, 8083, 8084]
+            available_ports = []
+            
+            for port in test_ports:
+                test_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                test_sock.settimeout(1)
+                try:
+                    result = test_sock.bind(('127.0.0.1', port))
+                    available_ports.append(port)
+                    test_sock.close()
+                except (OSError, socket.error) as e:
+                    test_sock.close()
+                    continue
+            
+            if not available_ports:
+                print("All local ports appear to be blocked by firewall/antivirus")
+                return False
+            
+            # Try to start server on available port
+            for port in available_ports:
                 try:
                     server = HTTPServer(('127.0.0.1', port), OAuthCallbackHandler)
                     server.oauth_manager = self
@@ -525,42 +616,49 @@ class OAuthManager:
                     self.callback_received = False
                     self.callback_result = False
                     break
-                except OSError:
+                except OSError as e:
+                    logger.warning(f"Port {port} failed: {e}")
                     continue
             
-            if self.callback_server:
-                # Start server in background
-                def run_server():
-                    logger.info(f"OAuth callback server started on port {self.callback_port}")
-                    try:
-                        while not self.callback_received:
-                            self.callback_server.timeout = 5  # Short timeout for checking
-                            self.callback_server.handle_request()
-                    except Exception as e:
-                        logger.error(f"Server error: {e}")
-                
-                self.server_thread = threading.Thread(target=run_server, daemon=True)
-                self.server_thread.start()
-                
-                # Test server is responding
-                import socket
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if not self.callback_server:
+                print("Could not bind to any local port - firewall may be blocking")
+                return False
+            
+            # Start server in background
+            def run_server():
+                logger.info(f"OAuth callback server started on port {self.callback_port}")
                 try:
-                    result = sock.connect_ex(('127.0.0.1', self.callback_port))
-                    sock.close()
-                    if result != 0:
-                        # Server not ready yet, wait a bit
-                        time.sleep(0.5)
-                finally:
-                    sock.close()
+                    while not self.callback_received:
+                        self.callback_server.timeout = 5  # Short timeout for checking
+                        self.callback_server.handle_request()
+                except Exception as e:
+                    logger.error(f"Server error: {e}")
+            
+            self.server_thread = threading.Thread(target=run_server, daemon=True)
+            self.server_thread.start()
+            
+            # Verify server is actually accessible
+            time.sleep(0.2)  # Give server time to start
+            verify_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            verify_sock.settimeout(2)
+            try:
+                result = verify_sock.connect_ex(('127.0.0.1', self.callback_port))
+                verify_sock.close()
                 
-                return True
-            else:
-                logger.error("Could not start OAuth callback server")
+                if result == 0:
+                    print(f"Local server successfully started on port {self.callback_port}")
+                    return True
+                else:
+                    print(f"Server started but not accessible - firewall blocking port {self.callback_port}")
+                    return False
+            except Exception as e:
+                verify_sock.close()
+                print(f"Server verification failed: {e}")
                 return False
                 
         except Exception as e:
             logger.error(f"Callback server startup failed: {e}")
+            print(f"Local server startup error: {e}")
             return False
     
     def _wait_for_callback(self, timeout: int) -> bool:
