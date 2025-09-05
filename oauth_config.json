@@ -1,23 +1,49 @@
 {
     "google": {
-        "client_id": "demo-google-client-id",
-        "client_secret": "demo-google-client-secret",
+        "client_id": "YOUR_REAL_GOOGLE_CLIENT_ID",
+        "client_secret": "YOUR_REAL_GOOGLE_CLIENT_SECRET",
         "redirect_uri": "http://localhost:8080/callback",
         "scope": "openid email profile",
-        "enabled": true
+        "enabled": false,
+        "note": "Set enabled:true after adding real credentials from Google Console"
     },
     "github": {
-        "client_id": "demo-github-client-id", 
-        "client_secret": "demo-github-client-secret",
+        "client_id": "YOUR_REAL_GITHUB_CLIENT_ID", 
+        "client_secret": "YOUR_REAL_GITHUB_CLIENT_SECRET",
         "redirect_uri": "http://localhost:8080/callback",
         "scope": "user:email",
-        "enabled": true
+        "enabled": false,
+        "note": "Set enabled:true after adding real credentials from GitHub Developer Settings"
     },
     "microsoft": {
-        "client_id": "demo-microsoft-client-id",
-        "client_secret": "demo-microsoft-client-secret", 
+        "client_id": "YOUR_REAL_MICROSOFT_CLIENT_ID",
+        "client_secret": "YOUR_REAL_MICROSOFT_CLIENT_SECRET", 
         "redirect_uri": "http://localhost:8080/callback",
         "scope": "openid profile email",
-        "enabled": true
+        "enabled": false,
+        "note": "Set enabled:true after adding real credentials from Azure App Registration"
+    },
+    "_demo_mode": {
+        "google": {
+            "client_id": "demo-google-client-id",
+            "client_secret": "demo-google-client-secret",
+            "redirect_uri": "http://localhost:8080/callback",
+            "scope": "openid email profile",
+            "enabled": true
+        },
+        "github": {
+            "client_id": "demo-github-client-id", 
+            "client_secret": "demo-github-client-secret",
+            "redirect_uri": "http://localhost:8080/callback",
+            "scope": "user:email",
+            "enabled": true
+        },
+        "microsoft": {
+            "client_id": "demo-microsoft-client-id",
+            "client_secret": "demo-microsoft-client-secret", 
+            "redirect_uri": "http://localhost:8080/callback",
+            "scope": "openid profile email",
+            "enabled": true
+        }
     }
 }
