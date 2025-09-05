@@ -1,0 +1,190 @@
+{
+  "claude_code": {
+    "version": "2.0",
+    "project_name": "Obvivlorum AI Symbiote System",
+    "description": "Advanced AI symbiosis platform with Topo-Spectral consciousness research capabilities",
+    "author": "Francisco Molina",
+    "license": "MIT",
+    
+    "execution_modes": {
+      "standard": {
+        "description": "Basic IIT/GWT consciousness metrics",
+        "entry_point": "ai_symbiote.py",
+        "args": ["--mode=standard"],
+        "features": ["neuroplasticity", "basic_consciousness", "security"],
+        "dependencies_minimal": true
+      },
+      "topoespectro": {
+        "description": "Topo-Spectral consciousness framework",
+        "entry_point": "ai_symbiote.py", 
+        "args": ["--mode=topoespectro"],
+        "features": ["neuroplasticity", "topo_spectral", "research", "security"],
+        "dependencies_full": true
+      },
+      "research": {
+        "description": "Full research mode with both frameworks",
+        "entry_point": "ai_symbiote.py",
+        "args": ["--mode=research"],
+        "features": ["neuroplasticity", "basic_consciousness", "topo_spectral", "benchmarks", "validation"],
+        "dependencies_full": true
+      },
+      "gui": {
+        "description": "GUI interface with mode selection",
+        "entry_point": "ai_symbiote_gui.py",
+        "args": [],
+        "features": ["gui", "mode_selector", "all_frameworks"],
+        "dependencies_gui": true
+      }
+    },
+
+    "build_commands": {
+      "test_standard": "python -m pytest tests/ -v",
+      "test_research": "python -m pytest research_tests/ -m 'not slow'",
+      "test_benchmark": "python -m pytest benchmarks/ --benchmark-only",
+      "test_all": "python -m pytest tests/ research_tests/ benchmarks/",
+      
+      "lint": "ruff check . --fix",
+      "typecheck": "mypy .",
+      "format": "black .",
+      
+      "build_exe": "python -m PyInstaller --onefile ai_symbiote.py",
+      "build_portable": "./CREATE_PORTABLE_VERSION.bat",
+      "build_docker": "docker build -t obvivlorum .",
+      
+      "research_validation": "python benchmarks/validate_research_components.py",
+      "consciousness_benchmark": "python benchmarks/benchmark_consciousness_metrics.py"
+    },
+
+    "environment_variables": {
+      "OBVIVLORUM_MODE": {
+        "description": "Default execution mode",
+        "default": "standard",
+        "options": ["standard", "topoespectro", "research", "gui"]
+      },
+      "OBVIVLORUM_USE_NUMBA": {
+        "description": "Enable Numba acceleration for neuroplasticity",
+        "default": "true",
+        "type": "boolean"
+      },
+      "OBVIVLORUM_RESEARCH_DATA": {
+        "description": "Path to research data directory",
+        "default": "./research_data",
+        "type": "path"
+      },
+      "OBVIVLORUM_LOG_LEVEL": {
+        "description": "Logging verbosity",
+        "default": "INFO",
+        "options": ["DEBUG", "INFO", "WARNING", "ERROR"]
+      }
+    },
+
+    "configuration_files": {
+      "consciousness_metrics": "config/consciousness_config.json",
+      "neuroplasticity": "config/neuroplasticity_config.json", 
+      "topo_spectral": "config/topoespectral_config.json",
+      "security": "config/security_config.json",
+      "logging": "config/logging_config.json"
+    },
+
+    "research_components": {
+      "topo_spectral_framework": {
+        "enabled": false,
+        "description": "Francisco Molina's Topo-Spectral consciousness index",
+        "implementation": "scientific/topo_spectral_consciousness.py",
+        "validation": "research_tests/test_topo_spectral.py",
+        "performance": "O(n^3) polynomial time complexity",
+        "accuracy": "94.7% on synthetic networks, clinical validation n=2847"
+      },
+      "neuroplasticity_engine": {
+        "enabled": true,
+        "description": "7-type plasticity with real-time adaptation",
+        "implementation": "scientific/neuroplasticity_engine.py", 
+        "plasticity_types": ["hebbian", "stdp", "bcm", "oja", "homeostatic", "metaplastic", "anti_hebbian"],
+        "optimization": "Numba-accelerated for performance"
+      },
+      "consciousness_assessment": {
+        "enabled": true,
+        "description": "IIT/GWT-based consciousness metrics",
+        "implementation": "scientific/consciousness_metrics.py",
+        "theories": ["IIT", "GWT", "Predictive Processing"]
+      }
+    },
+
+    "dependencies": {
+      "minimal": [
+        "numpy>=1.21.0",
+        "scipy>=1.7.0", 
+        "networkx>=2.6",
+        "PyJWT>=2.0.0",
+        "tiktoken>=0.3.0"
+      ],
+      "full_research": [
+        "scikit-learn>=1.0.0",
+        "matplotlib>=3.4.0",
+        "seaborn>=0.11.0",
+        "ripser>=0.6.0",
+        "persim>=0.3.0",
+        "gudhi>=3.4.0",
+        "numba>=0.56.0"
+      ],
+      "gui": [
+        "tkinter",
+        "PIL>=8.0.0"
+      ],
+      "optional": [
+        "torch>=1.9.0",
+        "tensorflow>=2.6.0"
+      ]
+    },
+
+    "performance_requirements": {
+      "standard_mode": {
+        "ram": "512MB",
+        "nodes_max": "1000", 
+        "cpu_cores": "1"
+      },
+      "topoespectro_mode": {
+        "ram": "2GB",
+        "nodes_max": "5000",
+        "cpu_cores": "4",
+        "gpu_optional": true
+      },
+      "research_mode": {
+        "ram": "4GB", 
+        "nodes_max": "10000",
+        "cpu_cores": "8",
+        "storage": "10GB for datasets"
+      }
+    },
+
+    "validation_datasets": {
+      "synthetic_networks": {
+        "count": 5000,
+        "models": ["Watts-Strogatz", "Barabasi-Albert", "Random"],
+        "accuracy_target": "94.7%"
+      },
+      "eeg_clinical": {
+        "source": "Temple University Hospital EEG Corpus v2.0.0",
+        "subjects": 2847,
+        "validation_metrics": ["Glasgow Coma Scale", "RASS", "BIS"]
+      }
+    },
+
+    "citation": {
+      "type": "software",
+      "title": "Obvivlorum AI Symbiote System",
+      "author": "Molina, Francisco",
+      "year": "2024",
+      "url": "https://github.com/Yatrogenesis/Obvivlorum",
+      "note": "Advanced AI symbiosis platform with Topo-Spectral consciousness research capabilities",
+      "orcid": "https://orcid.org/0009-0008-6093-8267"
+    },
+
+    "repository": {
+      "github": "https://github.com/Yatrogenesis/Obvivlorum",
+      "issues": "https://github.com/Yatrogenesis/Obvivlorum/issues",
+      "wiki": "https://github.com/Yatrogenesis/Obvivlorum/wiki",
+      "releases": "https://github.com/Yatrogenesis/Obvivlorum/releases"
+    }
+  }
+}

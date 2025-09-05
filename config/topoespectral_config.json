@@ -1,0 +1,109 @@
+{
+  "topo_spectral_framework": {
+    "enabled": false,
+    "description": "Francisco Molina's Topo-Spectral Consciousness Index implementation",
+    
+    "consciousness_index": {
+      "name": "Topo-Spectral Consciousness Index (Ψ)",
+      "formula": "cubic_root(Φ_spec * T_topo * Sync)",
+      "normalization": "components_to_unit_interval",
+      "geometric_mean": true
+    },
+
+    "spectral_information_integration": {
+      "enabled": true,
+      "algorithm": "fiedler_eigenvector_cuts",
+      "complexity": "O(n^3)",
+      "cut_parameter_k": 5,
+      "approximation_bound": "lambda_k+2 / lambda_2",
+      "eigenvalue_solver": "scipy.linalg.eigh",
+      "normalization": "symmetric_normalized_laplacian"
+    },
+
+    "topological_resilience": {
+      "enabled": true,
+      "method": "persistent_homology",
+      "filtration_type": "rips",
+      "max_dimension": 2,
+      "filtration_steps": 200,
+      "dimension_weights": {
+        "w0_connected_components": 0.1,
+        "w1_loops": 0.7, 
+        "w2_voids": 0.2
+      },
+      "noise_thresholds": {
+        "sigma0": "0.1 * mean_persistence_H0",
+        "sigma1": "0.1 * mean_persistence_H1", 
+        "sigma2": "0.1 * mean_persistence_H2"
+      }
+    },
+
+    "temporal_synchronization": {
+      "enabled": true,
+      "method": "variance_based_stability",
+      "temporal_window_ms": 10000,
+      "sensitivity_parameter_gamma": 2.0,
+      "exponential_penalty": true,
+      "derivative_calculation": "finite_difference"
+    },
+
+    "validation_parameters": {
+      "classification_accuracy_target": 0.947,
+      "parameter_stability_threshold": 0.9,
+      "cross_validation_folds": 10,
+      "cross_validation_repeats": 5,
+      "synthetic_network_count": 5000
+    },
+
+    "clinical_validation": {
+      "enabled": false,
+      "eeg_dataset": "Temple_University_Hospital_EEG_Corpus_v2.0.0",
+      "subjects_count": 2847,
+      "correlation_targets": {
+        "glasgow_coma_scale": 0.738,
+        "rass_scale": 0.682,
+        "bis_scale": 0.701
+      },
+      "significance_threshold": 0.001
+    },
+
+    "performance_optimization": {
+      "use_numba": true,
+      "parallel_computation": true,
+      "memory_management": "chunked_processing",
+      "max_nodes_standard": 1000,
+      "max_nodes_research": 5000,
+      "gpu_acceleration": false
+    },
+
+    "research_predictions": {
+      "threshold_prediction": {
+        "psi_threshold": 0.72,
+        "behavioral_test": "mirror_self_recognition",
+        "accuracy_threshold": 0.85
+      },
+      "monotonicity_prediction": {
+        "correlation_threshold": 0.65,
+        "scales": ["glasgow_coma", "rass", "bis"]
+      },
+      "engineering_prediction": {
+        "artificial_consciousness_threshold": 0.72,
+        "required_behaviors": ["temporal_binding", "selective_attention", "reportability"]
+      }
+    }
+  },
+
+  "fallback_consciousness_metrics": {
+    "enabled": true,
+    "description": "Standard IIT/GWT metrics when Topo-Spectral disabled",
+    "methods": ["basic_iit", "global_workspace", "predictive_processing"],
+    "performance_mode": "fast_approximation"
+  },
+
+  "logging": {
+    "level": "INFO",
+    "log_topo_spectral_calculations": false,
+    "log_performance_metrics": true,
+    "log_validation_results": true
+  }
+}
