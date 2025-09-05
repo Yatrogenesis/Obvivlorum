@@ -111,18 +111,18 @@ class AnimatedButton(tk.Canvas):
         """Salir de hover"""
         self.config(cursor='')
 
-class ConfigPanel(ttk.Frame):
+class ConfigPanel(tk.Frame):
     """Panel de configuración avanzada"""
     
     def __init__(self, parent, config_system: UnifiedConfigSystem):
-        super().__init__(parent)
+        super().__init__(parent, bg=BrutalTheme.COLORS["bg_primary"])
         self.config_system = config_system
         self._create_widgets()
     
     def _create_widgets(self):
         """Crear widgets de configuración"""
         # Título
-        title = tk.Label(self, text="⚙️ CONFIGURACIÓN BRUTAL", 
+        title = tk.Label(self, text="CONFIG - CONFIGURACION BRUTAL", 
                         fg=BrutalTheme.COLORS['accent_primary'],
                         bg=BrutalTheme.COLORS['bg_primary'],
                         font=BrutalTheme.FONTS['title'])
@@ -366,14 +366,13 @@ class BrutalUIDesktop:
         # Panel de configuración
         config_panel = ConfigPanel(self.root, self.config_system)
         config_panel.pack(fill='both', expand=True)
-        config_panel.configure(bg=BrutalTheme.COLORS['bg_primary'])
         
         # Footer
         footer = tk.Frame(self.root, bg=BrutalTheme.COLORS['bg_secondary'], height=40)
         footer.pack(fill='x')
         footer.pack_propagate(False)
         
-        footer_text = tk.Label(footer, text="⚡ Single Click Launch • Full Configuration • ParrotOS Ready ⚡", 
+        footer_text = tk.Label(footer, text="POWER - Single Click Launch • Full Configuration • ParrotOS Ready", 
                               fg=BrutalTheme.COLORS['text_secondary'],
                               bg=BrutalTheme.COLORS['bg_secondary'],
                               font=BrutalTheme.FONTS['body'])

@@ -32,11 +32,7 @@
 | **Fase 5** | ✅ COMPLETADO | CI/CD pipeline científico | `AION/ci_cd_scientific_pipeline.py` |
 | **Fase 6** | ✅ **COMPLETADO** | **Sistema Unificado + Escalado Incremental** | `AION/unified_config_manager.py` |
 
-## Overview
-
-**Publication-ready** advanced AI symbiosis platform with Topo-Spectral consciousness research framework. The system implements Francisco Molina's breakthrough consciousness index with **rigorous mathematical foundations** and **dramatic performance optimizations** suitable for **high-impact scientific publication**.
-
-⚠️ **CURRENT STATUS**: System runs in **manual startup mode** for stability. Persistence features are **disabled by default** - see Installation section for details.
+## Overview**Publication-ready** advanced AI symbiosis platform with Topo-Spectral consciousness research framework. The system implements Francisco Molina's breakthrough consciousness index with **rigorous mathematical foundations** and **dramatic performance optimizations** suitable for **high-impact scientific publication**.## 🚀 QUICK START - Single Click Launch### Desktop Shortcuts Available:- **🧠 OBVIVLORUM - BRUTAL LAUNCHER** ← **START HERE** (Main launcher with mode selection)- **🔥 OBVIVLORUM - BRUTAL DESKTOP** (Brutally impressive GUI configuration)- **🦜 OBVIVLORUM - PARROTOS MODE** (Unrestricted testing environment)- **🤖 OBVIVLORUM - AI SYMBIOTE** (Traditional AI interface)- **🌐 OBVIVLORUM - WEB SERVER** (Web-based access)### Installation:```bashgit clone https://github.com/Yatrogenesis/Obvivlorum.gitcd Obvivlorum./CREATE_DESKTOP_SHORTCUTS.bat  # Creates all shortcutspython SINGLE_CLICK_LAUNCHER.py  # Or launch directly```**🎯 DESKTOP MODE PRIORITIZED** - Web mode launches only when specifically requested.⚠️ **CURRENT STATUS**: System fully operational with **Single Click Access**. All features integrated and ready for testing.
 
 ## 🔬 Scientific Breakthrough: Topo-Spectral Framework
 
