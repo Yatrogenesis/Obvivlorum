@@ -224,16 +224,15 @@ class OAuthManager:
     def start_oauth_flow(self, provider: OAuthProvider, callback_func: Optional[Callable] = None) -> bool:
         """Start OAuth authentication flow."""
         if provider not in self.configs:
-            logger.warning(f"OAuth not configured for {provider.value}, creating demo flow")
-            # Create demo authentication flow
-            return self._demo_oauth_flow(provider)
+            logger.error(f"OAuth not configured for {provider.value}")
+            return False
         
         config = self.configs[provider]
         
-        # Check if using demo credentials
-        if config.client_id.startswith("demo-"):
-            logger.info(f"Using demo OAuth flow for {provider.value}")
-            return self._demo_oauth_flow(provider)
+        # Check if credentials are empty or invalid
+        if not config.client_id or not config.client_secret or not config.enabled:
+            logger.error(f"OAuth credentials missing or disabled for {provider.value}")
+            return False
         
         try:
             # Start callback server
@@ -276,42 +275,39 @@ class OAuthManager:
             logger.error(f"Failed to start OAuth flow: {e}")
             return False
     
-    def _demo_oauth_flow(self, provider: OAuthProvider) -> bool:
-        """Demo OAuth flow for testing without real credentials."""
+    def handle_callback(self, callback_path: str):
+        """Handle OAuth callback from provider."""
         try:
-            print(f"\nDemo OAuth Flow for {provider.value.title()}")
-            print("This is a demonstration - no real authentication occurs")
+            # Parse callback URL for authorization code
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(callback_path)
+            params = parse_qs(parsed.query)
             
-            # Simulate authentication delay
-            threading.Thread(target=self._simulate_oauth_success, args=(provider,), daemon=True).start()
-            
-            return True
-            
+            if 'code' in params and 'state' in params:
+                auth_code = params['code'][0]
+                state = params['state'][0]
+                
+                # Verify state matches
+                if state == self.state_verifier:
+                    logger.info("OAuth callback received with valid authorization code")
+                    return self._exchange_code_for_token(auth_code)
+                else:
+                    logger.error("OAuth state verification failed")
+                    return False
+            else:
+                logger.error("OAuth callback missing required parameters")
+                return False
+                
         except Exception as e:
-            logger.error(f"Demo OAuth flow failed: {e}")
+            logger.error(f"OAuth callback handling failed: {e}")
             return False
     
-    def _simulate_oauth_success(self, provider: OAuthProvider):
-        """Simulate successful OAuth authentication."""
-        time.sleep(2)  # Simulate network delay
-        
-        # Create demo token
-        demo_token = OAuthToken(
-            access_token=f"demo_access_token_{provider.value}_{int(time.time())}",
-            refresh_token=f"demo_refresh_token_{provider.value}",
-            token_type="Bearer",
-            expires_in=3600,
-            scope="demo scope",
-            user_info={
-                "name": f"Demo User ({provider.value.title()})",
-                "email": f"demo@{provider.value}.com",
-                "id": f"demo_user_{provider.value}",
-                "verified": True
-            }
-        )
-        
-        self.tokens[provider] = demo_token
-        logger.info(f"Demo OAuth completed for {provider.value}")
+    def _exchange_code_for_token(self, auth_code: str) -> bool:
+        """Exchange authorization code for access token."""
+        # This would implement the actual token exchange with the OAuth provider
+        # For now, returns False since real implementation requires provider-specific logic
+        logger.warning("Token exchange not yet implemented - requires real OAuth provider integration")
+        return False
     
     def _start_callback_server(self):
         """Start HTTP server for OAuth callback."""

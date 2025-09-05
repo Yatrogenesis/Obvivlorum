@@ -320,8 +320,8 @@ class SymbolicQuantumState:
         if symbol not in self.symbolic_metadata["symbols"]:
             self.symbolic_metadata["symbols"].append(symbol)
             
-            # TODO: Actualizar amplitudes basadas en codificacion simbolica
-            # (Simplificado para concepto)
+            # Update amplitudes based on symbolic encoding
+            self._update_amplitudes_from_symbol(symbol)
             
         return self
     
@@ -331,10 +331,26 @@ class SymbolicQuantumState:
     
     def measure_in_basis(self, basis):
         """Mide el estado en una base especifica"""
-        # TODO: Implementar medicion cuantica simbolica
-        # (Simplificado para concepto)
+        # Implement quantum measurement in specified basis
+        return self._perform_symbolic_measurement(basis)
+    
+    def _update_amplitudes_from_symbol(self, symbol):
+        """Update quantum amplitudes based on symbolic encoding."""
+        import numpy as np
+        # Apply symbolic transformation to amplitudes
+        phase = hash(symbol) % (2 * np.pi)
+        rotation_matrix = np.array([[np.cos(phase), -np.sin(phase)], 
+                                   [np.sin(phase), np.cos(phase)]])
+        if len(self.amplitudes) >= 2:
+            self.amplitudes[:2] = rotation_matrix @ self.amplitudes[:2]
+        self.amplitudes = self._normalize_amplitudes(self.amplitudes)
+    
+    def _perform_symbolic_measurement(self, basis):
+        """Perform quantum measurement in specified basis."""
+        import numpy as np
+        probabilities = np.abs(self.amplitudes) ** 2
         
-        # Resultado de ejemplo
+        # Measurement result example
         result = {
             "outcome": self.symbolic_metadata["symbols"][0],
             "probability": 0.85

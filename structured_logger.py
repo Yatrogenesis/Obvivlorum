@@ -618,7 +618,7 @@ if __name__ == "__main__":
     print("=== STRUCTURED LOGGER TEST ===\n")
     
     # Establecer contexto
-    logger.set_context(user="test_user", session="12345", component="test")
+    logger.set_context(user=os.getenv("OBVIVLORUM_USER_ID", "user"), session=str(int(time.time())), component="obvivlorum")
     
     # Diferentes tipos de logs
     logger.info("System starting up", version="2.0")

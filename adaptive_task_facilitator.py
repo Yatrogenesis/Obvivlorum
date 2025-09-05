@@ -974,7 +974,7 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description="Adaptive Task Facilitator")
-    parser.add_argument("--user-id", default="test_user", help="User ID")
+    parser.add_argument("--user-id", default=os.getenv("OBVIVLORUM_USER_ID", "user"), help="User ID")
     parser.add_argument("--add-task", help="Add a test task")
     parser.add_argument("--status", action="store_true", help="Show status")
     parser.add_argument("--suggestions", action="store_true", help="Get task suggestions")
