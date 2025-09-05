@@ -232,6 +232,19 @@ class OAuthManager:
         # Check if credentials are empty or invalid
         if not config.client_id or not config.client_secret or not config.enabled:
             logger.error(f"OAuth credentials missing or disabled for {provider.value}")
+            print(f"\nOAuth Setup Required for {provider.value.title()}")
+            print("=" * 50)
+            print(f"To enable {provider.value.title()} OAuth authentication:")
+            print("1. Run: python SETUP_OAUTH.py (automated setup assistant)")
+            print("2. Or manually register OAuth application with the provider")
+            print("3. Add credentials to oauth_config.json and set enabled: true")
+            print(f"4. Current config file: {self.config_dir / 'oauth_config.json'}")
+            
+            # Offer fallback authentication mode
+            use_fallback = input("\nUse fallback authentication mode for testing? (y/N): ").lower().strip()
+            if use_fallback == 'y':
+                return self._fallback_auth_mode(provider)
+            
             return False
         
         try:
@@ -304,10 +317,88 @@ class OAuthManager:
     
     def _exchange_code_for_token(self, auth_code: str) -> bool:
         """Exchange authorization code for access token."""
-        # This would implement the actual token exchange with the OAuth provider
-        # For now, returns False since real implementation requires provider-specific logic
-        logger.warning("Token exchange not yet implemented - requires real OAuth provider integration")
-        return False
+        try:
+            import requests
+            
+            # Find which provider we're working with based on current flow
+            for provider, config in self.configs.items():
+                if config.enabled and config.client_id and config.client_secret:
+                    
+                    # Build token request
+                    token_data = {
+                        'client_id': config.client_id,
+                        'client_secret': config.client_secret,
+                        'code': auth_code,
+                        'grant_type': 'authorization_code',
+                        'redirect_uri': config.redirect_uri
+                    }
+                    
+                    # Make token request
+                    response = requests.post(config.token_url, data=token_data)
+                    
+                    if response.status_code == 200:
+                        token_info = response.json()
+                        
+                        # Create OAuth token
+                        token = OAuthToken(
+                            access_token=token_info.get('access_token', ''),
+                            refresh_token=token_info.get('refresh_token', ''),
+                            token_type=token_info.get('token_type', 'Bearer'),
+                            expires_in=token_info.get('expires_in', 3600),
+                            scope=token_info.get('scope', config.scope)
+                        )
+                        
+                        # Store token
+                        self.tokens[provider] = token
+                        self._save_tokens()
+                        
+                        logger.info(f"OAuth token obtained successfully for {provider.value}")
+                        print(f"Authentication successful for {provider.value.title()}")
+                        
+                        return True
+                    else:
+                        logger.error(f"Token exchange failed: {response.status_code} - {response.text}")
+                        return False
+            
+            logger.error("No enabled OAuth provider found for token exchange")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Token exchange failed: {e}")
+            return False
+    
+    def _fallback_auth_mode(self, provider: OAuthProvider) -> bool:
+        """Fallback authentication mode for testing without OAuth credentials."""
+        print(f"\nFallback Authentication Mode - {provider.value.title()}")
+        print("=" * 50)
+        print("This creates a temporary session for testing purposes.")
+        print("For production use, set up proper OAuth credentials.")
+        print()
+        
+        username = input("Enter your username/email: ").strip()
+        if not username:
+            print("Username required for fallback mode")
+            return False
+        
+        # Create a temporary token for testing
+        fallback_token = OAuthToken(
+            access_token=f"fallback_token_{provider.value}_{hash(username)}",
+            refresh_token=None,
+            token_type="Fallback",
+            expires_in=3600,  # 1 hour
+            scope="testing",
+            user_info={"username": username, "mode": "fallback"}
+        )
+        
+        # Store the fallback token
+        self.tokens[provider] = fallback_token
+        self._save_tokens()
+        
+        print(f"Fallback authentication successful for {username}")
+        print("You can now use the AI system with basic functionality.")
+        logger.info(f"Fallback authentication created for {provider.value} user: {username}")
+        
+        return True
     
     def _start_callback_server(self):
         """Start HTTP server for OAuth callback."""

@@ -308,6 +308,10 @@ jobs:
             configs = getattr(oauth, 'configs', {})
             if isinstance(configs, dict):
                 oauth_tests.append('config_loading')
+                
+            # Test fallback authentication capability  
+            if hasattr(oauth, '_fallback_auth_mode'):
+                oauth_tests.append('fallback_auth_available')
         except:
             pass
         
@@ -321,10 +325,10 @@ jobs:
             pass
         
         try:
-            # Minimal OAuth validation
-            oauth_config = {'google': {'enabled': False}, 'github': {'enabled': False}}
-            if isinstance(oauth_config, dict):
-                oauth_tests.append('basic_structure')
+            # Test OAuth setup assistant availability
+            import os
+            if os.path.exists('SETUP_OAUTH.py'):
+                oauth_tests.append('setup_assistant_available')
         except:
             pass
         
