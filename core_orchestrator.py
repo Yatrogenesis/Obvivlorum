@@ -20,7 +20,7 @@ import queue
 from structured_logger import StructuredLogger
 from security_manager import SecurityManager, PrivilegeLevel
 from smart_provider_selector import SmartProviderSelector
-from human_in_the_loop import HumanInTheLoopManager
+from human_in_the_loop import HumanInTheLoop
 from adaptive_persistence_scheduler import AdaptivePersistenceScheduler
 
 @dataclass
@@ -54,7 +54,7 @@ class CoreOrchestrator:
         self.logger: Optional[StructuredLogger] = None
         self.security: Optional[SecurityManager] = None
         self.ai_selector: Optional[SmartProviderSelector] = None
-        self.hitl: Optional[HumanInTheLoopManager] = None
+        self.hitl: Optional[HumanInTheLoop] = None
         self.persistence: Optional[AdaptivePersistenceScheduler] = None
         
         # System control
@@ -93,7 +93,7 @@ class CoreOrchestrator:
             )
             
             # Initialize Human-in-the-Loop
-            self.hitl = HumanInTheLoopManager(
+            self.hitl = HumanInTheLoop(
                 config=self.config.get("human_in_the_loop", {}),
                 security_manager=self.security,
                 logger=self.logger
