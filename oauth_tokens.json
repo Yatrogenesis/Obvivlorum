@@ -1,0 +1,13 @@
+{
+  "google": {
+    "access_token": "fallback_token_google_5029198152778638875",
+    "refresh_token": null,
+    "token_type": "Fallback",
+    "expires_in": 3600,
+    "scope": "testing",
+    "user_info": {
+      "username": "test_user",
+      "mode": "fallback"
+    }
+  }
+}

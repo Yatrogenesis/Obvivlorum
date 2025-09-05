@@ -98,6 +98,15 @@ class ModeConfig:
             "color": "#00ff88",
             "icon": ""
         },
+        "claude_mode": {
+            "name": "Claude AI Mode",
+            "description": "Direct Claude/Anthropic authentication and AI",
+            "ai_engine": "claude_api", 
+            "memory_limit_mb": 1024,
+            "features": ["Claude AI", "Anthropic login", "Direct auth", "Premium AI"],
+            "color": "#D4512A",
+            "icon": ""
+        },
         "social_api": {
             "name": "Social API Mode", 
             "description": "OAuth + Real AI (Google/GitHub/Microsoft login)",
@@ -460,6 +469,7 @@ class ObvivlorumLauncher:
         """Launch the appropriate AI engine."""
         engine_scripts = {
             "ultra_light": "ai_simple_gui_working.py",
+            "claude_mode": "ai_gui_with_claude_oauth.py",
             "social_api": "ai_gui_with_oauth.py", 
             "tinyllama": "ai_engine_tinyllama.py",
             "hybrid_turbo": "ai_engine_hybrid_turbo.py"

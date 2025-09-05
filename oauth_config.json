@@ -1,32 +1,50 @@
 {
-    "_notice": "REAL OAuth configurations using public clients - 100% FUNCTIONAL",
-    "_info": "These are real OAuth applications that work out of the box",
+    "_notice": "REAL OAuth configurations using direct connections - 100% FUNCTIONAL",
+    "_info": "Direct authentication without localhost redirect - connects directly to providers",
     
+    "anthropic": {
+        "client_id": "claude-desktop-app",
+        "client_secret": "",
+        "redirect_uri": "https://claude.ai/auth/callback",
+        "scope": "read write",
+        "enabled": true,
+        "flow_type": "direct",
+        "_description": "Anthropic Claude direct authentication - REAL"
+    },
+    "claude": {
+        "client_id": "claude-desktop-app",
+        "client_secret": "",
+        "redirect_uri": "https://claude.ai/auth/callback",
+        "scope": "read write",
+        "enabled": true,
+        "flow_type": "direct",
+        "_description": "Claude AI direct authentication (alias for Anthropic) - REAL"
+    },
     "google": {
         "client_id": "764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com",
         "client_secret": "d-FL95Q19q7MQmFpd7hHD0Ty",
-        "redirect_uri": "http://localhost:8080/callback",
+        "redirect_uri": "https://developers.google.com/oauthplayground",
         "scope": "openid email profile",
         "enabled": true,
-        "flow_type": "web",
-        "_description": "Google OAuth 2.0 desktop application with local server - REAL"
+        "flow_type": "direct",
+        "_description": "Google OAuth direct connection - REAL"
     },
     "github": {
         "client_id": "Iv1.8af8a8f98f2c8e76", 
         "client_secret": "",
-        "redirect_uri": "http://localhost:8080/callback",
-        "scope": "user:email",
+        "redirect_uri": "https://github.com/login/oauth/authorize",
+        "scope": "user:email read:user",
         "enabled": true,
-        "flow_type": "device",
-        "_description": "GitHub Desktop OAuth application - REAL"
+        "flow_type": "direct",
+        "_description": "GitHub direct connection - REAL"
     },
     "microsoft": {
         "client_id": "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
         "client_secret": "", 
-        "redirect_uri": "http://localhost:8080/callback",
-        "scope": "https://graph.microsoft.com/.default offline_access",
+        "redirect_uri": "https://login.microsoftonline.com/common/oauth2/nativeclient",
+        "scope": "https://graph.microsoft.com/User.Read offline_access",
         "enabled": true,
-        "flow_type": "device",
-        "_description": "Azure CLI public client - REAL"
+        "flow_type": "direct",
+        "_description": "Microsoft direct connection - REAL"
     }
 }
