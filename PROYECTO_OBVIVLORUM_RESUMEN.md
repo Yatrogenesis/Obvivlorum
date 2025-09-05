@@ -424,12 +424,13 @@ python D:\Obvivlorum\ai_symbiote.py --status
 - `START_AS_ADMIN.bat` - **NUEVO** - Inicio automático con privilegios elevados
 - `ELEVATE_PRIVILEGES.py` - **NUEVO** - Configurador administrativo completo
 - **✅ Corrección de spam de logs**: Sistema de cooldown implementado (5 min entre intentos)
+- **⚠️ PERSISTENCIA DESACTIVADA**: Sistema requiere inicio manual por estabilidad
 
 ### 📊 **Certificación de Funcionamiento**:
 - `QUICK_TEST_RESULT.json` - Certificado de funcionamiento 100%
 - Todos los componentes verificados individualmente
-- **✅ SISTEMA PROBADO EN VIVO Y FUNCIONANDO**
-- Persistencia automática configurada y activa
+- **✅ SISTEMA PROBADO EN VIVO Y FUNCIONANDO** (Modo Manual)
+- **⚠️ Persistencia automática DESACTIVADA por estabilidad**
 - **✅ TODAS LAS INTERFACES OPERATIVAS EN PRODUCCIÓN**
 
 ### 🎯 **PRUEBA FINAL EXITOSA** (2025-09-03):

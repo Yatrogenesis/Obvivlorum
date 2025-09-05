@@ -35,6 +35,8 @@
 
 **Publication-ready** advanced AI symbiosis platform with Topo-Spectral consciousness research framework. The system implements Francisco Molina's breakthrough consciousness index with **rigorous mathematical foundations** and **dramatic performance optimizations** suitable for **high-impact scientific publication**.
 
+⚠️ **CURRENT STATUS**: System runs in **manual startup mode** for stability. Persistence features are **disabled by default** - see Installation section for details.
+
 ## 🔬 Scientific Breakthrough: Topo-Spectral Framework
 
 ### 📊 Dramatic Performance Achievement
@@ -148,17 +150,20 @@
 
 #### 1. Scientific Framework Execution Modes
 ```bash
-# Standard consciousness metrics (IIT/GWT only)
-python ai_symbiote.py --mode=standard --user-id your_username
+# Standard mode (Obvivlorum mock mode + AION Protocol)
+python ai_symbiote.py --user-id your_username
 
-# Topo-Spectral consciousness framework (ultra-fast 0.01ms)
-python ai_symbiote.py --mode=topoespectro --user-id your_username
-
-# Full research mode (both frameworks with benchmarks)
-python ai_symbiote.py --mode=research --user-id your_username
-
-# GUI mode with framework selection
+# GUI mode (Desktop interface with AI chat)
 python ai_symbiote_gui.py
+
+# Background mode (no persistence - manual mode only)
+python ai_symbiote.py --background --user-id your_username
+
+# Status check
+python ai_symbiote.py --status --user-id your_username
+
+# Note: Specialized modes (topo-spectral, research) are available 
+# but use mock implementations for Obvivlorum components
 ```
 
 #### 2. Ultra-Fast Topo-Spectral Testing
@@ -223,13 +228,22 @@ task_id = symbiote.add_task(
 # The system will provide intelligent suggestions and scheduling
 ```
 
-#### 5. Install Persistence (Windows)
+#### 5. Persistence Management (Windows) - ⚠️ CURRENTLY DISABLED FOR STABILITY
 ```bash
-# Install persistence mechanisms
-python ai_symbiote.py --install-persistence --user-id your_username
+# IMPORTANT: Persistence is currently disabled by default for system stability
+# The system requires manual startup for safety reasons
 
-# Check persistence status
+# Manual startup (recommended)
+python ai_symbiote.py --user-id your_username
+
+# Check current persistence status (will show 'disabled')
 python windows_persistence.py --status
+
+# To enable persistence (use with caution):
+# 1. Edit config_optimized.json
+# 2. Set "auto_start": true, "registry_persistence": true
+# 3. Remove DISABLE_PERSISTENCE.flag file if it exists
+# 4. Then run: python ai_symbiote.py --install-persistence --user-id your_username
 ```
 
 ## Component Details
@@ -290,8 +304,11 @@ Edit the main system configuration by providing a custom config file:
       "config_file": "AION/config.json"
     },
     "windows_persistence": {
-      "enabled": true,
-      "auto_install": false
+      "enabled": false,
+      "auto_install": false,
+      "auto_start": false,
+      "registry_persistence": false,
+      "note": "Disabled by default for system stability"
     },
     "linux_executor": {
       "enabled": true,

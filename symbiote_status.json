@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-09-04T21:39:42.073276",
+  "timestamp": "2025-09-05T01:21:19.429875",
   "is_running": true,
-  "user_id": "default",
-  "pid": 22564,
-  "uptime": 354.7741756439209,
+  "user_id": "Propietario",
+  "pid": 20884,
+  "uptime": 112.2357668876648,
   "components": {
     "aion": {
       "status": "active"
@@ -41,9 +41,12 @@
         "docker-desktop",
         "ParrotOS"
       ],
-      "default_distro": "docker-desktop",
+      "default_distro": "ParrotOS",
+      "actual_wsl_default": "docker-desktop",
       "config": {
-        "safe_mode": true
+        "safe_mode": false,
+        "unrestricted_mode": true,
+        "note": "Configuration updated to match config_optimized.json"
       },
       "execution_count": 0,
       "active_sessions": 0,
@@ -52,7 +55,7 @@
     "tasks": {
       "status": "active",
       "is_active": true,
-      "user_id": "default",
+      "user_id": "Propietario",
       "active_tasks": 0,
       "completed_tasks": 0,
       "behavior_patterns": 0,
