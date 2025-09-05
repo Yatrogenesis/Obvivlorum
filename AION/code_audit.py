@@ -615,6 +615,50 @@ def run_critical_performance_profiling():
         print(f" Error en profiling: {e}")
         return {"error": str(e)}
 
+def get_real_test_results():
+    """Get real test results from pytest execution."""
+    try:
+        import subprocess
+        import json
+        
+        # Run pytest with JSON output
+        result = subprocess.run(
+            ["python", "-m", "pytest", "tests/", "--tb=no", "-q"],
+            capture_output=True,
+            text=True,
+            cwd="."
+        )
+        
+        # Parse output for test statistics
+        output = result.stdout + result.stderr
+        lines = output.split('\n')
+        
+        for line in lines:
+            if 'passed' in line or 'failed' in line or 'error' in line:
+                # Extract numbers from pytest summary
+                import re
+                numbers = re.findall(r'\d+', line)
+                if numbers:
+                    passed = failed = 0
+                    if 'passed' in line:
+                        passed = int(numbers[0])
+                    if 'failed' in line:
+                        failed = int(numbers[1]) if len(numbers) > 1 else 0
+                    
+                    total = passed + failed
+                    if total > 0:
+                        return {
+                            "total_tests": total,
+                            "passed_tests": passed,
+                            "failed_tests": failed,
+                            "failure_rate": (failed / total) * 100
+                        }
+        
+        return None
+        
+    except Exception:
+        return None
+
 def analyze_test_failures():
     """
     ANALIZAR: Test failures para identificar el 19.4% de fallos
@@ -622,13 +666,15 @@ def analyze_test_failures():
     print("\n ANALISIS DE TEST FAILURES")
     print("=" * 40)
     
-    # Simular analisis de failures (en ausencia de datos reales)
-    mock_test_results = {
-        "total_tests": 62,
-        "passed_tests": 50,
-        "failed_tests": 12,
-        "failure_rate": 19.4
-    }
+    # Analyze test results from actual test execution
+    test_results = get_real_test_results()
+    if not test_results:
+        test_results = {
+            "total_tests": 0,
+            "passed_tests": 0,
+            "failed_tests": 0,
+            "failure_rate": 0.0
+        }
     
     # Categorias de failures simuladas basadas en el instructivo
     failure_categories = {
@@ -640,13 +686,19 @@ def analyze_test_failures():
     }
     
     print(f" ESTADISTICAS DE TESTS:")
-    print(f"   Total: {mock_test_results['total_tests']}")
-    print(f"   Pasados: {mock_test_results['passed_tests']} ({(mock_test_results['passed_tests']/mock_test_results['total_tests'])*100:.1f}%)")
-    print(f"   Fallidos: {mock_test_results['failed_tests']} ({mock_test_results['failure_rate']:.1f}%)")
+    if test_results['total_tests'] > 0:
+        print(f"   Total: {test_results['total_tests']}")
+        print(f"   Pasados: {test_results['passed_tests']} ({(test_results['passed_tests']/test_results['total_tests'])*100:.1f}%)")
+        print(f"   Fallidos: {test_results['failed_tests']} ({test_results['failure_rate']:.1f}%)")
+    else:
+        print("   No test results available - run tests first")
     
     print(f"\n ANALISIS DE CATEGORIAS DE FAILURES:")
     for category, count in failure_categories.items():
-        percentage = (count / mock_test_results['failed_tests']) * 100
+        if test_results['failed_tests'] > 0:
+            percentage = (count / test_results['failed_tests']) * 100
+        else:
+            percentage = 0
         print(f"   {category.replace('_', ' ').title()}: {count} ({percentage:.1f}%)")
     
     # Recomendaciones especificas
@@ -663,7 +715,7 @@ def analyze_test_failures():
         print(f"   {i}. {rec}")
     
     return {
-        "test_statistics": mock_test_results,
+        "test_statistics": test_results,
         "failure_categories": failure_categories,
         "recommendations": recommendations,
         "priority_action": "Implementar Fase 3: Optimizacion de Test Suite"
