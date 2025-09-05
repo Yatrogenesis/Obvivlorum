@@ -251,7 +251,12 @@ class ExecutionModeManager:
                 # Check for Topo-Spectral dependencies
                 import ripser
                 import persim
-                import numba
+                # Numba is optional but recommended
+                try:
+                    import numba
+                    self.logger.info("Numba acceleration available")
+                except ImportError:
+                    self.logger.info("Numba not available, using standard NumPy")
                 
             if mode == ExecutionMode.GUI:
                 import tkinter

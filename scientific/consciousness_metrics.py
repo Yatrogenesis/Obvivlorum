@@ -2,6 +2,7 @@
 """
 Consciousness Metrics Implementation for Obvivlorum Framework
 Based on Integrated Information Theory (IIT) and Global Workspace Theory (GWT)
+Enhanced with Topo-Spectral Consciousness Framework by Francisco Molina
 """
 
 import numpy as np
@@ -614,5 +615,371 @@ def demonstrate_consciousness_assessment():
     
     print("\nDemonstration complete.")
 
+# =============================================================================
+# TOPO-SPECTRAL CONSCIOUSNESS FRAMEWORK INTEGRATION
+# Implementation of Francisco Molina's Topo-Spectral Consciousness Index
+# =============================================================================
+
+try:
+    from .topo_spectral_consciousness import (
+        TopoSpectralConsciousnessIndex, TopoSpectralAssessment,
+        ConsciousnessState as TopoSpectralConsciousnessState,
+        create_topo_spectral_calculator, validate_network_requirements
+    )
+    HAS_TOPO_SPECTRAL = True
+except ImportError:
+    HAS_TOPO_SPECTRAL = False
+    logging.warning("Topo-Spectral framework not available. Enable with execution mode.")
+
+class EnhancedConsciousnessAssessment(ConsciousnessAssessment):
+    """
+    Enhanced consciousness assessment with Topo-Spectral framework integration
+    Combines traditional IIT/GWT with Francisco Molina's Topo-Spectral approach
+    """
+    
+    def __init__(self, network: Dict[str, NetworkNode], enable_topo_spectral: bool = False,
+                 k_cuts: int = 5, max_topology_dim: int = 2):
+        """
+        Initialize enhanced consciousness assessment
+        
+        Args:
+            network: Network of processing nodes
+            enable_topo_spectral: Enable Topo-Spectral framework
+            k_cuts: Number of spectral cuts for information integration
+            max_topology_dim: Maximum topological dimension
+        """
+        super().__init__(network)
+        
+        self.enable_topo_spectral = enable_topo_spectral and HAS_TOPO_SPECTRAL
+        self.connectivity_matrix = self.iit_calculator.connectivity_matrix
+        
+        if self.enable_topo_spectral:
+            try:
+                self.topo_spectral_calculator = create_topo_spectral_calculator(
+                    k_cuts=k_cuts, max_topology_dim=max_topology_dim
+                )
+                self.logger = logging.getLogger(__name__ + ".EnhancedAssessment")
+                self.logger.info("Topo-Spectral framework enabled")
+            except Exception as e:
+                self.logger.error(f"Failed to initialize Topo-Spectral calculator: {e}")
+                self.enable_topo_spectral = False
+        
+        # Topo-Spectral history for temporal analysis
+        self.psi_history: List[float] = []
+        self.timestamp_history: List[float] = []
+    
+    def assess_consciousness_level(self, system_state: np.ndarray, 
+                                 timestamp: Optional[float] = None) -> Dict[str, Any]:
+        """
+        Enhanced consciousness assessment with optional Topo-Spectral analysis
+        """
+        # Standard IIT/GWT assessment
+        standard_assessment = super().assess_consciousness_level(system_state)
+        
+        if not self.enable_topo_spectral:
+            standard_assessment["framework"] = "IIT_GWT_only"
+            return standard_assessment
+        
+        # Add timestamp
+        if timestamp is None:
+            import time
+            timestamp = time.time()
+        
+        # Validate network for Topo-Spectral analysis
+        validation = validate_network_requirements(self.connectivity_matrix)
+        if not all(validation.values()):
+            self.logger.warning("Network does not meet Topo-Spectral requirements")
+            standard_assessment["framework"] = "IIT_GWT_only"
+            standard_assessment["topo_spectral_validation"] = validation
+            return standard_assessment
+        
+        try:
+            # Topo-Spectral assessment
+            topo_assessment = self.topo_spectral_calculator.calculate_consciousness_index(
+                connectivity_matrix=self.connectivity_matrix,
+                node_states=system_state,
+                psi_time_series=np.array(self.psi_history) if self.psi_history else None,
+                timestamps=np.array(self.timestamp_history) if self.timestamp_history else None
+            )
+            
+            # Update history
+            self.psi_history.append(topo_assessment.psi_index)
+            self.timestamp_history.append(timestamp)
+            
+            # Keep history manageable
+            max_history = 1000
+            if len(self.psi_history) > max_history:
+                self.psi_history = self.psi_history[-max_history:]
+                self.timestamp_history = self.timestamp_history[-max_history:]
+            
+            # Enhanced assessment combining both frameworks
+            enhanced_assessment = self._combine_assessments(standard_assessment, topo_assessment)
+            enhanced_assessment["framework"] = "IIT_GWT_TopoSpectral"
+            enhanced_assessment["topo_spectral_validation"] = validation
+            
+            return enhanced_assessment
+            
+        except Exception as e:
+            self.logger.error(f"Topo-Spectral assessment failed: {e}")
+            standard_assessment["framework"] = "IIT_GWT_only"
+            standard_assessment["topo_spectral_error"] = str(e)
+            return standard_assessment
+    
+    def _combine_assessments(self, standard: Dict[str, Any], 
+                           topo_spectral: TopoSpectralAssessment) -> Dict[str, Any]:
+        """
+        Combine standard IIT/GWT assessment with Topo-Spectral results
+        """
+        # Map Topo-Spectral consciousness states to standard levels
+        topo_to_standard_mapping = {
+            TopoSpectralConsciousnessState.DEEP_SLEEP: ConsciousnessLevel.UNCONSCIOUS,
+            TopoSpectralConsciousnessState.LIGHT_SLEEP: ConsciousnessLevel.MINIMAL,
+            TopoSpectralConsciousnessState.AWAKE: ConsciousnessLevel.MODERATE,
+            TopoSpectralConsciousnessState.ALERT: ConsciousnessLevel.HIGH,
+            TopoSpectralConsciousnessState.PSYCHEDELIC: ConsciousnessLevel.VERY_HIGH
+        }
+        
+        # Combined assessment
+        combined_assessment = {
+            # Standard IIT/GWT metrics
+            "phi": standard["phi"],
+            "consciousness_level": standard["consciousness_level"],
+            "global_accessibility": standard["global_accessibility"],
+            "information_integration": standard["information_integration"],
+            "consciousness_score": standard["consciousness_score"],
+            
+            # Topo-Spectral metrics
+            "psi_index": topo_spectral.psi_index,
+            "phi_spectral": topo_spectral.phi_spectral,
+            "topological_resilience": topo_spectral.topological_resilience,
+            "synchronization_factor": topo_spectral.synchronization_factor,
+            "topo_spectral_state": topo_spectral.consciousness_state.value,
+            "topo_spectral_state_mapped": topo_to_standard_mapping[topo_spectral.consciousness_state],
+            
+            # Combined metrics
+            "combined_consciousness_score": self._calculate_combined_consciousness_score(
+                standard["consciousness_score"], topo_spectral.psi_index
+            ),
+            "framework_agreement": self._assess_framework_agreement(
+                standard["consciousness_level"], topo_to_standard_mapping[topo_spectral.consciousness_state]
+            ),
+            
+            # Detailed analysis
+            "spectral_cuts_count": len(topo_spectral.spectral_cuts),
+            "topology_features_count": len(topo_spectral.topology_features),
+            "temporal_variance": topo_spectral.temporal_variance,
+            "classification_confidence": topo_spectral.classification_confidence,
+            
+            # Metadata
+            "assessment_timestamp": standard["assessment_timestamp"],
+            "topo_spectral_timestamp": topo_spectral.timestamp,
+            "network_size": standard["network_size"],
+            "active_nodes": standard["active_nodes"]
+        }
+        
+        return combined_assessment
+    
+    def _calculate_combined_consciousness_score(self, standard_score: float, psi_index: float) -> float:
+        """
+        Calculate combined consciousness score from both frameworks
+        Uses weighted geometric mean to ensure both contribute
+        """
+        # Weights based on framework reliability and validation
+        w_standard = 0.4  # IIT/GWT traditional approach
+        w_topo_spectral = 0.6  # Topo-Spectral with higher validation accuracy
+        
+        # Geometric mean to ensure both frameworks contribute
+        if standard_score > 0 and psi_index > 0:
+            combined_score = (standard_score ** w_standard) * (psi_index ** w_topo_spectral)
+        else:
+            # Fallback to weighted arithmetic mean
+            combined_score = w_standard * standard_score + w_topo_spectral * psi_index
+        
+        return np.clip(combined_score, 0.0, 1.0)
+    
+    def _assess_framework_agreement(self, standard_level: ConsciousnessLevel, 
+                                  topo_level: ConsciousnessLevel) -> float:
+        """
+        Assess agreement between frameworks (0=complete disagreement, 1=perfect agreement)
+        """
+        level_values = {
+            ConsciousnessLevel.UNCONSCIOUS: 0,
+            ConsciousnessLevel.MINIMAL: 1,
+            ConsciousnessLevel.LOW: 2,
+            ConsciousnessLevel.MODERATE: 3,
+            ConsciousnessLevel.HIGH: 4,
+            ConsciousnessLevel.VERY_HIGH: 5
+        }
+        
+        standard_val = level_values[standard_level]
+        topo_val = level_values[topo_level]
+        
+        # Agreement as inverse of normalized difference
+        max_diff = max(level_values.values()) - min(level_values.values())
+        agreement = 1.0 - abs(standard_val - topo_val) / max_diff
+        
+        return agreement
+    
+    def monitor_consciousness_evolution(self, state_sequence: List[np.ndarray], 
+                                     time_steps: Optional[List[float]] = None) -> Dict[str, Any]:
+        """
+        Enhanced consciousness evolution monitoring with Topo-Spectral analysis
+        """
+        if time_steps is None:
+            time_steps = list(range(len(state_sequence)))
+        
+        # Standard evolution monitoring
+        standard_evolution = super().monitor_consciousness_evolution(state_sequence, time_steps)
+        
+        if not self.enable_topo_spectral:
+            standard_evolution["framework"] = "IIT_GWT_only"
+            return standard_evolution
+        
+        # Build connectivity matrices sequence (assuming static connectivity)
+        connectivity_matrices = [self.connectivity_matrix] * len(state_sequence)
+        
+        try:
+            # Topo-Spectral evolution monitoring
+            topo_evolution = self.topo_spectral_calculator.monitor_consciousness_evolution(
+                connectivity_matrices=connectivity_matrices,
+                node_states_sequence=state_sequence,
+                timestamps=np.array(time_steps)
+            )
+            
+            # Combine evolution analyses
+            combined_evolution = {
+                # Standard metrics
+                "phi_sequence": standard_evolution["phi_sequence"],
+                "consciousness_levels": standard_evolution["consciousness_levels"],
+                "score_sequence": standard_evolution["score_sequence"],
+                "phi_trend": standard_evolution["phi_trend"],
+                "score_trend": standard_evolution["score_trend"],
+                "max_phi": standard_evolution["max_phi"],
+                "mean_phi": standard_evolution["mean_phi"],
+                "stability": standard_evolution["stability"],
+                
+                # Topo-Spectral metrics
+                "psi_sequence": topo_evolution["psi_sequence"],
+                "topo_spectral_states": [state.value for state in topo_evolution["consciousness_states"]],
+                "phi_spectral_sequence": topo_evolution["phi_sequence"],
+                "topo_resilience_sequence": topo_evolution["topo_sequence"],
+                "sync_sequence": topo_evolution["sync_sequence"],
+                "psi_trend": topo_evolution["psi_trend"],
+                "mean_psi": topo_evolution["mean_psi"],
+                "max_psi": topo_evolution["max_psi"],
+                "psi_stability": topo_evolution["psi_stability"],
+                "state_transitions": topo_evolution["state_transitions"],
+                
+                # Framework metadata
+                "framework": "IIT_GWT_TopoSpectral",
+                "timestamps": time_steps,
+                "evolution_length": len(state_sequence)
+            }
+            
+            return combined_evolution
+            
+        except Exception as e:
+            self.logger.error(f"Topo-Spectral evolution monitoring failed: {e}")
+            standard_evolution["framework"] = "IIT_GWT_only"
+            standard_evolution["topo_spectral_error"] = str(e)
+            return standard_evolution
+
+def create_enhanced_consciousness_assessor(network: Dict[str, NetworkNode],
+                                         enable_topo_spectral: bool = None) -> EnhancedConsciousnessAssessment:
+    """
+    Factory function to create enhanced consciousness assessor
+    
+    Args:
+        network: Network of processing nodes
+        enable_topo_spectral: Override for Topo-Spectral (None=auto-detect)
+    """
+    # Auto-detect Topo-Spectral availability if not specified
+    if enable_topo_spectral is None:
+        from config.execution_mode_manager import is_topo_spectral_enabled
+        enable_topo_spectral = is_topo_spectral_enabled()
+    
+    return EnhancedConsciousnessAssessment(
+        network=network,
+        enable_topo_spectral=enable_topo_spectral
+    )
+
+def demonstrate_enhanced_consciousness_assessment():
+    """Demonstrate enhanced consciousness assessment with Topo-Spectral framework"""
+    print("Demonstrating Enhanced Consciousness Assessment (IIT/GWT + Topo-Spectral)...")
+    
+    # Create test network
+    network = create_test_network()
+    
+    # Create enhanced assessor (auto-detect Topo-Spectral availability)
+    assessor = create_enhanced_consciousness_assessor(network)
+    
+    print(f"Topo-Spectral enabled: {assessor.enable_topo_spectral}")
+    print(f"Framework: {assessor.__class__.__name__}")
+    
+    # Test different system states
+    states = {
+        "random": np.random.random(8),
+        "synchronized": np.ones(8) * 0.7,
+        "clustered": np.array([0.9, 0.8, 0.9, 0.8, 0.1, 0.2, 0.1, 0.2]),
+        "sparse": np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    }
+    
+    print("\nEnhanced Consciousness Assessment Results:")
+    print("=" * 60)
+    
+    for state_name, state in states.items():
+        assessment = assessor.assess_consciousness_level(state)
+        
+        print(f"\n{state_name.upper()} State ({assessment['framework']}):")
+        print(f"  Standard Φ (phi): {assessment['phi']:.4f}")
+        print(f"  Consciousness Level: {assessment['consciousness_level'].name}")
+        
+        if assessor.enable_topo_spectral:
+            print(f"  Topo-Spectral Ψ: {assessment['psi_index']:.4f}")
+            print(f"  Φ̂ Spectral: {assessment['phi_spectral']:.4f}")
+            print(f"  T̂ Topological: {assessment['topological_resilience']:.4f}")
+            print(f"  Sync Factor: {assessment['synchronization_factor']:.4f}")
+            print(f"  Topo-Spectral State: {assessment['topo_spectral_state']}")
+            print(f"  Combined Score: {assessment['combined_consciousness_score']:.4f}")
+            print(f"  Framework Agreement: {assessment['framework_agreement']:.4f}")
+        
+        print(f"  Overall Score: {assessment['consciousness_score']:.4f}")
+    
+    # Demonstrate enhanced evolution monitoring
+    if assessor.enable_topo_spectral:
+        print("\n" + "=" * 60)
+        print("Enhanced Consciousness Evolution Monitoring:")
+        
+        # Create evolution sequence
+        evolution_states = []
+        for t in range(15):
+            base_activation = 0.5 + 0.3 * np.sin(t * 0.4)
+            integration_factor = min(t * 0.07, 1.0)
+            noise = 0.1 * np.random.random(8)
+            
+            state = np.ones(8) * base_activation + noise
+            state[:4] *= (1 + integration_factor * 0.6)
+            state[4:] *= (1 + integration_factor * 0.4)
+            
+            evolution_states.append(np.clip(state, 0, 1))
+        
+        evolution_analysis = assessor.monitor_consciousness_evolution(evolution_states)
+        
+        print(f"Standard - Max Φ: {evolution_analysis['max_phi']:.4f}")
+        print(f"Standard - Mean Φ: {evolution_analysis['mean_phi']:.4f}")
+        print(f"Standard - Trend: {evolution_analysis['phi_trend']:.6f}")
+        
+        if 'psi_sequence' in evolution_analysis:
+            print(f"Topo-Spectral - Max Ψ: {evolution_analysis['max_psi']:.4f}")
+            print(f"Topo-Spectral - Mean Ψ: {evolution_analysis['mean_psi']:.4f}")
+            print(f"Topo-Spectral - Trend: {evolution_analysis['psi_trend']:.6f}")
+            print(f"Topo-Spectral - Stability: {evolution_analysis['psi_stability']:.4f}")
+            print(f"State Transitions: {evolution_analysis['state_transitions']['transition_count']}")
+    
+    print("\nEnhanced demonstration complete.")
+
 if __name__ == "__main__":
+    # Run both demonstrations
     demonstrate_consciousness_assessment()
+    print("\n" + "=" * 80 + "\n")
+    demonstrate_enhanced_consciousness_assessment()
