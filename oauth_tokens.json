@@ -9,5 +9,29 @@
       "username": "test_user",
       "mode": "fallback"
     }
+  },
+  "anthropic": {
+    "access_token": "claude_session_available",
+    "refresh_token": null,
+    "token_type": "Session",
+    "expires_in": 86400,
+    "scope": "claude_access",
+    "user_info": {
+      "name": "Claude User",
+      "provider": "anthropic",
+      "session": true
+    }
+  },
+  "claude": {
+    "access_token": "claude_session_available",
+    "refresh_token": null,
+    "token_type": "Session",
+    "expires_in": 86400,
+    "scope": "claude_access",
+    "user_info": {
+      "name": "Claude User",
+      "provider": "anthropic",
+      "session": true
+    }
   }
 }

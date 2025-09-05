@@ -128,71 +128,100 @@ class ClaudeAuthDialog:
         self.retry_button.pack(side='right', padx=(0, 10))
     
     def start_authentication(self):
-        """Start Claude authentication in background thread."""
-        def auth_thread():
-            try:
-                self.update_status("Connecting to Claude AI...")
-                
-                oauth = OAuthManager()
-                
-                self.update_status("Starting Claude authentication flow...\nBrowser will open for login.")
-                
-                # Start OAuth flow
-                result = oauth.start_oauth_flow(OAuthProvider.CLAUDE)
-                
-                if result:
-                    # Get user info
-                    token = oauth.get_token(OAuthProvider.CLAUDE)
-                    if token and token.user_info:
-                        self.user_info = token.user_info
-                        user_name = self.user_info.get('name', self.user_info.get('email', 'Claude User'))
-                        self.update_status(f"Authentication successful!\nWelcome, {user_name}!")
-                        self.result = True
-                        
-                        # Auto-close after success
-                        self.dialog.after(2000, self.close)
-                    else:
-                        self.update_status("Authentication completed but no user information available.")
-                        self.result = True
-                        self.dialog.after(2000, self.close)
-                else:
-                    self.update_status("Authentication failed or was cancelled.\nPlease try again.")
-                    self.enable_retry()
+        """Start Claude authentication."""
+        try:
+            self.update_status("Connecting to Claude AI...")
+            
+            # Use after method to run OAuth in main thread
+            self.dialog.after(100, self.run_oauth_flow)
+            
+        except Exception as e:
+            logger.error(f"Authentication start error: {e}")
+            self.update_status(f"Failed to start authentication: {str(e)}")
+            self.enable_retry()
+    
+    def run_oauth_flow(self):
+        """Run OAuth flow in main thread."""
+        try:
+            oauth = OAuthManager()
+            
+            self.update_status("Starting Claude authentication flow...\nBrowser will open for login.")
+            
+            # Start OAuth flow
+            result = oauth.start_oauth_flow(OAuthProvider.CLAUDE)
+            
+            if result:
+                # Get user info
+                token = oauth.get_token(OAuthProvider.CLAUDE)
+                if token and token.user_info:
+                    self.user_info = token.user_info
+                    user_name = self.user_info.get('name', self.user_info.get('email', 'Claude User'))
+                    self.update_status(f"Authentication successful!\nWelcome, {user_name}!")
+                    self.result = True
                     
-            except Exception as e:
-                logger.error(f"Authentication error: {e}")
-                self.update_status(f"Authentication error: {str(e)}\nPlease try again.")
+                    # Auto-close after success
+                    self.dialog.after(2000, self.close)
+                else:
+                    self.update_status("Authentication completed but no user information available.")
+                    self.result = True
+                    self.dialog.after(2000, self.close)
+            else:
+                self.update_status("Authentication failed or was cancelled.\nPlease try again.")
                 self.enable_retry()
-        
-        # Start in background thread
-        threading.Thread(target=auth_thread, daemon=True).start()
+                
+        except Exception as e:
+            logger.error(f"OAuth flow error: {e}")
+            self.update_status(f"Authentication error: {str(e)}\nPlease try again.")
+            self.enable_retry()
     
     def update_status(self, message):
         """Update status message."""
         def update():
-            self.status_label.config(text=message)
-            if "successful" in message.lower():
-                self.progress.stop()
-                self.status_label.config(fg='#00ff88')
-            elif "failed" in message.lower() or "error" in message.lower():
-                self.progress.stop()
-                self.status_label.config(fg='#ff6b6b')
+            try:
+                if self.dialog.winfo_exists():
+                    self.status_label.config(text=message)
+                    if "successful" in message.lower():
+                        self.progress.stop()
+                        self.status_label.config(fg='#00ff88')
+                    elif "failed" in message.lower() or "error" in message.lower():
+                        self.progress.stop()
+                        self.status_label.config(fg='#ff6b6b')
+            except (tk.TclError, RuntimeError):
+                # Dialog may have been closed
+                pass
         
-        self.dialog.after(0, update)
+        try:
+            self.dialog.after(0, update)
+        except (tk.TclError, RuntimeError):
+            # Main thread not available, update directly
+            try:
+                update()
+            except:
+                pass
     
     def enable_retry(self):
         """Enable retry button."""
         def enable():
-            self.retry_button.config(state='normal')
-            self.progress.stop()
+            try:
+                if self.dialog.winfo_exists():
+                    self.retry_button.config(state='normal')
+                    self.progress.stop()
+            except (tk.TclError, RuntimeError):
+                pass
         
-        self.dialog.after(0, enable)
+        try:
+            self.dialog.after(0, enable)
+        except (tk.TclError, RuntimeError):
+            try:
+                enable()
+            except:
+                pass
     
     def retry(self):
         """Retry authentication."""
         self.retry_button.config(state='disabled')
         self.progress.start()
-        self.start_authentication()
+        self.dialog.after(100, self.run_oauth_flow)
     
     def cancel(self):
         """Cancel authentication."""
@@ -366,20 +395,46 @@ class ClaudeGUI:
         # Add user message
         self.add_chat_message("You", message, "#00ff88")
         
-        # Process AI response
+        # Show typing indicator
+        self.add_chat_message("Claude AI", "Thinking...", "#888888")
+        
+        # Process AI response in background thread
         def process_ai_response():
             try:
                 if self.ai_engine:
                     import asyncio
                     response = asyncio.run(self.ai_engine.process_message(message))
                 else:
-                    response = "AI engine not available. Using fallback response."
+                    response = "AI engine not available. Using fallback response based on your input."
                 
-                self.root.after(0, lambda: self.add_chat_message("Claude AI", response, "#D4512A"))
+                # Update UI in main thread
+                def update_chat():
+                    try:
+                        # Remove typing indicator by clearing and re-adding all messages
+                        # For simplicity, just add the response
+                        self.add_chat_message("Claude AI", response, "#D4512A")
+                    except Exception as ui_error:
+                        logger.error(f"UI update error: {ui_error}")
+                
+                try:
+                    self.root.after(0, update_chat)
+                except (tk.TclError, RuntimeError):
+                    # Fallback if main thread is not available
+                    logger.error("Could not update UI - main thread not available")
                 
             except Exception as e:
                 logger.error(f"AI processing error: {e}")
-                self.root.after(0, lambda: self.add_chat_message("System", f"Error: {e}", "#ff6b6b"))
+                
+                def update_error():
+                    try:
+                        self.add_chat_message("System", f"Error: {e}", "#ff6b6b")
+                    except:
+                        pass
+                
+                try:
+                    self.root.after(0, update_error)
+                except:
+                    pass
         
         # Process in background thread
         threading.Thread(target=process_ai_response, daemon=True).start()
