@@ -19,10 +19,15 @@ jobs:
       with:
         python-version: '3.11'
     
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-tk
+    
     - name: Install core dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy scipy requests aiohttp asyncio
+        pip install numpy scipy requests aiohttp typing_extensions
     
     - name: Python syntax validation
       run: |
@@ -36,13 +41,13 @@ jobs:
         sys.path.insert(0, '.')
         try:
             from api_manager import APIManager
-            print('✓ APIManager imports successfully')
+            print('[OK] APIManager imports successfully')
         except Exception as e:
             print(f'APIManager import warning: {e}')
         
         try:
             from oauth_manager import OAuthManager  
-            print('✓ OAuthManager imports successfully')
+            print('[OK] OAuthManager imports successfully')
         except Exception as e:
             print(f'OAuthManager import warning: {e}')
         "
@@ -53,11 +58,11 @@ jobs:
         import os
         files = ['OBVIVLORUM_LAUNCHER.py', 'ai_simple_working.py', 'oauth_manager.py', 'api_manager.py']
         existing = [f for f in files if os.path.exists(f)]
-        print(f'✓ Core files present: {len(existing)}/{len(files)}')
+        print(f'[OK] Core files present: {len(existing)}/{len(files)}')
         print(f'  Files: {existing}')
         
         total_loc = sum(len(open(f).readlines()) for f in existing)
-        print(f'✓ Total LOC in core files: {total_loc}')
+        print(f'[OK] Total LOC in core files: {total_loc}')
         "
     
     - name: Directory structure validation
@@ -66,7 +71,7 @@ jobs:
         import os
         dirs = ['AION', 'scientific', 'tests', '.github/workflows']
         existing_dirs = [d for d in dirs if os.path.exists(d)]
-        print(f'✓ Project structure: {len(existing_dirs)}/{len(dirs)} directories')
+        print(f'[OK] Project structure: {len(existing_dirs)}/{len(dirs)} directories')
         print(f'  Directories: {existing_dirs}')
         
         py_files = []
@@ -74,8 +79,8 @@ jobs:
             if '.git' not in root:
                 py_files.extend([f for f in files if f.endswith('.py')])
         
-        print(f'✓ Total Python files: {len(py_files)}')
-        print(f'✓ OBVIVLORUM system structure validated')
+        print(f'[OK] Total Python files: {len(py_files)}')
+        print(f'[OK] OBVIVLORUM system structure validated')
         "
 
   system-integration:
@@ -91,6 +96,11 @@ jobs:
       with:
         python-version: '3.11'
     
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-tk
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -99,7 +109,7 @@ jobs:
     - name: OBVIVLORUM system test
       run: |
         python -c "
-        print('🚀 OBVIVLORUM AI System Integration Test')
+        print('[CI] OBVIVLORUM AI System Integration Test')
         print('=' * 50)
         
         # Test API Manager
@@ -107,35 +117,35 @@ jobs:
             from api_manager import get_api_manager
             manager = get_api_manager()
             providers = manager.get_available_providers()
-            print(f'✓ API Manager: {len(providers)} providers configured')
+            print(f'[OK] API Manager: {len(providers)} providers configured')
         except Exception as e:
-            print(f'⚠ API Manager: {e}')
+            print(f'[WARN] API Manager: {e}')
         
         # Test OAuth Manager (100% REAL)
         try:
             from oauth_manager import OAuthManager, OAuthProvider
             oauth = OAuthManager()
-            print('✓ OAuth Manager: 100% REAL authentication initialized')
+            print('[OK] OAuth Manager: 100% REAL authentication initialized')
             
             # Test real OAuth configurations
             configs = oauth.configs
-            print(f'✓ OAuth configurations: {len(configs)} REAL providers ready')
+            print(f'[OK] OAuth configurations: {len(configs)} REAL providers ready')
             
             # Show real client IDs
             for provider, config in configs.items():
-                print(f'✓ {provider.value.title()}: {config.client_id[:20]}... ({config.flow_type} flow)')
+                print(f'[OK] {provider.value.title()}: {config.client_id[:20]}... ({config.flow_type} flow)')
             
-            print('✓ OAuth system: 100% REAL - NO FALLBACK')
+            print('[OK] OAuth system: 100% REAL - NO FALLBACK')
             
         except Exception as e:
-            print(f'⚠ OAuth Manager: {e}')
+            print(f'[WARN] OAuth Manager: {e}')
         
         # Test Core AI
         try:
             from ai_simple_working import SimpleWorkingAI
-            print('✓ AI Engine: Core engine available')
+            print('[OK] AI Engine: Core engine available')
         except Exception as e:
-            print(f'⚠ AI Engine: {e}')
+            print(f'[WARN] AI Engine: {e}')
         
-        print('✓ OBVIVLORUM integration test completed')
+        print('[OK] OBVIVLORUM integration test completed')
         "

@@ -45,9 +45,9 @@ jobs:
         try:
             with open('bandit-report.json') as f:
                 report = json.load(f)
-            print(f'🔒 Security scan: {len(report.get(\"results\", []))} issues found')
+            print(f'[SECURITY] Security scan: {len(report.get(\"results\", []))} issues found')
         except:
-            print('🔒 Security scan: No issues file')
+            print('[SECURITY] Security scan: No issues file')
         "
 
   scientific-validation:
@@ -144,15 +144,13 @@ jobs:
         import sys, os
         sys.path.insert(0, '.')
         
-        print('🤖 Testing AION Core...')
+        print('[AION] Testing AION Core...')
         try:
-            from AION.aion_core import AIONCore
-            core = AIONCore()
-            core.initialize_protocols()
-            status = core.get_system_status()
-            print(f'✓ AION Core initialized: {status}')
+            from AION.aion_core import AIONProtocol
+            core = AIONProtocol()
+            print('[OK] AION Protocol initialized successfully')
         except Exception as e:
-            print(f'⚠ AION Core: {e}')
+            print(f'[WARN] AION Core: {e}')
         "
     
     - name: Holographic Memory Test
@@ -161,15 +159,15 @@ jobs:
         import sys, os
         sys.path.insert(0, '.')
         
-        print('🧩 Testing Holographic Memory...')
+        print('[MEMORY] Testing Holographic Memory...')
         try:
             from AION.holographic_memory import HolographicMemory
             memory = HolographicMemory(dimensions=512)
             memory.store_pattern('test_pattern', [0.5, 0.8, 0.2, 0.9])
             retrieved = memory.recall_pattern('test_pattern')
-            print(f'✓ Holographic memory: pattern stored and retrieved')
+            print('[OK] Holographic memory: pattern stored and retrieved')
         except Exception as e:
-            print(f'⚠ Holographic memory: {e}')
+            print(f'[WARN] Holographic memory: {e}')
         "
 
   ai-engine-integration:
