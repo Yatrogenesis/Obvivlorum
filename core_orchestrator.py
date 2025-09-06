@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Copyright (c) 2024 Francisco Molina
+Licensed under Dual License Agreement - See LICENSE file for details
+
+ATTRIBUTION REQUIRED: This software must include attribution to Francisco Molina
+COMMERCIAL USE: Requires separate license and royalties - contact pako.molina@gmail.com
+
+Project: https://github.com/Yatrogenesis/Obvivlorum
+Author: Francisco Molina <pako.molina@gmail.com>
+"""
+
 """
 Obvivlorum Core Orchestrator - Simplified Architecture
 Unified system manager that integrates all components cleanly

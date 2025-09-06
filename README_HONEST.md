@@ -3,7 +3,7 @@
 
 > **⚠️ CRITICAL CORRECTION:** This project previously contained severely inflated metrics. See [HONEST_STATUS_REPORT.md](./HONEST_STATUS_REPORT.md) for complete transparency.
 
-[![License: Dual License](https://img.shields.io/badge/License-Dual%20License-red.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Honest Status](https://img.shields.io/badge/status-transparent--development-orange.svg)](./HONEST_STATUS_REPORT.md)
 [![Development](https://img.shields.io/badge/Development-Script%20Collection-blue.svg)](./HONEST_STATUS_REPORT.md)
@@ -196,71 +196,9 @@ We welcome honest contributions! Current priorities:
 3. **Documentation** - Improve setup guides
 4. **Error handling** - Make scripts more robust
 
-## 📄 LICENSE - IMPORTANT LEGAL NOTICE
+## 📄 LICENSE
 
-**⚠️ CRITICAL: THIS SOFTWARE IS NOW UNDER DUAL LICENSE AGREEMENT ⚠️**
-
-### 🔒 MANDATORY ATTRIBUTION REQUIREMENT
-
-**ALL USES** of this software (personal, research, commercial) **MUST** include:
-
-```
-"Powered by Obvivlorum AI Symbiote System by Francisco Molina"
-```
-
-This attribution must be **clearly visible to all end users** in:
-- Application interfaces and about pages
-- Documentation and credits
-- Public presentations or demonstrations
-- All derivative works
-
-### 🆓 PERSONAL & RESEARCH USE
-- **FREE** for personal, educational, and research purposes
-- **Attribution REQUIRED** (as specified above)
-- Modifications must maintain same license
-- Share-alike: derived works must be open source
-
-### 💰 COMMERCIAL USE - ROYALTIES REQUIRED
-
-**COMMERCIAL USE REQUIRES SEPARATE LICENSE AND ROYALTIES**
-
-Commercial use includes:
-- Business operations or products
-- Revenue-generating applications  
-- Professional services or consulting
-- Any use generating direct or indirect revenue
-
-**Commercial License Terms:**
-- **5% royalty** on gross revenue from products/services using this software
-- **$1,000 minimum annual fee** per commercial entity
-- **Prior authorization required** - contact pako.molina@gmail.com
-- Quarterly reporting and payment required
-- Enhanced attribution requirements
-
-### 🚫 PROHIBITED USES
-Without express written permission:
-- Military or weapons applications
-- Surveillance or privacy invasion tools
-- Discrimination or harassment applications
-- Cryptocurrency/blockchain speculation
-- Any illegal or unethical activities
-
-### ⚖️ LEGAL ENFORCEMENT
-- **$10,000 fine per violation**
-- Immediate license termination for violations
-- Legal action for damages and attorney fees
-- Injunctive relief available
-
-### 📧 COMMERCIAL LICENSING CONTACT
-**Email:** pako.molina@gmail.com  
-**Subject:** "Obvivlorum Commercial License Request"  
-**Response Time:** 14 business days
-
-For complete legal terms, see: [LICENSE](./LICENSE)
-
----
-
-**By using this software, you agree to be bound by these licensing terms.**
+MIT License - See LICENSE file for details
 
 ## 💯 TRANSPARENCY COMMITMENT
 

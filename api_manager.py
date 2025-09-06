@@ -20,6 +20,8 @@ Supports multiple loading methods:
 import os
 import json
 import logging
+import asyncio
+import aiohttp
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 from dataclasses import dataclass
@@ -412,6 +414,192 @@ HUGGINGFACE_API_TOKEN=your_huggingface_token_here
                     print("Failed to select provider")
         except (ValueError, IndexError):
             print("Invalid selection")
+    
+    def has_provider(self, provider_name: str) -> bool:
+        """Check if a provider is configured and enabled."""
+        try:
+            provider = AIProvider(provider_name.lower())
+            return provider in self.configs and self.configs[provider].enabled
+        except ValueError:
+            return False
+    
+    def add_provider(self, provider_name: str, api_key: str, **kwargs) -> bool:
+        """Add a provider configuration."""
+        try:
+            provider = AIProvider(provider_name.lower())
+            return self.add_api_key(provider, api_key, **kwargs)
+        except ValueError:
+            logger.error(f"Unknown provider: {provider_name}")
+            return False
+    
+    async def send_message(self, message: str, provider: str = None, model: str = None, **kwargs) -> str:
+        """Send message to AI provider."""
+        try:
+            # Determine provider
+            if provider:
+                target_provider = AIProvider(provider.lower())
+            elif self.current_provider:
+                target_provider = self.current_provider
+            else:
+                # Use first available provider
+                available = self.get_available_providers()
+                if not available:
+                    raise Exception("No AI providers configured")
+                target_provider = available[0]
+            
+            # Get configuration
+            if target_provider not in self.configs or not self.configs[target_provider].enabled:
+                raise Exception(f"Provider {target_provider.value} not configured or enabled")
+            
+            config = self.configs[target_provider]
+            
+            # Use provided model or default
+            selected_model = model or config.model
+            
+            # Call appropriate API
+            if target_provider == AIProvider.ANTHROPIC:
+                return await self._call_anthropic_api(message, config, selected_model, **kwargs)
+            elif target_provider == AIProvider.OPENAI:
+                return await self._call_openai_api(message, config, selected_model, **kwargs)
+            elif target_provider == AIProvider.GOOGLE:
+                return await self._call_google_api(message, config, selected_model, **kwargs)
+            else:
+                raise Exception(f"Provider {target_provider.value} not implemented yet")
+                
+        except Exception as e:
+            logger.error(f"API call failed: {e}")
+            raise
+    
+    async def _call_anthropic_api(self, message: str, config: APIConfiguration, model: str, **kwargs) -> str:
+        """Call Anthropic Claude API."""
+        if not config.api_key:
+            raise Exception("Anthropic API key not configured")
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': config.api_key,
+            'anthropic-version': '2023-06-01'
+        }
+        
+        data = {
+            'model': model,
+            'max_tokens': kwargs.get('max_tokens', config.max_tokens),
+            'messages': [
+                {
+                    'role': 'user',
+                    'content': message
+                }
+            ],
+            'temperature': kwargs.get('temperature', config.temperature)
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{config.endpoint}/messages",
+                    headers=headers,
+                    json=data,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if result.get('content') and len(result['content']) > 0:
+                            return result['content'][0].get('text', 'No response text')
+                        else:
+                            return "Empty response from Claude"
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Anthropic API error {response.status}: {error_text}")
+                        raise Exception(f"Anthropic API error: {response.status} - {error_text}")
+        except asyncio.TimeoutError:
+            raise Exception("Anthropic API request timed out")
+        except aiohttp.ClientError as e:
+            raise Exception(f"Network error calling Anthropic API: {e}")
+    
+    async def _call_openai_api(self, message: str, config: APIConfiguration, model: str, **kwargs) -> str:
+        """Call OpenAI API."""
+        if not config.api_key:
+            raise Exception("OpenAI API key not configured")
+        
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {config.api_key}'
+        }
+        
+        data = {
+            'model': model,
+            'messages': [
+                {
+                    'role': 'user',
+                    'content': message
+                }
+            ],
+            'max_tokens': kwargs.get('max_tokens', config.max_tokens),
+            'temperature': kwargs.get('temperature', config.temperature)
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{config.endpoint}/chat/completions",
+                    headers=headers,
+                    json=data,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if result.get('choices') and len(result['choices']) > 0:
+                            return result['choices'][0]['message']['content']
+                        else:
+                            return "Empty response from OpenAI"
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"OpenAI API error {response.status}: {error_text}")
+                        raise Exception(f"OpenAI API error: {response.status} - {error_text}")
+        except asyncio.TimeoutError:
+            raise Exception("OpenAI API request timed out")
+        except aiohttp.ClientError as e:
+            raise Exception(f"Network error calling OpenAI API: {e}")
+    
+    async def _call_google_api(self, message: str, config: APIConfiguration, model: str, **kwargs) -> str:
+        """Call Google Gemini API."""
+        if not config.api_key:
+            raise Exception("Google API key not configured")
+        
+        data = {
+            'contents': [{
+                'parts': [{
+                    'text': message
+                }]
+            }],
+            'generationConfig': {
+                'maxOutputTokens': kwargs.get('max_tokens', config.max_tokens),
+                'temperature': kwargs.get('temperature', config.temperature)
+            }
+        }
+        
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{config.endpoint}/models/{model}:generateContent?key={config.api_key}",
+                    json=data,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        if result.get('candidates') and len(result['candidates']) > 0:
+                            candidate = result['candidates'][0]
+                            if candidate.get('content') and candidate['content'].get('parts'):
+                                return candidate['content']['parts'][0]['text']
+                        return "Empty response from Google"
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"Google API error {response.status}: {error_text}")
+                        raise Exception(f"Google API error: {response.status} - {error_text}")
+        except asyncio.TimeoutError:
+            raise Exception("Google API request timed out")
+        except aiohttp.ClientError as e:
+            raise Exception(f"Network error calling Google API: {e}")
 
 # Global instance
 _api_manager = None
