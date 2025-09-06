@@ -6,6 +6,9 @@ requests>=2.28.0
 tkinter
 typing_extensions>=4.0.0
 
+# Real Claude Integration via Browser Automation
+playwright>=1.40.0
+
 # Scientific computing
 numpy>=1.21.0
 scipy>=1.8.0
